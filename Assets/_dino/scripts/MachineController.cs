@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using Vector3 = UnityEngine.Vector3;
+using Vector2 = UnityEngine.Vector2;
 
 public class MachineController : MonoBehaviour {
 
@@ -34,9 +35,13 @@ public class MachineController : MonoBehaviour {
     [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.Lever MovementController;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.SteeringWheel RotationController;
     [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
 
+
     #endregion
+
     #region Bools
 
     [HideInInspector]public bool EngineActive;
@@ -68,7 +73,13 @@ public class MachineController : MonoBehaviour {
 
     #region MachineAndDrillFunctions
     
-    
+    public void ChangeMovementForce(Vector2 force){
+        MachineMovementForce = force.y * 100;
+    }
+
+    public void ChangeRotationForce(Vector2 force){
+        MachineRotationForce = force.x * 100;
+    }
     
     [DisableIf("@EngineActive")]
     [PropertyOrder(0)]
@@ -258,6 +269,7 @@ public class MachineController : MonoBehaviour {
     }
 
     private void Update() {
+
         if (BrakesReleased){
             var motorL = WheelL.motor;
             var motorR = WheelR.motor;

@@ -11053,7 +11053,7 @@ MonoBehaviour:
   GrappleForceMode: 5
   GrappleLayers:
     serializedVersion: 2
-    m_Bits: 1281
+    m_Bits: 1
   MuzzleTransform: {fileID: 5660403290459373926}
   HitTargetPrefab: {fileID: 607901920206549334}
   GrappleLine: {fileID: 5660403290208085475}

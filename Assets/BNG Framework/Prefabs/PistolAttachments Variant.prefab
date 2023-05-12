@@ -107,6 +107,11 @@ PrefabInstance:
       propertyPath: EmptySoundVolume
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6896351667102617552, guid: b2defb85b986ab243a8c5252fe34a93a,
+        type: 3}
+      propertyPath: ValidLayers.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8569038907691427831, guid: b2defb85b986ab243a8c5252fe34a93a,
         type: 3}
       propertyPath: m_IsActive

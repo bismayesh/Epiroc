@@ -5384,7 +5384,7 @@ MonoBehaviour:
   RaycastTransform: {fileID: 8710617119351049066}
   LaserCollision:
     serializedVersion: 2
-    m_Bits: 273
+    m_Bits: 17
   CollisionParticle: {fileID: 8710617119457064049}
   BladeEnabled: 0
   LaserLength: 0.52
