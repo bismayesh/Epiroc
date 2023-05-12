@@ -30,25 +30,28 @@ public class MachineController : MonoBehaviour {
     #endregion
     #region References
 
-    [FoldoutGroup("References")] public DrillController Drill;
-    [FoldoutGroup("References")] public List<GameObject> Jacks;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public DrillController Drill;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
 
     #endregion
     #region Bools
 
-    public bool EngineActive;
-    public bool JacksRetrieved;
-    public bool DrillActive;
-    public bool BrakesReleased;
-    public bool DrillSpinning;
+    [HideInInspector]public bool EngineActive;
+    [HideInInspector]public bool JacksRetrieved;
+    [HideInInspector]public bool DrillActive;
+    [HideInInspector]public bool BrakesReleased;
+    [HideInInspector]public bool DrillSpinning;
 
     #endregion
     #region MachineVariables
     
-    [ShowIf("@BrakesReleased")]
-    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(0, 1)] public float MachineMovementSpeed;
-    [ShowIf("@BrakesReleased")]
-    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(0, 1)] public float MachineRotationSpeed;
+    [ShowIf("@EngineActive")]
+    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-100 , 100)] public float MachineMovementForce;
+    [ShowIf("@EngineActive")]
+    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-180, 180)] public float MachineRotationForce;
 
     #endregion
     #region DrillVariables
@@ -64,7 +67,7 @@ public class MachineController : MonoBehaviour {
     #endregion
 
     #region MachineAndDrillFunctions
-
+    
     
     
     [DisableIf("@EngineActive")]
@@ -174,7 +177,7 @@ public class MachineController : MonoBehaviour {
     
     IEnumerator CO_RetrieveJacks() {
         foreach (var jack in Jacks) {
-            jack.transform.DOLocalMoveX(-0.5f, 5);
+            jack.transform.DOLocalMoveX(-0.75f, 5);
         }
         
         JacksRetrieved = true;
@@ -255,6 +258,41 @@ public class MachineController : MonoBehaviour {
     }
 
     private void Update() {
+        if (BrakesReleased){
+            var motorL = WheelL.motor;
+            var motorR = WheelR.motor;
+
+            motorL.force = 100;
+            motorL.targetVelocity = MachineMovementForce;
+            motorL.freeSpin = false;
+            WheelL.motor = motorL;
+            WheelL.useMotor = true;
+            
+            motorR.force = 100;
+            motorR.targetVelocity = MachineMovementForce;
+            motorR.freeSpin = false;
+            WheelR.motor = motorR;
+            WheelR.useMotor = true;
+
+            Engine.AddTorque(Vector3.up * MachineRotationForce);
+        }
+        else{
+            var motorL = WheelL.motor;
+            var motorR = WheelR.motor;
+
+            motorL.force = 0;
+            motorL.targetVelocity = MachineMovementForce;
+            motorL.freeSpin = false;
+            WheelL.motor = motorL;
+            WheelL.useMotor = true;
+            
+            motorR.force = 0;
+            motorR.targetVelocity = MachineMovementForce;
+            motorR.freeSpin = false;
+            WheelR.motor = motorR;
+            WheelR.useMotor = true;
+        }
+        
         if (DrillActive) {
             Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
             Drill.SliderJoint.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
@@ -266,5 +304,6 @@ public class MachineController : MonoBehaviour {
             SliderJointRotation = (float)Math.Round(Drill.SliderJoint.transform.eulerAngles.x / 360, 2);
             SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
         }
+        
     }
 }
