@@ -1,21 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using Vector3 = UnityEngine.Vector3;
 
 public class MachineController : MonoBehaviour {
 
     #region Events
     
-    
     [Space(30)]
+    [HorizontalGroup("Engine EVENTS")][PropertyOrder(666)] public UnityEvent OnEngineActivated;
+    [Space(30)]
+    [HorizontalGroup("Engine EVENTS")][PropertyOrder(666)] public UnityEvent OnEngineDeactivated;
     [HorizontalGroup("Jack EVENTS")][PropertyOrder(666)] public UnityEvent OnJacksRetrieved;
-    [Space(30)]
     [HorizontalGroup("Jack EVENTS")][PropertyOrder(666)] public UnityEvent OnJacksExtended;
     [HorizontalGroup("Drill EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillActivated;
     [HorizontalGroup("Drill EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillDeactivated;
@@ -33,24 +36,30 @@ public class MachineController : MonoBehaviour {
     #endregion
     #region Bools
 
-    [HideInInspector] public bool MachineActive;
-    [HideInInspector] public bool JacksRetrieved;
-    [HideInInspector] public bool DrillActive;
-    [HideInInspector] public bool BrakesReleased;
-    [HideInInspector] public bool DrillSpinning;
+    public bool EngineActive;
+    public bool JacksRetrieved;
+    public bool DrillActive;
+    public bool BrakesReleased;
+    public bool DrillSpinning;
 
     #endregion
     #region MachineVariables
     
+    [ShowIf("@BrakesReleased")]
     [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(0, 1)] public float MachineMovementSpeed;
+    [ShowIf("@BrakesReleased")]
     [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(0, 1)] public float MachineRotationSpeed;
 
     #endregion
     #region DrillVariables
 
-    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, 15)] public float CaseJointRotation;
-    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, -90)] public float SliderJointRotation;
-    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, -90)] public float SliderPosition;
+    
+    [ShowIf("@DrillActive")]
+    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, 30)] public float CaseJointRotation;
+    [ShowIf("@DrillActive")]
+    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(-90, 0)] public float SliderJointRotation;
+    [ShowIf("@DrillActive")]
+    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(-1.75f, 1.75f)] public float SliderPosition;
 
     #endregion
 
@@ -58,8 +67,25 @@ public class MachineController : MonoBehaviour {
 
     
     
+    [DisableIf("@EngineActive")]
+    [PropertyOrder(0)]
+    [HorizontalGroup("-1")]
+    [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
+    public void ActivateEngine() {
+        StartCoroutine(CO_ActivateEngine());
+        
+    }
+    [DisableIf("@!EngineActive")]
+    [PropertyOrder(0)]
+    [HorizontalGroup("-1")]
+    [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
+    public void DeactivateEngine() {
+        StartCoroutine(CO_DeactivateEngine());
+        
+    }
     
-    [DisableIf("@JacksRetrieved")]
+    
+    [DisableIf("@JacksRetrieved || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("0")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -68,7 +94,7 @@ public class MachineController : MonoBehaviour {
         
     }
     
-    [DisableIf("@!JacksRetrieved")]
+    [DisableIf("@!JacksRetrieved || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("0")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -77,7 +103,7 @@ public class MachineController : MonoBehaviour {
         
     }
     
-    [DisableIf("@BrakesReleased")]
+    [DisableIf("@BrakesReleased || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("1")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -85,7 +111,7 @@ public class MachineController : MonoBehaviour {
         StartCoroutine(CO_ReleaseBrakes());
         
     }
-    [DisableIf("@!BrakesReleased")]
+    [DisableIf("@!BrakesReleased || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("1")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -94,7 +120,7 @@ public class MachineController : MonoBehaviour {
         
     }
     
-    [DisableIf("@DrillActive")]
+    [DisableIf("@DrillActive || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("2")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -102,7 +128,7 @@ public class MachineController : MonoBehaviour {
         StartCoroutine(CO_ActivateDrill());
         
     }
-    [DisableIf("@!DrillActive")]
+    [DisableIf("@!DrillActive || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("2")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -111,7 +137,7 @@ public class MachineController : MonoBehaviour {
         
     }
     
-    [DisableIf("@DrillSpinning")]
+    [DisableIf("@DrillSpinning || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("3")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
@@ -119,13 +145,12 @@ public class MachineController : MonoBehaviour {
         StartCoroutine(CO_SpinDrill());
         
     }
-    [DisableIf("@!DrillSpinning")]
+    [DisableIf("@!DrillSpinning || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("3")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
     public void StopDrill() {
         StartCoroutine(CO_StopDrill());
-        
     }
     
     
@@ -133,20 +158,35 @@ public class MachineController : MonoBehaviour {
     #endregion
     #region MachineAndDrillCoroutines
 
+    IEnumerator CO_ActivateEngine() {
+        
+        EngineActive = true;
+        OnEngineActivated?.Invoke();
+        yield return null;
+    }
+    
+    IEnumerator CO_DeactivateEngine() {
+        
+        EngineActive = false;
+        OnEngineDeactivated?.Invoke();
+        yield return null;
+    }
+    
     IEnumerator CO_RetrieveJacks() {
         foreach (var jack in Jacks) {
             jack.transform.DOLocalMoveX(-0.5f, 5);
         }
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
+        
         JacksRetrieved = true;
         OnJacksRetrieved?.Invoke();
+        yield return null;
     }
     
     IEnumerator CO_ExtendJacks() {
         foreach (var jack in Jacks) {
             jack.transform.DOLocalMoveX(0.5f, 5);
         }
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
+        
         JacksRetrieved = false;
         OnJacksExtended?.Invoke();
         yield return null;
@@ -169,26 +209,29 @@ public class MachineController : MonoBehaviour {
     }
 
     IEnumerator CO_ActivateDrill() {
-        var endRotation = Vector3.zero;
-        Drill.SliderJoint.transform.DORotate(endRotation, 4);
-        Drill.CaseJoint.transform.DORotate(endRotation, 6);
+        var endRotation = new Vector3(0, 0, 0);
+        Drill.SliderJoint.transform.DOLocalRotate(endRotation, 4);
+        Drill.CaseJoint.transform.DOLocalRotate(endRotation, 6);
 
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
+        yield return new WaitForSeconds(6);
         DrillActive = true;
+        CaseJointRotation = 0;
+        SliderJointRotation = 0;
+        SliderPosition = 1.75f;
         OnDrillActivated?.Invoke();
-        yield return null;
+        
     }
     
     IEnumerator CO_DeactivateDrill() {
         var endRotationSliderJoint = new Vector3(-30, 0, 0);
         var endRotationCaseJoint = new Vector3(15, 0, 0);
-        Drill.SliderJoint.transform.DORotate(endRotationSliderJoint, 4);
-        Drill.CaseJoint.transform.DORotate(endRotationCaseJoint, 6);
+        Drill.SliderJoint.transform.DOLocalRotate(endRotationSliderJoint, 4);
+        Drill.CaseJoint.transform.DOLocalRotate(endRotationCaseJoint, 6);
 
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
+        yield return new WaitForSeconds(6);
         DrillActive = false;
         OnDrillDeactivated?.Invoke();
-        yield return null;
+        
     }
 
     IEnumerator CO_SpinDrill() {
@@ -206,5 +249,22 @@ public class MachineController : MonoBehaviour {
     }
 
     #endregion
-    
+
+    private void Start() {
+        
+    }
+
+    private void Update() {
+        if (DrillActive) {
+            Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
+            Drill.SliderJoint.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
+            Drill.Slider.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
+
+        }
+        else {
+            CaseJointRotation = (float)Math.Round(Drill.CaseJoint.transform.eulerAngles.x, 2);
+            SliderJointRotation = (float)Math.Round(Drill.SliderJoint.transform.eulerAngles.x / 360, 2);
+            SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
+        }
+    }
 }

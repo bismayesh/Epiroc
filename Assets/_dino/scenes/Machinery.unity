@@ -16689,18 +16689,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fab39591593e7b0459380a21771bf077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnEngineActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEngineDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnJacksRetrieved:
+    m_PersistentCalls:
+      m_Calls: []
+  OnJacksExtended:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDrillActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDrillDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBrakesReleased:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBrakesActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDrillSpinning:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDrillStop:
+    m_PersistentCalls:
+      m_Calls: []
   Drill: {fileID: 1003573630}
   Jacks:
   - {fileID: 525759930}
   - {fileID: 1705337516}
   - {fileID: 860734201}
   - {fileID: 1212513004}
+  EngineActive: 0
   JacksRetrieved: 0
   DrillActive: 0
   BrakesReleased: 0
   DrillSpinning: 0
   MachineMovementSpeed: 0
   MachineRotationSpeed: 0
+  CaseJointRotation: 15
+  SliderJointRotation: -30
+  SliderPosition: 1.75
 --- !u!1 &2022287254
 GameObject:
   m_ObjectHideFlags: 0
