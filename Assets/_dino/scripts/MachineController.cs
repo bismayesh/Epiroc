@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using DG.Tweening;
 using Sirenix.OdinInspector;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using Vector3 = UnityEngine.Vector3;
@@ -249,16 +246,16 @@ public class MachineController : MonoBehaviour {
     }
 
     IEnumerator CO_SpinDrill() {
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
         DrillSpinning = true;
         OnDrillSpinning?.Invoke();
+        
         yield return null;
     }
     
     IEnumerator CO_StopDrill() {
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
         DrillSpinning = false;
         OnDrillStop?.Invoke();
+        
         yield return null;
     }
 
