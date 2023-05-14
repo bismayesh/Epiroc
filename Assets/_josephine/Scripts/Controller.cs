@@ -7,20 +7,24 @@ public class Controller : MonoBehaviour
     public Training activeTraining;
     public Task activeTask;
 
-    bool pressing = false;
+    //bool pressing = false;
 
     private void Start()
     {
         activeTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<Training>();
     }
 
-
+    /*
     private void OnCollisionEnter(Collision collision)
     {
+        
+
         if (collision.gameObject.tag == "Player" && !pressing)
         {
             pressing = true;
             Debug.Log("Player pressed button");
+            activeTask = activeTraining.CurrentTask.GetComponent<Task>();
+            activeTask.ButtonController(gameObject);
 
             StartCoroutine(WaitTwoSeconds());
         }
@@ -31,10 +35,13 @@ public class Controller : MonoBehaviour
         yield return new WaitForSeconds(2);
         pressing = false;
     }
+    */
 
+    
     public void ButtonFunction()
     {
         activeTask = activeTraining.CurrentTask.GetComponent<Task>();
         activeTask.ButtonController(gameObject);
     }
+    
 }
