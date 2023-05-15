@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using DG.Tweening;
 using Sirenix.OdinInspector;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using Vector3 = UnityEngine.Vector3;
@@ -60,7 +57,6 @@ public class MachineController : MonoBehaviour {
 
     #endregion
     #region DrillVariables
-
     
     [ShowIf("@DrillActive")]
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, 30)] public float CaseJointRotation;
@@ -68,6 +64,10 @@ public class MachineController : MonoBehaviour {
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(-90, 0)] public float SliderJointRotation;
     [ShowIf("@DrillActive")]
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(-1.75f, 1.75f)] public float SliderPosition;
+    [ShowIf("@DrillActive")]
+    [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, 100)] public float DrillSpinSpeed;
+    
+    
 
     #endregion
 
@@ -156,18 +156,17 @@ public class MachineController : MonoBehaviour {
     [HorizontalGroup("3")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
     public void SpinDrill() {
-        StartCoroutine(CO_SpinDrill());
-        
+        DrillSpinning = true;
+        OnDrillSpinning?.Invoke();
     }
     [DisableIf("@!DrillSpinning || !EngineActive")]
     [PropertyOrder(0)]
     [HorizontalGroup("3")]
     [DisableInEditorMode][Button(ButtonSizes.Large), GUIColor(0,1,0)]
     public void StopDrill() {
-        StartCoroutine(CO_StopDrill());
+        DrillSpinning = false;
+        OnDrillStop?.Invoke();
     }
-    
-    
 
     #endregion
     #region MachineAndDrillCoroutines
@@ -248,19 +247,7 @@ public class MachineController : MonoBehaviour {
         
     }
 
-    IEnumerator CO_SpinDrill() {
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
-        DrillSpinning = true;
-        OnDrillSpinning?.Invoke();
-        yield return null;
-    }
     
-    IEnumerator CO_StopDrill() {
-        yield return new WaitUntil((() => !DOTween.IsTweening(this)));
-        DrillSpinning = false;
-        OnDrillStop?.Invoke();
-        yield return null;
-    }
 
     #endregion
 
@@ -270,6 +257,10 @@ public class MachineController : MonoBehaviour {
 
     private void Update() {
 
+        if (DrillSpinning) {
+            Drill.DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
+        }
+        
         if (BrakesReleased){
             var motorL = WheelL.motor;
             var motorR = WheelR.motor;
