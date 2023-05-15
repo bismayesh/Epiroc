@@ -5,6 +5,7 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
 
@@ -27,13 +28,15 @@ public class MachineController : MonoBehaviour {
 
     #endregion
     #region References
-
-    [PropertyOrder(-666)][FoldoutGroup("References")] public DrillController Drill;
+    
+    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject DrillBase;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject CaseJoint;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject Slider;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject SliderJoint;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject DrillTip;
     [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.Lever MovementController;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.SteeringWheel RotationController;
     [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
 
 
@@ -223,8 +226,8 @@ public class MachineController : MonoBehaviour {
 
     IEnumerator CO_ActivateDrill() {
         var endRotation = new Vector3(0, 0, 0);
-        Drill.SliderJoint.transform.DOLocalRotate(endRotation, 4);
-        Drill.CaseJoint.transform.DOLocalRotate(endRotation, 6);
+        DrillBase.transform.DOLocalRotate(endRotation, 4);
+        DrillBase.transform.DOLocalRotate(endRotation, 6);
 
         yield return new WaitForSeconds(6);
         DrillActive = true;
@@ -238,8 +241,8 @@ public class MachineController : MonoBehaviour {
     IEnumerator CO_DeactivateDrill() {
         var endRotationSliderJoint = new Vector3(-30, 0, 0);
         var endRotationCaseJoint = new Vector3(15, 0, 0);
-        Drill.SliderJoint.transform.DOLocalRotate(endRotationSliderJoint, 4);
-        Drill.CaseJoint.transform.DOLocalRotate(endRotationCaseJoint, 6);
+        DrillBase.transform.DOLocalRotate(endRotationSliderJoint, 4);
+        DrillBase.transform.DOLocalRotate(endRotationCaseJoint, 6);
 
         yield return new WaitForSeconds(6);
         DrillActive = false;
@@ -258,7 +261,7 @@ public class MachineController : MonoBehaviour {
     private void Update() {
 
         if (DrillSpinning) {
-            Drill.DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
+            DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
         }
         
         if (BrakesReleased){
@@ -297,15 +300,15 @@ public class MachineController : MonoBehaviour {
         }
         
         if (DrillActive) {
-            Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
-            Drill.SliderJoint.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
-            Drill.Slider.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
+            DrillBase.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
+            DrillBase.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
+            DrillBase.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
 
         }
         else {
-            CaseJointRotation = (float)Math.Round(Drill.CaseJoint.transform.eulerAngles.x, 2);
-            SliderJointRotation = (float)Math.Round(Drill.SliderJoint.transform.eulerAngles.x / 360, 2);
-            SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
+            CaseJointRotation = (float)Math.Round(DrillBase.transform.eulerAngles.x, 2);
+            SliderJointRotation = (float)Math.Round(DrillBase.transform.eulerAngles.x / 360, 2);
+            SliderPosition = (float)Math.Round(DrillBase.transform.localPosition.z, 2);
         }
         
     }

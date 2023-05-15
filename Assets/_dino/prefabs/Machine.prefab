@@ -8993,7 +8993,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5566149436941409067}
-  - component: {fileID: 5566149436941409064}
   m_Layer: 0
   m_Name: Drill
   m_TagString: Untagged
@@ -9017,22 +9016,6 @@ Transform:
   m_Father: {fileID: 5566149438362722797}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5566149436941409064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5566149436941409066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19aba60d88d685949860d7b0f6e93c87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CaseJoint: {fileID: 5566149437151048275}
-  Slider: {fileID: 5566149437085732997}
-  SliderJoint: {fileID: 5566149437753684455}
-  DrillTip: {fileID: 5566149437179358819}
 --- !u!1 &5566149437069101231
 GameObject:
   m_ObjectHideFlags: 0
@@ -9904,7 +9887,7 @@ GameObject:
   - component: {fileID: 5566149437151048287}
   - component: {fileID: 5566149437151048286}
   m_Layer: 0
-  m_Name: Joint
+  m_Name: CaseJoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12330,7 +12313,7 @@ GameObject:
   - component: {fileID: 5566149437753684451}
   - component: {fileID: 5566149437753684450}
   m_Layer: 0
-  m_Name: Joint
+  m_Name: SliderJoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14607,12 +14590,14 @@ MonoBehaviour:
   OnDrillStop:
     m_PersistentCalls:
       m_Calls: []
-  Drill: {fileID: 5566149436941409064}
+  DrillBase: {fileID: 5566149436941409066}
+  CaseJoint: {fileID: 5566149437151048275}
+  Slider: {fileID: 5566149437085732997}
+  SliderJoint: {fileID: 5566149437753684455}
+  DrillTip: {fileID: 5566149437179358819}
   Engine: {fileID: 7754250585356873914}
   WheelL: {fileID: 1659759968929156401}
   WheelR: {fileID: 2624224417823129908}
-  MovementController: {fileID: 0}
-  RotationController: {fileID: 0}
   Jacks:
   - {fileID: 5566149437537206252}
   - {fileID: 5566149437917899002}
