@@ -44,7 +44,7 @@ public class Task : MonoBehaviour
         index = 0;
         progress = 0;
         gameManager.TaskProgress = progress;
-        gameManager.TrainingFailures++;
-        gameManager.TrainingAttempts++;
+        gameManager.UpdateTrainingFailures();
+        gameManager.UpdateTrainingAttempts();
     }
 }

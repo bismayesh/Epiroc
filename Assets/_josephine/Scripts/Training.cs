@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Training : MonoBehaviour
 {
@@ -34,9 +35,7 @@ public class Training : MonoBehaviour
             
             if (index == tasks.Count)
             {
-                //Whole training finnished
-                Debug.Log("Training finnished!");
-                gameManager.TrainingProgress = 100;
+                StartCoroutine(TrainingFinnished());
             }
             else
             {
@@ -68,5 +67,16 @@ public class Training : MonoBehaviour
         gameManager.TrainingProgress = trainingProgress;
         gameManager.TaskProgress = 0;
         gameManager.TaskName = tasks[index].taskName;
+    }
+
+    IEnumerator TrainingFinnished()
+    {
+        gameManager.TrainingProgress = 100;
+        Debug.Log("Training finnished!");
+
+        yield return new WaitForSeconds(2);
+
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1;
     }
 }

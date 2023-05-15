@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DG.Tweening.Core.Easing;
 
 public class GameState : MonoBehaviour
 {
@@ -18,18 +19,22 @@ public class GameState : MonoBehaviour
     private int currentTrainingProgress = 0;
     private string currentTaskName;
     private int currentTaskProgress = 0;
-    private int currentFailure = 0;
-    private int currentAttempt = 0;
+    private int currentFailure;
+    private int currentAttempt;
     private int currentDamage = 0;
     [SerializeField]
     private int playerHP = 100;
 
     private void Start()
     {
+        GameStatistics.UpdateTrainingAttempts();
+        currentAttempt = GameStatistics.TrainingAttempts;
+        currentFailure = GameStatistics.TrainingFailures;
+
         textTrainingProgress.text = "Progress: " + currentTrainingProgress + "%";
         texTaskProgress.text = "Progress: " + currentTaskProgress + "%";
         textFailures.text = "Failures: " + currentFailure;
-        textAttempts.text = "Attempts: " + currentAttempt;
+        textAttempts.text = "Attempt: " + currentAttempt;
         textDamage.text = "Machine damage: " + currentDamage;
         textHP.text = "HP: " + playerHP;
     }
@@ -54,7 +59,7 @@ public class GameState : MonoBehaviour
             if (currentTrainingProgress >= 100)
             {
                 //Finnished training condition
-                textTrainingProgress.text = "Progress: " + currentTrainingProgress + "%";
+                textTrainingProgress.text = "Progress: 100%";
             }
             else
             {
@@ -64,24 +69,18 @@ public class GameState : MonoBehaviour
         }
     }
 
-    public int TrainingAttempts
+    public void UpdateTrainingAttempts()
     {
-        get { return currentAttempt; }
-        set
-        {
-            currentAttempt = value;
-            textAttempts.text = "Attempts: " + currentAttempt;
-        }
+        GameStatistics.UpdateTrainingAttempts();
+        currentAttempt = GameStatistics.TrainingAttempts;
+        textAttempts.text = "Attempt: " + currentAttempt;
     }
 
-    public int TrainingFailures
+    public void UpdateTrainingFailures()
     {
-        get { return currentFailure; }
-        set
-        {
-            currentFailure = value;
-            textFailures.text = "Failures: " + currentFailure;
-        }
+        GameStatistics.UpdateTrainingFailures();
+        currentFailure = GameStatistics.TrainingFailures;
+        textFailures.text = "Failures: " + currentFailure;
     }
 
     public string TaskName
@@ -129,10 +128,6 @@ public class GameState : MonoBehaviour
         get { return playerHP; }
         set
         {
-            //Change value example:
-            //private GameBehavior gameManager;
-            //gameManager.HP -= 1;
-
             playerHP = value;
 
             if (playerHP <= 0)
