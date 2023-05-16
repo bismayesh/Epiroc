@@ -25,6 +25,8 @@ public class MachineController : MonoBehaviour {
     [HorizontalGroup("Brakes EVENTS")][PropertyOrder(666)] public UnityEvent OnBrakesActivated;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillSpinning;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillStop;
+    [HorizontalGroup("Torch EVENTS")][PropertyOrder(666)] public UnityEvent OnTorchActivated;
+    [HorizontalGroup("Torch EVENTS")][PropertyOrder(666)] public UnityEvent OnTorchDeactivated;
 
     #endregion
     #region References
@@ -37,6 +39,7 @@ public class MachineController : MonoBehaviour {
     [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public Light Torch;
     [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
 
 
@@ -49,6 +52,7 @@ public class MachineController : MonoBehaviour {
     [HideInInspector]public bool DrillActive;
     [HideInInspector]public bool BrakesReleased;
     [HideInInspector]public bool DrillSpinning;
+    [HideInInspector]public bool TorchActive;
 
     #endregion
     #region MachineVariables
@@ -74,6 +78,17 @@ public class MachineController : MonoBehaviour {
 
     #endregion
 
+    #region TorchVariables
+    [ShowIf("TorchActive")]
+    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(15, 60)] public float TorchPitch = 45;
+    [ShowIf("TorchActive")]
+    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(120, 230)] public float TorchYaw = 180;
+    [ShowIf("TorchActive")]
+    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(3, 30)] public float TorchFocus = 30;
+    [ShowIf("TorchActive")]
+    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(0.25f, 3)] public float TorchIntensity = 0.25f;
+
+    #endregion
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
@@ -171,6 +186,30 @@ public class MachineController : MonoBehaviour {
         OnDrillStop?.Invoke();
     }
 
+    [DisableIf("@TorchActive || !EngineActive")]
+    [PropertyOrder(0)]
+    [HorizontalGroup("4")]
+    [DisableInEditorMode]
+    [Button(ButtonSizes.Large), GUIColor(0, 1, 0)]
+    public void ActivateTorch() {
+        Torch.enabled = true;
+        TorchActive = true;
+        TorchPitch = 45;
+        TorchYaw = 180;
+        TorchFocus = 30;
+        OnTorchActivated?.Invoke();
+    }
+    [DisableIf("@!TorchActive || !EngineActive")]
+    [PropertyOrder(0)]
+    [HorizontalGroup("4")]
+    [DisableInEditorMode]
+    [Button(ButtonSizes.Large), GUIColor(0, 1, 0)]
+    public void DeactivateTorch() {
+        Torch.enabled = false;
+        TorchActive = true;
+        OnTorchDeactivated?.Invoke();
+    }
+
     #endregion
     #region MachineAndDrillCoroutines
 
@@ -260,6 +299,12 @@ public class MachineController : MonoBehaviour {
 
     private void Update() {
 
+        if (TorchActive) {
+            Torch.transform.eulerAngles = new Vector3(TorchPitch, TorchYaw, 0);
+            Torch.spotAngle = TorchFocus;
+            Torch.intensity = TorchIntensity;
+        }
+        
         if (DrillSpinning) {
             DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
         }
