@@ -15308,6 +15308,12 @@ MonoBehaviour:
   OnDrillStop:
     m_PersistentCalls:
       m_Calls: []
+  OnTorchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTorchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
   DrillBase: {fileID: 5566149436941409066}
   CaseJoint: {fileID: 5566149437151048275}
   Slider: {fileID: 5566149437085732997}
@@ -15327,6 +15333,7 @@ MonoBehaviour:
   DrillActive: 0
   BrakesReleased: 0
   DrillSpinning: 0
+  TorchActive: 0
   MachineMovementForce: 0
   MachineRotationForce: 0
   CaseJointRotation: 15
@@ -15335,6 +15342,8 @@ MonoBehaviour:
   DrillSpinSpeed: 0
   TorchPitch: 0
   TorchYaw: 0
+  TorchFocus: 30
+  TorchIntensity: 0.25
 --- !u!54 &7754250585356873914
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -27874,26 +27883,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 271992293}
     m_Modifications:
-    - target: {fileID: 5117709272728731509, guid: 2af1d2045149fe743b81bc4d1a6f8406,
-        type: 3}
-      propertyPath: m_ClearFlags
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5117709272728731509, guid: 2af1d2045149fe743b81bc4d1a6f8406,
-        type: 3}
-      propertyPath: m_BackGroundColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5117709272728731509, guid: 2af1d2045149fe743b81bc4d1a6f8406,
-        type: 3}
-      propertyPath: m_BackGroundColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5117709272728731509, guid: 2af1d2045149fe743b81bc4d1a6f8406,
-        type: 3}
-      propertyPath: m_BackGroundColor.r
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5117709272763234209, guid: 2af1d2045149fe743b81bc4d1a6f8406,
         type: 3}
       propertyPath: m_Name
@@ -27954,52 +27943,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8455787518813299462, guid: 2af1d2045149fe743b81bc4d1a6f8406,
-        type: 3}
-      propertyPath: sceneViewId
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2af1d2045149fe743b81bc4d1a6f8406, type: 3}
---- !u!1 &737233628452375788 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5117709272727730633, guid: 2af1d2045149fe743b81bc4d1a6f8406,
-    type: 3}
-  m_PrefabInstance: {fileID: 5566149437631821093}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5566149437290662488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 737233628452375788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
 --- !u!4 &737233628480569990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5117709272763234211, guid: 2af1d2045149fe743b81bc4d1a6f8406,
