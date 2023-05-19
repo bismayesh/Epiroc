@@ -5,7 +5,6 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
 
@@ -25,21 +24,16 @@ public class MachineController : MonoBehaviour {
     [HorizontalGroup("Brakes EVENTS")][PropertyOrder(666)] public UnityEvent OnBrakesActivated;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillSpinning;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillStop;
-    [HorizontalGroup("Torch EVENTS")][PropertyOrder(666)] public UnityEvent OnTorchActivated;
-    [HorizontalGroup("Torch EVENTS")][PropertyOrder(666)] public UnityEvent OnTorchDeactivated;
 
     #endregion
     #region References
-    
-    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject DrillBase;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject CaseJoint;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject Slider;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject SliderJoint;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public GameObject DrillTip;
+
+    [PropertyOrder(-666)][FoldoutGroup("References")] public DrillController Drill;
     [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public Light Torch;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.Lever MovementController;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.SteeringWheel RotationController;
     [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
 
 
@@ -52,7 +46,6 @@ public class MachineController : MonoBehaviour {
     [HideInInspector]public bool DrillActive;
     [HideInInspector]public bool BrakesReleased;
     [HideInInspector]public bool DrillSpinning;
-    [HideInInspector]public bool TorchActive;
 
     #endregion
     #region MachineVariables
@@ -78,17 +71,6 @@ public class MachineController : MonoBehaviour {
 
     #endregion
 
-    #region TorchVariables
-    [ShowIf("TorchActive")]
-    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(15, 60)] public float TorchPitch = 45;
-    [ShowIf("TorchActive")]
-    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(120, 230)] public float TorchYaw = 180;
-    [ShowIf("TorchActive")]
-    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(3, 30)] public float TorchFocus = 30;
-    [ShowIf("TorchActive")]
-    [PropertyOrder(1)] [TabGroup("Torch Controlls")] [Range(0.25f, 3)] public float TorchIntensity = 0.25f;
-
-    #endregion
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
@@ -186,30 +168,6 @@ public class MachineController : MonoBehaviour {
         OnDrillStop?.Invoke();
     }
 
-    [DisableIf("@TorchActive || !EngineActive")]
-    [PropertyOrder(0)]
-    [HorizontalGroup("4")]
-    [DisableInEditorMode]
-    [Button(ButtonSizes.Large), GUIColor(0, 1, 0)]
-    public void ActivateTorch() {
-        Torch.enabled = true;
-        TorchActive = true;
-        TorchPitch = 45;
-        TorchYaw = 180;
-        TorchFocus = 30;
-        OnTorchActivated?.Invoke();
-    }
-    [DisableIf("@!TorchActive || !EngineActive")]
-    [PropertyOrder(0)]
-    [HorizontalGroup("4")]
-    [DisableInEditorMode]
-    [Button(ButtonSizes.Large), GUIColor(0, 1, 0)]
-    public void DeactivateTorch() {
-        Torch.enabled = false;
-        TorchActive = true;
-        OnTorchDeactivated?.Invoke();
-    }
-
     #endregion
     #region MachineAndDrillCoroutines
 
@@ -265,8 +223,8 @@ public class MachineController : MonoBehaviour {
 
     IEnumerator CO_ActivateDrill() {
         var endRotation = new Vector3(0, 0, 0);
-        DrillBase.transform.DOLocalRotate(endRotation, 4);
-        DrillBase.transform.DOLocalRotate(endRotation, 6);
+        Drill.SliderJoint.transform.DOLocalRotate(endRotation, 4);
+        Drill.CaseJoint.transform.DOLocalRotate(endRotation, 6);
 
         yield return new WaitForSeconds(6);
         DrillActive = true;
@@ -280,8 +238,8 @@ public class MachineController : MonoBehaviour {
     IEnumerator CO_DeactivateDrill() {
         var endRotationSliderJoint = new Vector3(-30, 0, 0);
         var endRotationCaseJoint = new Vector3(15, 0, 0);
-        DrillBase.transform.DOLocalRotate(endRotationSliderJoint, 4);
-        DrillBase.transform.DOLocalRotate(endRotationCaseJoint, 6);
+        Drill.SliderJoint.transform.DOLocalRotate(endRotationSliderJoint, 4);
+        Drill.CaseJoint.transform.DOLocalRotate(endRotationCaseJoint, 6);
 
         yield return new WaitForSeconds(6);
         DrillActive = false;
@@ -299,14 +257,8 @@ public class MachineController : MonoBehaviour {
 
     private void Update() {
 
-        if (TorchActive) {
-            Torch.transform.eulerAngles = new Vector3(TorchPitch, TorchYaw, 0);
-            Torch.spotAngle = TorchFocus;
-            Torch.intensity = TorchIntensity;
-        }
-        
         if (DrillSpinning) {
-            DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
+            Drill.DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
         }
         
         if (BrakesReleased){
@@ -345,15 +297,15 @@ public class MachineController : MonoBehaviour {
         }
         
         if (DrillActive) {
-            DrillBase.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
-            DrillBase.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
-            DrillBase.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
+            Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
+            Drill.SliderJoint.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
+            Drill.Slider.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
 
         }
         else {
-            CaseJointRotation = (float)Math.Round(DrillBase.transform.eulerAngles.x, 2);
-            SliderJointRotation = (float)Math.Round(DrillBase.transform.eulerAngles.x / 360, 2);
-            SliderPosition = (float)Math.Round(DrillBase.transform.localPosition.z, 2);
+            CaseJointRotation = (float)Math.Round(Drill.CaseJoint.transform.eulerAngles.x, 2);
+            SliderJointRotation = (float)Math.Round(Drill.SliderJoint.transform.eulerAngles.x / 360, 2);
+            SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
         }
         
     }

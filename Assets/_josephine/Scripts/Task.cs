@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Task : MonoBehaviour
 {
@@ -12,11 +14,17 @@ public class Task : MonoBehaviour
     int index = 0;
     int progress = 0;
 
+    //event
+    public UnityEvent OnTaskFinished;
+    //public UnityEvent OnTaskFinished<Vecto2 joystick>;
+
     private void Start()
     {
         currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<Training>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameState>();
     }
+
+
 
     public void ButtonController(GameObject pressedButton)
     {
@@ -31,6 +39,7 @@ public class Task : MonoBehaviour
             {
                 currentTraining.TaskIndex++;
                 Debug.Log("Task " + taskName + " finnished");
+                OnTaskFinished?.Invoke();
             }
         }
         else
