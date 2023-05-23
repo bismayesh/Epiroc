@@ -6,18 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class TrainingState : MonoBehaviour
 {
-    //public string trainingName;
-
     //Tasks
-    public TaskStart taskStart;
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
     public TaskLights taskLights;
-    public TaskStop taskStop;
 
     //Training figures
     int neededTrainingIterations;
     int currentTrainingIteration = 0;
+    [SerializeField]
+    int maxDamage = 100;
 
     int trainingProgress = 0;
     int trainingFailures = 0;
@@ -25,13 +23,13 @@ public class TrainingState : MonoBehaviour
     int trainingScore = 0;
     int scoreMultiplier = 1;
 
-    //StartMachine figures
-    int taskStartProgress = 0;
-    int taskStartFailures = 0;
-
-    //Drive figures
-
-    //
+    //Task figures
+    int taskDriveProgress = 0;
+    int taskDriveFailures = 0;
+    int taskDrillProgress = 0;
+    int taskDrillFailures = 0;
+    int taskLightsProgress = 0;
+    int taskLightsFailures = 0;
 
     //UI
     public TextMeshProUGUI textTrainingProgress;
@@ -39,15 +37,16 @@ public class TrainingState : MonoBehaviour
     public TextMeshProUGUI textTrainingDamage;
     public TextMeshProUGUI textTrainingScore;
     public TextMeshProUGUI textTrainingScoreMultiplier;
-    public TextMeshProUGUI textStartMachineProgress;
-    public TextMeshProUGUI textStartMachineFailures;
-
+    public TextMeshProUGUI textTaskDriveProgress;
+    public TextMeshProUGUI textTaskDriveFailures;
+    public TextMeshProUGUI textTaskDrillProgress;
+    public TextMeshProUGUI textTaskDrillFailures;
+    public TextMeshProUGUI textTaskLightsProgress;
+    public TextMeshProUGUI textTaskLightsFailures;
 
     private void Start()
     {
-        neededTrainingIterations = taskStart.neededIterations 
-            + taskDrive.neededCheckpoints + taskDrill.neededIterations + 
-            taskLights.neededIterations + taskStop.neededIterations;
+        neededTrainingIterations = taskDrive.neededCheckpoints + taskDrill.neededIterations + taskLights.neededIterations;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
         textTrainingFailures.text =  "Failures: " + trainingFailures;
@@ -55,22 +54,30 @@ public class TrainingState : MonoBehaviour
         textTrainingScore.text = "Training score: " + trainingScore;
         textTrainingScoreMultiplier.text = scoreMultiplier.ToString() + "X";
 
-        textStartMachineProgress.text = "Progress: " + taskStartProgress + "%";
-        textStartMachineFailures.text = "Failures: " + taskStartFailures;
-    }
-
-    public void UpdateStartMachineProgress(int neededIt, int currentIt)
-    {
-        taskStartProgress = (int)((float)currentIt / (float)neededIt * 100);
-        textStartMachineProgress.text = taskStartProgress + "%";
-
-        UpdateTrainingProgress();
+        textTaskDriveProgress.text = "Progress: " + taskDriveProgress + "%";
+        textTaskDriveFailures.text = "Failures: " + taskDriveFailures;
     }
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
-        taskStartProgress = (int)((float)currentIt / (float)neededIt * 100);
-        textStartMachineProgress.text = taskStartProgress + "%";
+        taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
+        textTaskDriveProgress.text = taskDriveProgress + "%";
+
+        UpdateTrainingProgress();
+    }
+
+    public void UpdateTaskDrillProgress(int neededIt, int currentIt)
+    {
+        taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
+        textTaskDriveProgress.text = taskDriveProgress + "%";
+
+        UpdateTrainingProgress();
+    }
+
+    public void UpdateTaskLightsProgress(int neededIt, int currentIt)
+    {
+        taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
+        textTaskDriveProgress.text = taskDriveProgress + "%";
 
         UpdateTrainingProgress();
     }
@@ -107,6 +114,13 @@ public class TrainingState : MonoBehaviour
         {
             trainingDamage = value;
             textTrainingDamage.text = "Damage: " + trainingDamage;
+
+            if (trainingDamage >= maxDamage)
+            {
+                trainingScore = 0;
+
+                //You fired screen
+            }
         }
     }
 
