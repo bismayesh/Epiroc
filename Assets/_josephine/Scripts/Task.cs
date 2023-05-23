@@ -8,9 +8,9 @@ public class Task : MonoBehaviour
 {
     public string taskName;
     public List<GameObject> subTasks = new List<GameObject>();
-    public Training currentTraining;
-    public GameState gameManager;
+    public TrainingState currentTraining;
 
+    public int neededIterations;
     int index = 0;
     int progress = 0;
 
@@ -20,8 +20,7 @@ public class Task : MonoBehaviour
 
     private void Start()
     {
-        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<Training>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameState>();
+        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
     }
 
 
@@ -33,11 +32,9 @@ public class Task : MonoBehaviour
             //Öka progress
             index++;
             progress = (int)((float)index / (float)subTasks.Count * 100);
-            gameManager.TaskProgress = progress;
 
             if (index == subTasks.Count)
             {
-                currentTraining.TaskIndex++;
                 Debug.Log("Task " + taskName + " finnished");
                 OnTaskFinished?.Invoke();
             }
@@ -52,8 +49,5 @@ public class Task : MonoBehaviour
     {
         index = 0;
         progress = 0;
-        gameManager.TaskProgress = progress;
-        gameManager.UpdateTrainingFailures();
-        gameManager.UpdateTrainingAttempts();
     }
 }
