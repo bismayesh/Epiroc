@@ -5,19 +5,39 @@ using UnityEngine;
 public class Controllers : MonoBehaviour
 {
     public Transform knobAngle;
-    public TaskStart startMachine;
+    public Renderer lightRenderer;
+    public TaskDrive taskDrive;
+    public TaskDrill taskDrill;
+    public TaskLights taskLights;
     public bool isActive = false;
+
+    public Material greenMat;
+    public Material redMat;
 
     private float localRotation;
 
     private void Start()
     {
-        startMachine = GameObject.Find("StartMachine").GetComponent<TaskStart>();
+        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
+        taskDrive = GameObject.Find("Drill").GetComponent<TaskDrive>();
+        taskDrive = GameObject.Find("Lights").GetComponent<TaskDrive>();
     }
 
     public void ButtonPressed()
     {
-        startMachine.ActivateButton(this.gameObject);
+        
+        if (isActive)
+        {
+            isActive = false;
+            lightRenderer.material = redMat;
+        }
+        else
+        {
+            isActive = true;
+            lightRenderer.material = greenMat;
+        }
+
+        //taskDrive.ActivateButton(this.gameObject);
     }
 
     public void SwitchTurned()
@@ -28,11 +48,13 @@ public class Controllers : MonoBehaviour
         if (localRotation == 0)
         {
             isActive = false;
+            lightRenderer.material = redMat;
         }
         else
         {
             isActive = true;
+            lightRenderer.material = greenMat;
         }
-        startMachine.StartEngine(this.gameObject, isActive);
+        //taskDrive.StartEngine(this.gameObject, isActive);
     }
 }
