@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b90035e8f28bde64a9f82a971018fbd6, type: 2}
+  - {fileID: 2100000, guid: 5e80cc6acf16d804a9446d4eb5118f54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -189,7 +189,6 @@ GameObject:
   - component: {fileID: 2289847268128615604}
   - component: {fileID: 2289847268128615596}
   - component: {fileID: 2289847268128615597}
-  - component: {fileID: 2289847268128615598}
   - component: {fileID: 2289847268128615599}
   - component: {fileID: 2289847268128615592}
   - component: {fileID: 2289847268128615593}
@@ -197,7 +196,7 @@ GameObject:
   - component: {fileID: 2289847268128615595}
   - component: {fileID: 8392064494300539656}
   m_Layer: 0
-  m_Name: RoundButton
+  m_Name: RoundButtonSmall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -231,8 +230,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.017346233, y: 0.044035017, z: 0.1462413}
-  m_Center: {x: -0.06562103, y: -0.00045469403, z: 0.000044882298}
+  m_Size: {x: 0.00922014, y: 0.044035017, z: 0.06602196}
+  m_Center: {x: -0.023601215, y: -0.00045469403, z: -0.00020926818}
 --- !u!54 &2289847268128615597
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -249,75 +248,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2289847268128615598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2289847268128615605}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cdea428d48e2bb488d33d5f75c39bb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BeingHeld: 0
-  GrabButton: 0
-  Grabtype: 0
-  GrabPhysics: 1
-  GrabMechanic: 1
-  GrabSpeed: 10
-  RemoteGrabbable: 0
-  RemoteGrabMechanic: 0
-  RemoteGrabDistance: 10
-  ThrowForceMultiplier: 2
-  ThrowForceMultiplierAngular: 1.125
-  BreakDistance: 1
-  HideHandGraphics: 0
-  ParentToHands: 1
-  ParentHandModel: 0
-  SnapHandModel: 1
-  CanBeDropped: 1
-  CanBeSnappedToSnapZone: 1
-  ForceDisableKinematicOnDrop: 0
-  InstantMovement: 0
-  MakeChildCollidersGrabbable: 0
-  handPoseType: 1
-  SelectedHandPose: {fileID: 0}
-  CustomHandPose: 0
-  SecondaryGrabBehavior: 0
-  TwoHandedPosition: 0
-  TwoHandedPostionLerpAmount: 0.5
-  TwoHandedRotation: 1
-  TwoHandedRotationLerpAmount: 0.5
-  TwoHandedDropBehavior: 0
-  TwoHandedLookVector: 0
-  SecondHandLookSpeed: 40
-  SecondaryGrabbable: {fileID: 0}
-  OtherGrabbableMustBeGrabbed: {fileID: 0}
-  CollisionSpring: 3000
-  CollisionSlerp: 500
-  CollisionLinearMotionX: 2
-  CollisionLinearMotionY: 2
-  CollisionLinearMotionZ: 2
-  CollisionAngularMotionX: 2
-  CollisionAngularMotionY: 2
-  CollisionAngularMotionZ: 2
-  ApplyCorrectiveForce: 1
-  MoveVelocityForce: 3000
-  MoveAngularVelocityForce: 90
-  LastGrabTime: 0
-  LastDropTime: 0
-  AddControllerVelocityOnDrop: 1
-  collisions: []
-  ActiveGrabPoint: {fileID: 0}
-  SecondaryLookOffset: {x: 0, y: 0, z: 0}
-  SecondaryLookAtTransform: {fileID: 0}
-  LocalOffsetTransform: {fileID: 0}
-  GrabPoints: []
-  UseCustomInspector: 1
-  lastFlickTime: 0
-  FlickForce: 1
 --- !u!82 &2289847268128615599
 AudioSource:
   m_ObjectHideFlags: 0
@@ -425,8 +355,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.017346233, y: 0.044080332, z: 0.1462413}
-  m_Center: {x: 0.06562103, y: -0.00014231354, z: 0.000044882298}
+  m_Size: {x: 0.011791941, y: 0.044080332, z: 0.06373377}
+  m_Center: {x: 0.025497796, y: -0.00014231354, z: -0.00006343983}
 --- !u!65 &2289847268128615593
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -438,8 +368,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.11146328, y: 0.012896128, z: 0.14540744}
-  m_Center: {x: -0.00047172606, y: -0.016448062, z: -0.0003720522}
+  m_Size: {x: 0.04580026, y: 0.012896128, z: 0.049231134}
+  m_Center: {x: -0.0049752668, y: -0.016448062, z: -0.0073491596}
 --- !u!65 &2289847268128615594
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -451,8 +381,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.11146328, y: 0.044451803, z: 0.020183325}
-  m_Center: {x: -0.00047172606, y: -0.0005414933, z: 0.0643543}
+  m_Size: {x: 0.05828189, y: 0.04382421, z: 0.015591554}
+  m_Center: {x: 0.0012283223, y: -0.0021534897, z: 0.023905199}
 --- !u!65 &2289847268128615595
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -464,8 +394,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.11146328, y: 0.044358462, z: 0.020195127}
-  m_Center: {x: -0.00047172606, y: -0.00038839877, z: -0.06463927}
+  m_Size: {x: 0.059031773, y: 0.044358462, z: 0.013507187}
+  m_Center: {x: 0.0014855135, y: -0.00038839877, z: -0.025076501}
 --- !u!114 &8392064494300539656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,8 +414,8 @@ MonoBehaviour:
   taskDrill: {fileID: 0}
   taskLights: {fileID: 0}
   isActive: 0
-  greenMat: {fileID: 2100000, guid: 935f92a18a2ee4a4189c998033c7ad18, type: 2}
-  redMat: {fileID: 2100000, guid: b90035e8f28bde64a9f82a971018fbd6, type: 2}
+  MaterialOn: {fileID: 2100000, guid: 935f92a18a2ee4a4189c998033c7ad18, type: 2}
+  MaterialOff: {fileID: 2100000, guid: 5e80cc6acf16d804a9446d4eb5118f54, type: 2}
 --- !u!1 &2289847268439415332
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,8 +518,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.29848793, y: 1, z: 0.30523822}
-  m_Center: {x: -0.002475571, y: 0, z: 0.00436534}
+  m_Size: {x: 0.24767353, y: 1, z: 0.2548881}
+  m_Center: {x: 0.0032581086, y: 0, z: 0.002940533}
 --- !u!54 &2289847268439415774
 Rigidbody:
   m_ObjectHideFlags: 0

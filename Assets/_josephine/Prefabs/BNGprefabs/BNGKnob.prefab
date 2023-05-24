@@ -1311,7 +1311,7 @@ GameObject:
   - component: {fileID: 6827592823468029577}
   - component: {fileID: 6827592823468029582}
   m_Layer: 0
-  m_Name: Knob
+  m_Name: BNGKnob
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
