@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Controllers : MonoBehaviour
 {
-    public Transform knobAngle;
+    public Transform switchTransform;
     public Renderer lightRenderer;
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
     public TaskLights taskLights;
     public bool isActive = false;
 
-    public Material greenMat;
-    public Material redMat;
+    public Material MaterialOn;
+    public Material MaterialOff;
 
     private float localRotation;
 
@@ -29,32 +29,49 @@ public class Controllers : MonoBehaviour
         if (isActive)
         {
             isActive = false;
-            lightRenderer.material = redMat;
+            lightRenderer.material = MaterialOff;
         }
         else
         {
             isActive = true;
-            lightRenderer.material = greenMat;
+            lightRenderer.material = MaterialOn;
         }
 
         //taskDrive.ActivateButton(this.gameObject);
     }
 
-    public void SwitchTurned()
+    public void TurnSwitch()
     {
-        localRotation = knobAngle.localRotation.eulerAngles.y;
+        localRotation = switchTransform.localRotation.eulerAngles.y;
         localRotation = (Mathf.Abs(localRotation))%180;
 
         if (localRotation == 0)
         {
             isActive = false;
-            lightRenderer.material = redMat;
+            lightRenderer.material = MaterialOff;
         }
         else
         {
             isActive = true;
-            lightRenderer.material = greenMat;
+            lightRenderer.material = MaterialOn;
         }
         //taskDrive.StartEngine(this.gameObject, isActive);
+    }
+
+    public void Switch()
+    {
+        float angle = switchTransform.localEulerAngles.x;
+        angle = (angle > 180) ? angle - 360 : angle;
+
+        if (angle > 0)
+        {
+            isActive = false;
+            lightRenderer.material = MaterialOff;
+        }
+        else
+        {
+            isActive = true;
+            lightRenderer.material = MaterialOn;
+        }
     }
 }
