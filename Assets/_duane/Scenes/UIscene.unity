@@ -11263,6 +11263,142 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2056539603}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2057765006
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 799122812933489866, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 8.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241008550531265492, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_text
+      value: 'Lets Drive! "So you want to move this beast ha? First, turn the activation
+        switch, then press the allocate button on the panel. To maneuver her we use
+        the right joystick, but first, release the parking brake by pressing the
+        button on top of the right joystick! Let''s Go!"
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.0008213378
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.0008213378
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.0008213378
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.539
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0055445
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.56817
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911230320240346983, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7181817462215694291, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_Name
+      value: text_support
+      objectReference: {fileID: 0}
+    - target: {fileID: 7232591766962540861, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_text
+      value: '"So ya wanna drill something? Slap the bitch in gear and let her rip
+        mate!"'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7355780727374886472, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_text
+      value: "\"So we have to stabilize this beast before we drill and destabilize
+        her to drive, or you could do some serious damage! to stabilize her we need
+        to extend the jack slides. Do this by pressing left on the thumbstick on
+        the left controller, and right to retrieve them. Now to extend the jacks
+        To retrieve the jacks! we can do this by using the left joystick. Pull it
+        back for the front jacks to come up, and forward for down. to toggle between
+        front and rear jacks, use the left controller trigger.\"\n "
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951325094878696754, guid: 6353bdf56a1c40d4497177ab66bf9e40,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6353bdf56a1c40d4497177ab66bf9e40, type: 3}
 --- !u!1001 &2071785830
 PrefabInstance:
   m_ObjectHideFlags: 0
