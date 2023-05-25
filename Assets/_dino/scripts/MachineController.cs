@@ -32,6 +32,7 @@ public class MachineController : MonoBehaviour {
     [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
     [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public Light Torch;
     [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.Lever MovementController;
     [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.SteeringWheel RotationController;
     [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
@@ -70,7 +71,14 @@ public class MachineController : MonoBehaviour {
     
 
     #endregion
+    
+    #region TorchVariables
 
+    public float torchIntensity;
+    public float torchSpread;
+    public bool isTorchActive;
+    
+    #endregion
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
@@ -168,6 +176,24 @@ public class MachineController : MonoBehaviour {
         OnDrillStop?.Invoke();
     }
 
+    public void ActivateTorch() { // button to activate torch
+        isTorchActive = true;
+    }
+    
+    public void DeactivateTorch() { // button to deactivate torhc
+        isTorchActive = false;
+    }
+
+    public void ChangeTorchRotationX(Vector2 rot) { // plug this function in on the right joystick
+        var torchEuler = Torch.transform.eulerAngles;
+        Torch.transform.eulerAngles = new Vector3(rot.x, torchEuler.y);
+    }
+    
+    public void ChangeTorchRotationY(Vector2 rot) { // plug this function in on the left joystick
+        var torchEuler = Torch.transform.eulerAngles;
+        Torch.transform.eulerAngles = new Vector3(torchEuler.x, rot.y);
+    }
+
     #endregion
     #region MachineAndDrillCoroutines
 
@@ -257,45 +283,19 @@ public class MachineController : MonoBehaviour {
 
     private void Update() {
 
+        if (isTorchActive) {
+            Torch.intensity = torchIntensity;
+            Torch.spotAngle = torchSpread;
+        }
+        
         if (DrillSpinning) {
             Drill.DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
         }
         
         if (BrakesReleased){
-            var motorL = WheelL.motor;
-            var motorR = WheelR.motor;
-
-            motorL.force = 100;
-            motorL.targetVelocity = MachineMovementForce;
-            motorL.freeSpin = false;
-            WheelL.motor = motorL;
-            WheelL.useMotor = true;
-            
-            motorR.force = 100;
-            motorR.targetVelocity = MachineMovementForce;
-            motorR.freeSpin = false;
-            WheelR.motor = motorR;
-            WheelR.useMotor = true;
-
             Engine.AddTorque(Vector3.up * MachineRotationForce);
         }
-        else{
-            var motorL = WheelL.motor;
-            var motorR = WheelR.motor;
 
-            motorL.force = 0;
-            motorL.targetVelocity = MachineMovementForce;
-            motorL.freeSpin = false;
-            WheelL.motor = motorL;
-            WheelL.useMotor = true;
-            
-            motorR.force = 0;
-            motorR.targetVelocity = MachineMovementForce;
-            motorR.freeSpin = false;
-            WheelR.motor = motorR;
-            WheelR.useMotor = true;
-        }
-        
         if (DrillActive) {
             Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
             Drill.SliderJoint.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
