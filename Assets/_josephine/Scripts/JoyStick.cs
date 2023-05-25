@@ -9,34 +9,62 @@ public class JoyStick : MonoBehaviour
 {
     public InputActionProperty primaryButtonAction;
     public InputActionProperty secondaryButtonAction;
+    public InputActionProperty gripButtonAction;
 
+    public TaskDrive taskDrive;
+
+    public GameObject primaryButton;
+    public GameObject secondaryButton;
     public Renderer light1;
     public Renderer light2;
     public Material MaterialOn;
     public Material MaterialOff;
 
+    public bool holdingJoystick = false;
     public bool primaryIsActive = false;
     public bool secondaryIsActive = false;
-    float primaryButton;
-    float secondaryButton;
     public bool buttonJustPressed  = false;
+
+    float primaryButtonValue;
+    float secondaryButtonValue;
+    float gripButtonValue;
+
+    private void Start()
+    {
+        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
+    }
 
     void FixedUpdate()
     {
-        primaryButton = primaryButtonAction.action.ReadValue<float>();
-        secondaryButton = secondaryButtonAction.action.ReadValue<float>();
-
-        //Debug.Log(secondaryButton);
+        primaryButtonValue = primaryButtonAction.action.ReadValue<float>();
+        secondaryButtonValue = secondaryButtonAction.action.ReadValue<float>();
+        gripButtonValue = gripButtonAction.action.ReadValue<float>();
     }
+
     private void OnTriggerStay(Collider other)
     {
-        TopButtonPressed(other, primaryButton, ref primaryIsActive, light1);
-        TopButtonPressed(other, secondaryButton, ref secondaryIsActive, light2);
+        HoldingJoystick(other);
+        TopButtonPressed(primaryButton, primaryButtonValue, ref primaryIsActive, light1);
+        TopButtonPressed(secondaryButton, secondaryButtonValue, ref secondaryIsActive, light2);
     }
 
-    private void TopButtonPressed(Collider other, float topButton, ref bool isActive, Renderer light)
+    private void HoldingJoystick(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") && topButton != 0f && !buttonJustPressed)
+        if (other.gameObject.CompareTag("Player") && gripButtonValue != 0f)
+        {
+            holdingJoystick = true;
+            taskDrive.HoldingJoystick = true;
+        }
+        else
+        {
+            holdingJoystick = false;
+            taskDrive.HoldingJoystick = false;
+        }
+    }
+
+    private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
+    {
+        if (holdingJoystick && !buttonJustPressed && topButtonValue != 0f)
         {
             buttonJustPressed = true;
             StartCoroutine(ButtonPressDelay());
@@ -51,6 +79,8 @@ public class JoyStick : MonoBehaviour
                 isActive = true;
                 light.material = MaterialOn;
             }
+
+            taskDrive.ActivateButton(topButton);
         }
     }
 

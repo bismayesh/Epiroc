@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class TaskDrive : MonoBehaviour
 {
-    public GameObject button1;
-    public GameObject button2;
-    public GameObject button3;
-    public GameObject activateEngine;
+    public GameObject activationSwitch;
+    public GameObject allocateButton;
+    public GameObject breakButton;
+    //public GameObject activateEngine;
 
-    public bool button1activated = false;
-    public bool button2activated = false;
-    public bool button3activated = false;
-    public bool EngineStarted = false;
+    public bool activationSwitchOn = false;
+    public bool allocateButtonOn = false;
+    public bool breakButtonOn = false;
+    public bool driving = false;
+    private bool holdingJoystick = false;
 
     public TrainingState currentTraining;
     public MachineController machineController;
@@ -30,51 +31,27 @@ public class TaskDrive : MonoBehaviour
         }
     }
 
-    private void Start()
+    public bool HoldingJoystick
     {
-        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
-        //gameManager = GameObject.Find("GameManager").GetComponent<GameState>();
-    }
-
-    public void StartEngine(GameObject thisObject, bool isActive)
-    {
-        if (thisObject == activateEngine)
+        get { return holdingJoystick; }
+        set 
         {
-            if (isActive)
-            {
-                if (button1activated && button2activated && button3activated)
-                {
-                    Debug.Log("EngineStarted");
-                    EngineStarted = true;
-                    machineController.ActivateEngine();
-
-                    //currentIteration++;
-                    //currentTraining.UpdateStartMachineProgress(neededIterations, currentIteration);
-                }
-                else
-                {
-                    EngineStarted = false;
-                    TaskFailure();
-                }
-            }
-            else
-            {
-                EngineStarted = false;
-            }
+            holdingJoystick = value;
         }
     }
 
-    void TaskFailure()
+    private void Start()
     {
-        currentTraining.UpdateTrainingFailures();
-        //Show ghost animation
+        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
+        machineController = GameObject.Find("Machine").GetComponent<MachineController>();
     }
+
 
     public void ActivateButton(GameObject thisObject)
     {
-        ButtonSwitch(thisObject, button1, ref button1activated);
-        ButtonSwitch(thisObject, button2, ref button2activated);
-        ButtonSwitch(thisObject, button3, ref button3activated);
+        ButtonSwitch(thisObject, activationSwitch, ref activationSwitchOn);
+        ButtonSwitch(thisObject, allocateButton, ref allocateButtonOn);
+        ButtonSwitch(thisObject, breakButton, ref breakButtonOn);
     }
 
     private void ButtonSwitch(GameObject thisObject, GameObject button, ref bool activateButton)
@@ -85,11 +62,52 @@ public class TaskDrive : MonoBehaviour
             if (!activateButton)
             {
                 activateButton = true;
+
+                if (button == activationSwitch)
+                {
+                    machineController.ActivateEngine();
+                }
+                else if (button == breakButton)
+                {
+                    machineController.ReleaseBrakes();
+                }
             }
             else
-            {
+            { 
                 activateButton = false;
             }
         }
+    }
+
+    public void Drive(Vector2 force)
+    {
+        if (holdingJoystick)
+        {
+            if (activationSwitchOn && allocateButtonOn)
+            {
+                if(breakButtonOn)
+                {
+                    Debug.Log("Driving");
+                    driving = true;
+                    machineController.ChangeMovementForce(force);
+                }
+            }
+            else
+            {
+                driving = false;
+                TaskFailure();
+            }
+        }
+        else
+        {
+            driving = false;
+        }
+    }
+
+    void TaskFailure()
+    {
+        Debug.Log("Drive task fail!");
+        currentTraining.UpdateTrainingFailures();
+        //Show ghost animation
     }
 }

@@ -506,20 +506,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: JoyStick, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: SetSteeringAngle
+        m_TargetAssemblyTypeName: TaskDrive, Assembly-CSharp
+        m_MethodName: Drive
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -678,10 +666,27 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 5880600222942651088, guid: e39f4b35a6db18348b41eb0262520e69,
       type: 3}
+  gripButtonAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Grip Button
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: e1d5bed0-026a-4866-badf-1b5f73403ec0
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 187161793506945269, guid: e39f4b35a6db18348b41eb0262520e69,
+      type: 3}
+  taskDrive: {fileID: 0}
+  primaryButton: {fileID: 1732463722151986668}
+  secondaryButton: {fileID: 4449490122150413286}
   light1: {fileID: 8801684323921114703}
   light2: {fileID: 8801684323161488774}
   MaterialOn: {fileID: 2100000, guid: 935f92a18a2ee4a4189c998033c7ad18, type: 2}
   MaterialOff: {fileID: 2100000, guid: 5e80cc6acf16d804a9446d4eb5118f54, type: 2}
+  holdingJoystick: 0
   primaryIsActive: 0
   secondaryIsActive: 0
   buttonJustPressed: 0

@@ -20,6 +20,17 @@ public class Lever : MonoBehaviour
 
     private bool isActive = false;
 
+    public TaskDrive taskDrive;
+    public TaskDrill taskDrill;
+    public TaskLights taskLights;
+
+    private void Start()
+    {
+        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
+        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
+        taskLights = GameObject.Find("Lights").GetComponent<TaskLights>();
+    }
+
     public void SwitchTurning()
     {
         float angle = hingeTransform.localEulerAngles.x;
@@ -46,7 +57,6 @@ public class Lever : MonoBehaviour
 
     public void SwitchOnOff()
     {
-        //Debug.Log("Switch turned!");
-        //taskDrive.StartEngine(this.gameObject, isActive);
+        taskDrive.ActivateButton(this.gameObject);
     }
 }
