@@ -19,8 +19,8 @@ public class Controllers : MonoBehaviour
     private void Start()
     {
         taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
-        taskDrive = GameObject.Find("Drill").GetComponent<TaskDrive>();
-        taskDrive = GameObject.Find("Lights").GetComponent<TaskDrive>();
+        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
+        taskLights = GameObject.Find("Lights").GetComponent<TaskLights>();
     }
 
     public void ButtonPressed()
@@ -37,7 +37,7 @@ public class Controllers : MonoBehaviour
             lightRenderer.material = MaterialOn;
         }
 
-        //taskDrive.ActivateButton(this.gameObject);
+        taskDrive.ActivateButton(this.gameObject);
     }
 
     public void TurnSwitch()
@@ -55,7 +55,8 @@ public class Controllers : MonoBehaviour
             isActive = true;
             lightRenderer.material = MaterialOn;
         }
-        //taskDrive.StartEngine(this.gameObject, isActive);
+
+        taskDrive.ActivateButton(this.gameObject);
     }
 
     public void Switch()
@@ -73,5 +74,7 @@ public class Controllers : MonoBehaviour
             isActive = true;
             lightRenderer.material = MaterialOn;
         }
+
+        taskDrive.ActivateButton(this.gameObject);
     }
 }

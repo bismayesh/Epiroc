@@ -1209,6 +1209,9 @@ MonoBehaviour:
   LabelToUpdate: {fileID: 5156565211801156531}
   onHingeChange:
     m_PersistentCalls:
+      m_Calls: []
+  onHingeSnapChange:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 9184885158689556047}
         m_TargetAssemblyTypeName: Controllers, Assembly-CSharp
@@ -1222,9 +1225,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onHingeSnapChange:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &9184885158382446437
 GameObject:
   m_ObjectHideFlags: 0
