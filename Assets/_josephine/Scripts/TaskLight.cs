@@ -72,19 +72,15 @@ public class TaskLight : MonoBehaviour
 
                 if (button == activateButton)
                 {
-                    Debug.Log("activate lights on");
+                    machineController.ActivateTorch();
                 }
                 else if (button == fucusSlider)
                 {
-                    Debug.Log("lights focosed");
-                    //Focus lights method
-                    //machineController.ActivateEngine();
+                    machineController.torchSpread = 1.0f;
                 }
                 else if (button == intensitySlider)
                 {
-                    Debug.Log("light intensity up");
-                    //Light intensity method
-                    //machineController.ReleaseBrakes();
+                    machineController.torchIntensity = 1.0f;
                 }
             }
             else
@@ -93,19 +89,15 @@ public class TaskLight : MonoBehaviour
 
                 if (button == this.activateButton)
                 {
-                    Debug.Log("activate lights off");
+                    machineController.DeactivateTorch();
                 }
                 else if (button == fucusSlider)
                 {
-                    Debug.Log("lights unfocosed");
-                    //Focus lights method
-                    //machineController.ActivateEngine();
+                    machineController.torchSpread = 0f;
                 }
                 else if (button == intensitySlider)
                 {
-                    Debug.Log("light intensity down");
-                    //Light intensity method
-                    //machineController.ReleaseBrakes();
+                    machineController.torchIntensity = 0f;
                 }
             }
         }
@@ -119,7 +111,7 @@ public class TaskLight : MonoBehaviour
             {
                 Debug.Log("Operating lights");
                 operatesLight = true;
-                //Operate lights method
+                //Operate lights method instead
                 //machineController.ChangeMovementForce(force);
             }
             else
