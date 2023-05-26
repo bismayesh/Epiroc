@@ -114,7 +114,7 @@ public class TaskLight : MonoBehaviour
         }
     }
 
-    public void Torch(Vector2 force)
+    public void Torch(Vector2 force, GameObject thisObject)
     {
         if (holdingJoystick)
         {
@@ -122,8 +122,16 @@ public class TaskLight : MonoBehaviour
             {
                 Debug.Log("Operating lights");
                 operatesLight = true;
-                //Operate lights method instead
-                //machineController.ChangeMovementForce(force);
+
+                if (thisObject.CompareTag("LeftJoystick"))
+                {
+                    Debug.Log("Operating light with left joystick");
+                    machineController.ChangeTorchRotationY(force);
+                }
+                else
+                {
+                    machineController.ChangeTorchRotationX(force);
+                }
             }
             else
             {

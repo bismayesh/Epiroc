@@ -9,6 +9,7 @@ public class Controllers : MonoBehaviour
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
     public TaskLight taskLights;
+    public SupportLevels supportLevels;
     public bool isActive = false;
 
     public Material MaterialOn;
@@ -22,6 +23,7 @@ public class Controllers : MonoBehaviour
         taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
         taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
         taskLights = GameObject.Find("Torch").GetComponent<TaskLight>();
+        supportLevels = GameObject.Find("SupportLevels").GetComponent<SupportLevels>();
     }
 
     public void ButtonPressed()
@@ -40,6 +42,7 @@ public class Controllers : MonoBehaviour
 
         taskDrive.ActivateButton(this.gameObject);
         taskLights.ActivateButton(this.gameObject);
+        supportLevels.UserSupport(this.gameObject);
     }
 
     public void TurnSwitch()
@@ -59,6 +62,7 @@ public class Controllers : MonoBehaviour
         }
 
         taskDrive.ActivateButton(this.gameObject);
+        supportLevels.UserSupport(this.gameObject);
     }
 
     public void Switch()
@@ -85,5 +89,6 @@ public class Controllers : MonoBehaviour
 
         taskDrive.ActivateButton(this.gameObject);
         taskLights.ActivateButton(this.gameObject);
+        supportLevels.UserSupport(this.gameObject);
     }
 }

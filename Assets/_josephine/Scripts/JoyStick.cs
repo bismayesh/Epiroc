@@ -15,6 +15,7 @@ public class JoyStick : MonoBehaviour
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
     public TaskLight taskLight;
+    public SupportLevels supportLevels;
 
     public GameObject primaryButton;
     public GameObject secondaryButton;
@@ -41,6 +42,7 @@ public class JoyStick : MonoBehaviour
         taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
         taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
         taskLight = GameObject.Find("Torch").GetComponent<TaskLight>();
+        supportLevels = GameObject.Find("SupportLevels").GetComponent<SupportLevels>();
     }
 
     void FixedUpdate()
@@ -80,7 +82,7 @@ public class JoyStick : MonoBehaviour
     {
         if (taskDrive.DriveMood)
         {
-            taskDrive.Drive(value);
+            taskDrive.Drive(value, this.gameObject);
         }
         else if (taskDrill.DrillMood)
         {
@@ -88,7 +90,7 @@ public class JoyStick : MonoBehaviour
         }
         else if (taskLight.LightMood)
         {
-            taskLight.Torch(value);
+            taskLight.Torch(value, this.gameObject);
         }     
     }
 
@@ -115,6 +117,7 @@ public class JoyStick : MonoBehaviour
             taskDrive.ActivateButton(topButton);
             taskDrill.ActivateButton(topButton);
             taskLight.ActivateButton(topButton);
+            supportLevels.UserSupport(topButton);
         }
     }
 
