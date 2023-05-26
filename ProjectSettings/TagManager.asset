@@ -4,8 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Gem
-  - monster
+  - Training
+  - SuperGem
+  - ChunkGem
+  - RadarGem
+  - Troll
+  - Machine
+  - LeftJoystick
   layers:
   - Default
   - TransparentFX
@@ -13,9 +18,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Controlls
+  - Cockpit
+  - RadarElements
   - 
   - 
   - 
