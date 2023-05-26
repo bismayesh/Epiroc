@@ -57,8 +57,6 @@ public class Lever : MonoBehaviour
 
     public void SwitchOnOff()
     {
-        //taskDrive.ActivateButton(this.gameObject);
         taskDrill.ActivateButton(this.gameObject);
-        //taskLights.ActivateButton(this.gameObject);
     }
 }

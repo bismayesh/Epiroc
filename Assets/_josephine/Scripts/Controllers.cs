@@ -83,7 +83,7 @@ public class Controllers : MonoBehaviour
             lightRenderer.material = MaterialOn;
         }
 
-        //taskDrive.ActivateButton(this.gameObject);
+        taskDrive.ActivateButton(this.gameObject);
         taskLights.ActivateButton(this.gameObject);
     }
 }
