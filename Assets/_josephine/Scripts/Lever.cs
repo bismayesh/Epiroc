@@ -22,13 +22,13 @@ public class Lever : MonoBehaviour
 
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
-    public TaskLights taskLights;
+    public TaskLight taskLights;
 
     private void Start()
     {
         taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
         taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-        taskLights = GameObject.Find("Lights").GetComponent<TaskLights>();
+        taskLights = GameObject.Find("Torch").GetComponent<TaskLight>();
     }
 
     public void SwitchTurning()
@@ -57,6 +57,8 @@ public class Lever : MonoBehaviour
 
     public void SwitchOnOff()
     {
-        taskDrive.ActivateButton(this.gameObject);
+        //taskDrive.ActivateButton(this.gameObject);
+        taskDrill.ActivateButton(this.gameObject);
+        //taskLights.ActivateButton(this.gameObject);
     }
 }

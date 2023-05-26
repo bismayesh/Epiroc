@@ -9,7 +9,7 @@ public class TrainingState : MonoBehaviour
     //Tasks
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
-    public TaskLights taskLights;
+    public TaskLight taskLight;
 
     //Training figures
     int neededTrainingIterations;
@@ -46,7 +46,7 @@ public class TrainingState : MonoBehaviour
 
     private void Start()
     {
-        neededTrainingIterations = taskDrive.neededCheckpoints + taskDrill.neededIterations + taskLights.neededIterations;
+        neededTrainingIterations = taskDrive.neededCheckpoints + taskDrill.neededIterations + taskLight.neededTrolls;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
         textTrainingFailures.text =  "Failures: " + trainingFailures;
@@ -54,8 +54,8 @@ public class TrainingState : MonoBehaviour
         textTrainingScore.text = "Training score: " + trainingScore;
         textTrainingScoreMultiplier.text = scoreMultiplier.ToString() + "X";
 
-        textTaskDriveProgress.text = "Progress: " + taskDriveProgress + "%";
-        textTaskDriveFailures.text = "Failures: " + taskDriveFailures;
+        textTaskDriveProgress.text = taskDriveProgress + "%";
+        textTaskDriveFailures.text = taskDriveFailures.ToString();
     }
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
@@ -80,13 +80,6 @@ public class TrainingState : MonoBehaviour
         textTaskDriveProgress.text = taskDriveProgress + "%";
 
         UpdateTrainingProgress();
-    }
-
-    public void UpdateTrainingFailures()
-    {
-        trainingFailures++;
-        textTrainingFailures.text = "Failures: " + trainingFailures;
-        scoreMultiplier = 1;
     }
 
     private void UpdateTrainingProgress()
@@ -122,6 +115,13 @@ public class TrainingState : MonoBehaviour
                 //You fired screen
             }
         }
+    }
+
+    public void UpdateTrainingFailures()
+    {
+        trainingFailures++;
+        textTrainingFailures.text = "Failures: " + trainingFailures;
+        scoreMultiplier = 1;
     }
 
     public void UpdateTrainingScore(int gemScore)

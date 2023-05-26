@@ -8,19 +8,20 @@ public class Controllers : MonoBehaviour
     public Renderer lightRenderer;
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
-    public TaskLights taskLights;
+    public TaskLight taskLights;
     public bool isActive = false;
 
     public Material MaterialOn;
     public Material MaterialOff;
 
-    private float localRotation;
+    float localRotation;
+    bool initialSwitch = true;
 
     private void Start()
     {
         taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
         taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-        taskLights = GameObject.Find("Lights").GetComponent<TaskLights>();
+        taskLights = GameObject.Find("Torch").GetComponent<TaskLight>();
     }
 
     public void ButtonPressed()
@@ -38,6 +39,7 @@ public class Controllers : MonoBehaviour
         }
 
         taskDrive.ActivateButton(this.gameObject);
+        taskLights.ActivateButton(this.gameObject);
     }
 
     public void TurnSwitch()
@@ -61,6 +63,12 @@ public class Controllers : MonoBehaviour
 
     public void Switch()
     {
+        if (initialSwitch)
+        {
+            initialSwitch = false;
+            return;
+        }
+
         float angle = switchTransform.localEulerAngles.x;
         angle = (angle > 180) ? angle - 360 : angle;
 
@@ -75,6 +83,7 @@ public class Controllers : MonoBehaviour
             lightRenderer.material = MaterialOn;
         }
 
-        taskDrive.ActivateButton(this.gameObject);
+        //taskDrive.ActivateButton(this.gameObject);
+        taskLights.ActivateButton(this.gameObject);
     }
 }

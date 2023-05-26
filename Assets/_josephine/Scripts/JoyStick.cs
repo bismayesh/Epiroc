@@ -11,7 +11,10 @@ public class JoyStick : MonoBehaviour
     public InputActionProperty secondaryButtonAction;
     public InputActionProperty gripButtonAction;
 
+    public TrainingState currentTraining;
     public TaskDrive taskDrive;
+    public TaskDrill taskDrill;
+    public TaskLight taskLight;
 
     public GameObject primaryButton;
     public GameObject secondaryButton;
@@ -29,9 +32,15 @@ public class JoyStick : MonoBehaviour
     float secondaryButtonValue;
     float gripButtonValue;
 
+    enum JoystickMood { Drive, Drill, Light}
+    JoystickMood joystickMood = JoystickMood.Drive;
+
     private void Start()
     {
+        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
         taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
+        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
+        taskLight = GameObject.Find("Torch").GetComponent<TaskLight>();
     }
 
     void FixedUpdate()
@@ -39,6 +48,14 @@ public class JoyStick : MonoBehaviour
         primaryButtonValue = primaryButtonAction.action.ReadValue<float>();
         secondaryButtonValue = secondaryButtonAction.action.ReadValue<float>();
         gripButtonValue = gripButtonAction.action.ReadValue<float>();
+
+        if (gripButtonValue == 0f)
+        {
+            holdingJoystick = false;
+            taskDrive.HoldingJoystick = false;
+            taskDrill.HoldingJoystick = false;
+            taskLight.HoldingJoystick = false;
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -50,20 +67,35 @@ public class JoyStick : MonoBehaviour
 
     private void HoldingJoystick(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") && gripButtonValue != 0f)
+        if (other.gameObject.CompareTag("Player") && gripButtonValue > 0.5f)
         {
             holdingJoystick = true;
             taskDrive.HoldingJoystick = true;
+            taskDrill.HoldingJoystick = true;
+            taskLight.HoldingJoystick = true;
         }
-        else
+    }
+
+    public void ReadJoystickInput(Vector2 value)
+    {
+        if (taskDrive.DriveMood)
         {
-            holdingJoystick = false;
-            taskDrive.HoldingJoystick = false;
+            taskDrive.Drive(value);
         }
+        else if (taskDrill.DrillMood)
+        {
+            taskDrill.Drill(value);
+        }
+        else if (taskLight.LightMood)
+        {
+            taskLight.Torch(value);
+        }     
     }
 
     private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
     {
+
+       
         if (holdingJoystick && !buttonJustPressed && topButtonValue != 0f)
         {
             buttonJustPressed = true;
@@ -81,6 +113,8 @@ public class JoyStick : MonoBehaviour
             }
 
             taskDrive.ActivateButton(topButton);
+            taskDrill.ActivateButton(topButton);
+            taskLight.ActivateButton(topButton);
         }
     }
 

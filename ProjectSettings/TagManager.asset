@@ -9,6 +9,8 @@ TagManager:
   - ChunkGem
   - RadarGem
   - Troll
+  - Machine
+  - LeftJoystick
   layers:
   - Default
   - TransparentFX

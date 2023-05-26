@@ -7,19 +7,32 @@ public class TaskDrive : MonoBehaviour
     public GameObject activationSwitch;
     public GameObject allocateButton;
     public GameObject breakButton;
-    //public GameObject activateEngine;
 
-    public bool activationSwitchOn = false;
-    public bool allocateButtonOn = false;
-    public bool breakButtonOn = false;
-    public bool driving = false;
-    private bool holdingJoystick = false;
+    [SerializeField]
+    bool activationSwitchOn = false;
+    [SerializeField]
+    bool allocateButtonOn = false;
+    [SerializeField]
+    bool breakButtonOn = false;
+    [SerializeField]
+    bool driving = false;
+    [SerializeField]
+    bool holdingJoystick = false;
+    [SerializeField]
+    bool failureRecorded = false;
 
     public TrainingState currentTraining;
     public MachineController machineController;
+    public TaskDrill taskDrill;
 
     public int neededCheckpoints = 5;
     int currentCheckpoint = 0;
+
+    public bool DriveMood
+    {
+        get { return activationSwitchOn; }
+        private set { activationSwitchOn = value; }
+    }
 
     public int CurrentCheckpoint
     {
@@ -44,8 +57,16 @@ public class TaskDrive : MonoBehaviour
     {
         currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
         machineController = GameObject.Find("Machine").GetComponent<MachineController>();
+        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
     }
 
+    private void Update()
+    {
+        if (!holdingJoystick)
+        {
+            failureRecorded = false;
+        }
+    }
 
     public void ActivateButton(GameObject thisObject)
     {
@@ -83,9 +104,18 @@ public class TaskDrive : MonoBehaviour
     {
         if (holdingJoystick)
         {
+            if (taskDrill.MachineStabalized && !failureRecorded)
+            {
+                failureRecorded = true;
+                Debug.Log("Serius damage inflicted to vehicle");
+                currentTraining.MachineDamage += 5;
+                TaskFailure();
+                return;
+            }
+
             if (activationSwitchOn && allocateButtonOn)
             {
-                if(breakButtonOn)
+                if (breakButtonOn)
                 {
                     Debug.Log("Driving");
                     driving = true;
@@ -94,8 +124,12 @@ public class TaskDrive : MonoBehaviour
             }
             else
             {
-                driving = false;
-                TaskFailure();
+                if (!failureRecorded)
+                {
+                    failureRecorded = true;
+                    Debug.Log(failureRecorded);
+                    TaskFailure();
+                }
             }
         }
         else
