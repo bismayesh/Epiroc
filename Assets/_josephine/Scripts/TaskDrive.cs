@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class TaskDrive : MonoBehaviour
 {
+    //Only for testing movement on prototype
+    public MoveForward moveForward;
+    //Only for testing movement on prototype
+
     public GameObject activationSwitch;
     public GameObject allocateButton;
     public GameObject breakButton;
@@ -100,7 +105,8 @@ public class TaskDrive : MonoBehaviour
         }
     }
 
-    public void Drive(Vector2 force)
+    //Take away input parameter thisobject when stop using method for testdrive
+    public void Drive(Vector2 force, GameObject thisObject)
     {
         if (holdingJoystick)
         {
@@ -119,6 +125,11 @@ public class TaskDrive : MonoBehaviour
                 {
                     Debug.Log("Driving");
                     driving = true;
+
+                    //Only for testing movement on prototype
+                    moveForward.DriveTest(force, thisObject);
+                    //Only for testing movement on prototype
+
                     machineController.ChangeMovementForce(force);
                 }
             }
