@@ -22,14 +22,16 @@ public class TrainingState : MonoBehaviour
     int trainingDamage = 0;
     int trainingScore = 0;
     int scoreMultiplier = 1;
+    int gemsCount = 0;
+    int trollsKill = 0;
 
     //Task figures
     int taskDriveProgress = 0;
     int taskDriveFailures = 0;
     int taskDrillProgress = 0;
     int taskDrillFailures = 0;
-    int taskLightsProgress = 0;
-    int taskLightsFailures = 0;
+    int taskTorchProgress = 0;
+    int taskTorchFailures = 0;
 
     //UI
     public TextMeshProUGUI textTrainingProgress;
@@ -37,15 +39,21 @@ public class TrainingState : MonoBehaviour
     public TextMeshProUGUI textTrainingDamage;
     public TextMeshProUGUI textTrainingScore;
     public TextMeshProUGUI textTrainingScoreMultiplier;
+    public TextMeshProUGUI textTrainingGemsCount;
+    public TextMeshProUGUI textTrainingTrollsKill;
     public TextMeshProUGUI textTaskDriveProgress;
     public TextMeshProUGUI textTaskDriveFailures;
     public TextMeshProUGUI textTaskDrillProgress;
     public TextMeshProUGUI textTaskDrillFailures;
-    public TextMeshProUGUI textTaskLightsProgress;
-    public TextMeshProUGUI textTaskLightsFailures;
+    public TextMeshProUGUI textTaskTorchProgress;
+    public TextMeshProUGUI textTaskTorchFailures;
 
     private void Start()
     {
+        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
+        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
+        taskLight = GameObject.Find("Torch").GetComponent<TaskLight>();
+
         neededTrainingIterations = taskDrive.neededCheckpoints + taskDrill.neededIterations + taskLight.neededTrolls;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
@@ -69,12 +77,14 @@ public class TrainingState : MonoBehaviour
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
     {
         taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
-        textTaskDriveProgress.text = taskDriveProgress + "%";
+        trollsKill++;
+        textTaskDrillProgress.text = taskDrillProgress + "%";
+        textTrainingTrollsKill.text = trollsKill.ToString();
 
         UpdateTrainingProgress();
     }
 
-    public void UpdateTaskLightsProgress(int neededIt, int currentIt)
+    public void UpdateTaskTorchProgress(int neededIt, int currentIt)
     {
         taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
         textTaskDriveProgress.text = taskDriveProgress + "%";
@@ -85,7 +95,7 @@ public class TrainingState : MonoBehaviour
     private void UpdateTrainingProgress()
     {
         currentTrainingIteration++;
-        trainingProgress = (int)((float)currentTrainingIteration / (float)neededTrainingIterations);
+        trainingProgress = (int)((float)currentTrainingIteration / (float)neededTrainingIterations * 100);
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
 
         if (currentTrainingIteration == neededTrainingIterations)
@@ -100,6 +110,24 @@ public class TrainingState : MonoBehaviour
         SceneManager.LoadScene(0);
         Time.timeScale = 1;
     }
+
+    public void UpdateTrainingScore(int gemScore)
+    {
+        trainingScore += gemScore * scoreMultiplier;
+        scoreMultiplier *= 2;
+        gemsCount++;
+        textTrainingScore.text = "Score: " + trainingScore;
+        textTrainingScoreMultiplier.text = scoreMultiplier.ToString() + "X";
+        textTrainingGemsCount.text = gemsCount.ToString();
+    }
+
+    public void UpdateTrainingFailures()
+    {
+        trainingFailures++;
+        textTrainingFailures.text = "Failures: " + trainingFailures;
+        scoreMultiplier = 1;
+    }
+
     public int MachineDamage
     {
         get { return trainingDamage; }
@@ -117,18 +145,8 @@ public class TrainingState : MonoBehaviour
         }
     }
 
-    public void UpdateTrainingFailures()
+    private void UpdateDamageMeter()
     {
-        trainingFailures++;
-        textTrainingFailures.text = "Failures: " + trainingFailures;
-        scoreMultiplier = 1;
-    }
 
-    public void UpdateTrainingScore(int gemScore)
-    {
-        trainingScore += gemScore * scoreMultiplier;
-        scoreMultiplier *= 2;
-        textTrainingScore.text = "Score: " + trainingScore;
-        textTrainingScoreMultiplier.text = scoreMultiplier.ToString() + "X";
     }
 }
