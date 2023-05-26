@@ -18,5 +18,14 @@ public class trollnavmesh : MonoBehaviour
     {
         navMeshAgent.destination=movePositionTransform.position;
     }
+
+    void trollnavmeshOnCollisionEnter(Collision collision)
+
+    {
+        if (collision.gameObject.tag == "Gem")
+
+            Destroy(collision.gameObject);
+    }
+   
 }
 
