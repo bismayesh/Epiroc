@@ -24,7 +24,7 @@ public class TaskLight : MonoBehaviour
     bool failureRecorded = false;
 
     public int neededTrolls = 5;
-    int currentCheckpoint = 0;
+    int currentTrolls = 0;
 
     public bool LightMood
     {
@@ -38,6 +38,17 @@ public class TaskLight : MonoBehaviour
         set
         {
             holdingJoystick = value;
+        }
+    }
+
+    //Increase in the event of trollkill
+    public int CurrentTrolls
+    {
+        get { return currentTrolls; }
+        set 
+        { 
+            currentTrolls = value;
+            currentTraining.UpdateTaskTorchProgress( neededTrolls, currentTrolls);
         }
     }
 

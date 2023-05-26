@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class SupportLevels : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    enum SupportLayers { Light, Text, Voice, Ghost}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
