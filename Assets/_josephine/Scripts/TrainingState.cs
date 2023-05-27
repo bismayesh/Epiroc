@@ -1,3 +1,4 @@
+using BNG;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,6 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class TrainingState : MonoBehaviour
 {
+    public SmoothLocomotion smoothLocomotion;
+    bool smoothLocomotionOn = false;
+
     //Tasks
     public TaskDrive taskDrive;
     public TaskDrill taskDrill;
@@ -47,6 +51,15 @@ public class TrainingState : MonoBehaviour
     public TextMeshProUGUI textTaskDrillFailures;
     public TextMeshProUGUI textTaskTorchProgress;
     public TextMeshProUGUI textTaskTorchFailures;
+
+    private void LateUpdate()
+    {
+        if (!smoothLocomotionOn)
+        {
+            smoothLocomotionOn = true;
+            smoothLocomotion.enabled = true;
+        }
+    }
 
     private void Start()
     {

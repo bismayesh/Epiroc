@@ -57,6 +57,7 @@ public class JoyStick : MonoBehaviour
             taskDrive.HoldingJoystick = false;
             taskDrill.HoldingJoystick = false;
             taskLight.HoldingJoystick = false;
+            supportLevels.holdingJoystick = false;
         }
     }
 
@@ -75,6 +76,7 @@ public class JoyStick : MonoBehaviour
             taskDrive.HoldingJoystick = true;
             taskDrill.HoldingJoystick = true;
             taskLight.HoldingJoystick = true;
+            supportLevels.holdingJoystick = true;
         }
     }
 

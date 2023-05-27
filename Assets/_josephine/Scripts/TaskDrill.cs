@@ -27,6 +27,7 @@ public class TaskDrill : MonoBehaviour
     bool drilling = false;
     [SerializeField]
     bool spawnArea = false;
+    bool firstTime = true;
     GemSpawnPoint gemSpawnPoint = null;
     [SerializeField]
     bool machineStabalized = false;
@@ -35,6 +36,7 @@ public class TaskDrill : MonoBehaviour
 
     public TrainingState currentTraining;
     public MachineController machineController;
+    public SupportLevels supportLevels;
 
     public int neededIterations = 5;
     int currentIteration = 0;
@@ -54,7 +56,10 @@ public class TaskDrill : MonoBehaviour
     public bool SpawnArea
     {
         get { return spawnArea; }
-        set { spawnArea = value; }
+        set 
+        { 
+            spawnArea = value; 
+        }
     }
 
     public bool MachineStabalized
@@ -77,6 +82,12 @@ public class TaskDrill : MonoBehaviour
         if (!holdingJoystick)
         {
             failureRecorded = false;
+        }
+
+        if (spawnArea && firstTime)
+        {
+            firstTime = false;
+            supportLevels.DrillInstructions();
         }
     }
 
@@ -163,15 +174,14 @@ public class TaskDrill : MonoBehaviour
         {
             if (jacksLeverOn)
             {
-                Debug.Log("info comming through");
                 if (jacksToggleOn)
                 {
-                    if (value.y >= 0.6f)
+                    if (value.y >= 0.5f)
                     {
                         frontJacksUp = true;
                         textFrontJacks.text = "Front Jacks Up";
                     }
-                    else if (value.y <= -0.6f)
+                    else if (value.y <= -0.5f)
                     {
                         frontJacksUp = false;
                         textFrontJacks.text = "Front Jacks Down";
@@ -179,12 +189,12 @@ public class TaskDrill : MonoBehaviour
                 }
                 else if(!jacksToggleOn)
                 {
-                    if (value.y >= 0.6f)
+                    if (value.y >= 0.5f)
                     {
                         rearJacksUp = true;
                         textRearJacks.text = "Rear Jacks Up";
                     }
-                    else if (value.y <= -0.6f)
+                    else if (value.y <= -0.5f)
                     {
                         rearJacksUp = false;
                         textRearJacks.text = "Rear Jacks Down";

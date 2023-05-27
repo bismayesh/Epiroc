@@ -123,7 +123,6 @@ public class TaskDrive : MonoBehaviour
             {
                 if (breakButtonOn)
                 {
-                    Debug.Log("Driving");
                     driving = true;
 
                     //Only for testing movement on prototype
