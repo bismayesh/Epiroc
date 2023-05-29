@@ -34,6 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7012845047058848477}
+  - {fileID: 1887977320519763178}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -130,12 +131,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskDrill: {fileID: 0}
   gemObjects:
-  - {fileID: 6339222494637908926, guid: def690613de90014b8804f6611bbe6ed, type: 3}
-  - {fileID: 1588050471922542007, guid: 7634b982781c64a428d864f0f6e3b546, type: 3}
-  - {fileID: 7728375201104708404, guid: 0fc6c31abe0d7f54a9f0f8842c270362, type: 3}
-  - {fileID: 8942605025514723059, guid: a740a37328acdd64c99e22080bb54b23, type: 3}
-  - {fileID: 1407278156252229927, guid: 605e6c9d0b73d154f80d054ed7fcd9b6, type: 3}
-  - {fileID: 727797483827502607, guid: f90857cc7d4219f44aa49e9932dd50ba, type: 3}
+  - {fileID: 7576376475985966520, guid: 7657f86fab910634e8d97b7023cdc185, type: 3}
+  - {fileID: 7576376475985966520, guid: 7657f86fab910634e8d97b7023cdc185, type: 3}
+  - {fileID: 7576376475985966520, guid: 7657f86fab910634e8d97b7023cdc185, type: 3}
+  - {fileID: 7576376475985966520, guid: 7657f86fab910634e8d97b7023cdc185, type: 3}
+  - {fileID: 7576376475985966520, guid: 7657f86fab910634e8d97b7023cdc185, type: 3}
+  spawnGems: 0
+  spawnTransform: {fileID: 1887977320519763178}
 --- !u!1 &1143538043317645825
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,3 +221,34 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8234120332566829478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1887977320519763178}
+  m_Layer: 0
+  m_Name: SpawnPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1887977320519763178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8234120332566829478}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.77, y: 1.61, z: 2.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1671943458331428499}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

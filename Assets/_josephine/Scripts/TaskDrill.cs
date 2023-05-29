@@ -38,6 +38,12 @@ public class TaskDrill : MonoBehaviour
     public MachineController machineController;
     public SupportLevels supportLevels;
 
+    public AudioSource audioSource;
+    public AudioClip jacksAudio;
+    public AudioClip drillAudio;
+    bool audioDrillOn = false;
+    bool audioJacksOn = false;
+
     public int neededIterations = 5;
     int currentIteration = 0;
 
@@ -127,13 +133,27 @@ public class TaskDrill : MonoBehaviour
                 if (button == jacksLever)
                 {
                     machineController.ExtendJacks();
+
+                    if (!audioJacksOn)
+                    {
+                        audioJacksOn = true;
+                        audioSource.clip = jacksAudio;
+                        audioSource.PlayOneShot(jacksAudio);
+                    }
                 }
                 else if (button == drillLever)
                 {
                     if (jacksLeverOn && frontJacksUp && rearJacksUp)
                     {
-                        Debug.Log("Drilling");
                         drilling = true;
+
+                        if (!audioDrillOn)
+                        {
+                            audioDrillOn = true;
+                            audioSource.clip = drillAudio;
+                            audioSource.Play();
+                        }
+                        
                         machineController.ActivateDrill();
                         machineController.SpinDrill();
 
@@ -156,11 +176,20 @@ public class TaskDrill : MonoBehaviour
                 activateButton = false;
                 if (button == jacksLever)
                 {
+                    audioJacksOn = false;
                     machineController.RetrieveJacks();
                 }
                 else if (button == drillLever)
                 {
                     drilling = false;
+
+                    if (audioDrillOn)
+                    {
+                        audioDrillOn = false;
+                        audioSource.Stop();
+                        audioSource.clip = null;
+                    }
+
                     machineController.DeactivateDrill();
                     machineController.StopDrill();
                 }  

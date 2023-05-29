@@ -2,6 +2,7 @@ using Photon.Voice.PUN;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -98,8 +99,6 @@ public class JoyStick : MonoBehaviour
 
     private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
     {
-
-       
         if (holdingJoystick && !buttonJustPressed && topButtonValue != 0f)
         {
             buttonJustPressed = true;

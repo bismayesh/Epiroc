@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class SupportLevels : MonoBehaviour
 {
     //Support menu
+    [Header("Support Menu")]
     public GameObject supportMenu;
     public InputActionReference InputAction = default;
     public bool holdingJoystick = false;
@@ -17,10 +18,12 @@ public class SupportLevels : MonoBehaviour
     public Toggle supportGhostToggle;
 
     //Intro
+    [Header("Intro")]
     public GameObject textBackground;
     public GameObject introText;
 
     //Drive
+    [Header("Drive")]
     public GameObject driveTask1;
     public GameObject driveTask2;
     public GameObject driveTask3;
@@ -32,6 +35,7 @@ public class SupportLevels : MonoBehaviour
     public GameObject driveLight3;
 
     //Drill
+    [Header("Drill")]
     public GameObject drillTask1;
     public TextMeshProUGUI textFrontJacks;
     public TextMeshProUGUI textRearJacks;
@@ -51,6 +55,7 @@ public class SupportLevels : MonoBehaviour
     bool taskHasRun = false;
 
     //Torch
+    [Header("Torch")]
     public GameObject torchTask1;
     public GameObject torchTask2;
     public GameObject torchTask3;
