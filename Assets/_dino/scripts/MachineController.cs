@@ -29,12 +29,7 @@ public class MachineController : MonoBehaviour {
     #region References
 
     [PropertyOrder(-666)][FoldoutGroup("References")] public DrillController Drill;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public Rigidbody Engine;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelL;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public HingeJoint WheelR;
     [PropertyOrder(-666)][FoldoutGroup("References")] public Light Torch;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.Lever MovementController;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public BNG.SteeringWheel RotationController;
     [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
 
 
@@ -82,11 +77,11 @@ public class MachineController : MonoBehaviour {
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
-        MachineMovementForce = force.y * 100;
+        transform.Translate(Vector3.forward * (MachineMovementForce * force.y));
     }
 
     public void ChangeRotationForce(Vector2 force){
-        MachineRotationForce = force.x * 100;
+        transform.Rotate(Vector3.right * (MachineRotationForce * force.x),Space.Self);
     }
     
     [DisableIf("@EngineActive")]
@@ -290,10 +285,6 @@ public class MachineController : MonoBehaviour {
         
         if (DrillSpinning) {
             Drill.DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
-        }
-        
-        if (BrakesReleased){
-            Engine.AddTorque(Vector3.up * MachineRotationForce);
         }
 
         if (DrillActive) {
