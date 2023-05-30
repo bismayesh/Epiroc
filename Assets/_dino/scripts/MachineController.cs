@@ -77,11 +77,11 @@ public class MachineController : MonoBehaviour {
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
-        transform.Translate(Vector3.forward * (MachineMovementForce * force.y));
+        transform.Translate(Vector3.forward * (force.y));
     }
 
     public void ChangeRotationForce(Vector2 force){
-        transform.Rotate(Vector3.right * (MachineRotationForce * force.x),Space.Self);
+        transform.Rotate(Vector3.right * (force.x),Space.Self);
     }
     
     [DisableIf("@EngineActive")]
