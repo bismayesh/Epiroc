@@ -89,18 +89,19 @@ public class TrainingState : MonoBehaviour
 
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
     {
-        taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
-        trollsKill++;
+        taskDrillProgress = (int)((float)currentIt / (float)neededIt * 100);        
         textTaskDrillProgress.text = taskDrillProgress + "%";
-        textTrainingTrollsKill.text = trollsKill.ToString();
 
         UpdateTrainingProgress();
     }
 
     public void UpdateTaskTorchProgress(int neededIt, int currentIt)
     {
-        taskDriveProgress = (int)((float)currentIt / (float)neededIt * 100);
-        textTaskDriveProgress.text = taskDriveProgress + "%";
+        taskTorchProgress = (int)((float)currentIt / (float)neededIt * 100);
+        textTaskTorchProgress.text = taskTorchProgress + "%";
+
+        trollsKill++;
+        textTrainingTrollsKill.text = trollsKill.ToString();
 
         UpdateTrainingProgress();
     }
@@ -115,12 +116,13 @@ public class TrainingState : MonoBehaviour
         {
             Debug.Log("Training finnished!");
             Invoke("TrainingFinnished", 2);
+            //Spawn mega gem
         }
     }
 
     private void TrainingFinnished()
     {
-        SceneManager.LoadScene(0);
+        //SceneManager.LoadScene(0);
         Time.timeScale = 1;
     }
 

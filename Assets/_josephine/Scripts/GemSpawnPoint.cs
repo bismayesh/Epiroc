@@ -5,12 +5,15 @@ using UnityEngine;
 public class GemSpawnPoint : MonoBehaviour
 {
     public TaskDrill taskDrill;
-
     public List<GameObject> gemObjects = new List<GameObject>();
+    public bool spawnGems = false;
+    public Transform spawnTransform;
+    Vector3 spawnPosition;
 
     private void Start()
     {
         taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
+        spawnPosition = spawnTransform.position;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -31,19 +34,35 @@ public class GemSpawnPoint : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (spawnGems)
+        {
+            spawnGems = false;
+            StartCoroutine(SpawnDelay());
+        }
+    }
+
     public void SpawnGems()
     {
-        for (int i = 0; i < 4; i++)
+        StartCoroutine(SpawnDelay());
+    }
+
+    IEnumerator SpawnDelay()
+    {
+        for (int i = 0; i < 2; i++)
         {
             foreach (var g in gemObjects)
             {
-                Vector3 randomDir = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(2.0f, 5.0f), Random.Range(-3.0f, 3.0f));
-                Instantiate(g);
-                Rigidbody rigidbody = g.GetComponent<Rigidbody>();
-                rigidbody.AddForce(randomDir);
+                Vector3 randomDir = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(5.0f, 15.0f), Random.Range(-5.0f, 5.0f));
+                var gem = Instantiate(g, spawnPosition, Quaternion.identity);
+                gem.GetComponent<Rigidbody>().AddForce(randomDir, ForceMode.Impulse);
+
+                
+                yield return new WaitForSeconds(0.2f);
             }
         }
 
-        Destroy(gameObject, 2f);
+        Destroy(gameObject, 2.5f);
     }
 }

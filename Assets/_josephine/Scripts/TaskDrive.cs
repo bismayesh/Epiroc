@@ -30,13 +30,17 @@ public class TaskDrive : MonoBehaviour
     public MachineController machineController;
     public TaskDrill taskDrill;
 
+    public AudioSource audioSource;
+    public AudioClip driveAudio;
+    bool audioOn = false;
+
     public int neededCheckpoints = 5;
     int currentCheckpoint = 0;
 
     public bool DriveMood
     {
-        get { return activationSwitchOn; }
-        private set { activationSwitchOn = value; }
+        get { return breakButtonOn; }
+        private set { breakButtonOn = value; }
     }
 
     public int CurrentCheckpoint
@@ -125,6 +129,13 @@ public class TaskDrive : MonoBehaviour
                 {
                     driving = true;
 
+                    if (!audioOn)
+                    {
+                        audioOn = true;
+                        audioSource.clip = driveAudio;
+                        audioSource.Play();
+                    }
+                    
                     //Only for testing movement on prototype
                     moveForward.DriveTest(force, thisObject);
                     //Only for testing movement on prototype
@@ -145,6 +156,12 @@ public class TaskDrive : MonoBehaviour
         else
         {
             driving = false;
+
+            if (audioOn)
+            {
+                audioSource.Stop();
+                audioSource.clip = null;
+            }
         }
     }
 
