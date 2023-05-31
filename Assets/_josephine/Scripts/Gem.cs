@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Gem : MonoBehaviour
 {
-    public string gemType;
     public int gemScore;
+    [HideInInspector]
     public TrainingState trainingState;
 
     private void Start()

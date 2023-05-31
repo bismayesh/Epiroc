@@ -68,6 +68,7 @@ public class SupportLevels : MonoBehaviour
 
     //Supportlayers
     enum SupportLayers { Light, Text, Voice, Ghost }
+    private SupportLayers supportLight = SupportLayers.Light;
     [SerializeField]
     bool supportlayerText = true;
     [SerializeField]
@@ -330,6 +331,7 @@ public class SupportLevels : MonoBehaviour
         }
     }
 
+
     private void OnEnable()
     {
         InputAction.action.performed += ToggleActive;
@@ -380,6 +382,45 @@ public class SupportLevels : MonoBehaviour
             toggle.isOn = true;
             supportLayer = true;
         }
+    }
+}
+
+
+
+//Testa och skriva om klassen
+public class Tasks
+{
+    public List<GameObject> tasks = new List<GameObject>();
+    public List<TextMeshProUGUI> textTasks = new List<TextMeshProUGUI>();
+    public List<string> taskMessages = new List<string>();
+
+    bool textTaskComplete = false;
+
+    private void FixedUpdate()
+    {
+        if (textTasks[0].text == taskMessages[0] && textTasks[1].text == taskMessages[1] && !textTaskComplete)
+        {
+            textTaskComplete = true;
+            TaskCompleted(textTaskComplete);
+        }
+    }
+
+    public bool TaskCompleted(GameObject taskObject, GameObject thisObject)
+    {
+        if (taskObject = thisObject)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool TaskCompleted(bool textTaskComplete)
+    {
+        if (textTaskComplete)
+        {
+            return true;
+        }
+        return false;
     }
 }
 
