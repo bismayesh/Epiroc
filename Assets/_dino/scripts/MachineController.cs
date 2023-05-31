@@ -5,6 +5,7 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
 
@@ -30,7 +31,12 @@ public class MachineController : MonoBehaviour {
 
     [PropertyOrder(-666)][FoldoutGroup("References")] public DrillController Drill;
     [PropertyOrder(-666)][FoldoutGroup("References")] public Light Torch;
-    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> Jacks;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> JacksLeft;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> JacksLeftMid;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> JacksLeftLow;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> JacksRight;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> JacksRightMid;
+    [PropertyOrder(-666)][FoldoutGroup("References")] public List<GameObject> JacksRightLow;
 
 
     #endregion
@@ -45,10 +51,8 @@ public class MachineController : MonoBehaviour {
 
     #endregion
     #region MachineVariables
-    
-    [ShowIf("@EngineActive")]
+
     [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-100 , 100)] public float MachineMovementForce;
-    [ShowIf("@EngineActive")]
     [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-180, 180)] public float MachineRotationForce;
 
     #endregion
@@ -81,7 +85,7 @@ public class MachineController : MonoBehaviour {
     }
 
     public void ChangeRotationForce(Vector2 force){
-        transform.Rotate(Vector3.right * force.x,Space.Self);
+        transform.Rotate(Vector3.up * force.x,Space.Self);
     }
     
     [DisableIf("@EngineActive")]
@@ -207,9 +211,25 @@ public class MachineController : MonoBehaviour {
     }
     
     IEnumerator CO_RetrieveJacks() {
-        foreach (var jack in Jacks) {
-            jack.transform.DOLocalMoveX(-0.75f, 5);
+        foreach (var jack in JacksLeft) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 32), 5);
         }
+        foreach (var jack in JacksLeftMid) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 43), 5);
+        }
+        foreach (var jack in JacksLeftLow) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, -12), 5);
+        }
+        foreach (var jack in JacksRight) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, -32), 5);
+        }
+        foreach (var jack in JacksRightMid) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 32), 5);
+        }
+        foreach (var jack in JacksRightLow) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 12), 5);
+        }
+        
         
         JacksRetrieved = true;
         OnJacksRetrieved?.Invoke();
@@ -217,8 +237,23 @@ public class MachineController : MonoBehaviour {
     }
     
     IEnumerator CO_ExtendJacks() {
-        foreach (var jack in Jacks) {
-            jack.transform.DOLocalMoveX(0.5f, 5);
+        foreach (var jack in JacksLeft) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 107), 5);
+        }
+        foreach (var jack in JacksLeftMid) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, -2), 5);
+        }
+        foreach (var jack in JacksLeftLow) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, -102), 5);
+        }
+        foreach (var jack in JacksRight) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, -107), 5);
+        }
+        foreach (var jack in JacksRightMid) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 2), 5);
+        }
+        foreach (var jack in JacksRightLow) {
+            jack.transform.DOLocalRotate(new Vector3(0, 0, 102), 5);
         }
         
         JacksRetrieved = false;
@@ -244,7 +279,7 @@ public class MachineController : MonoBehaviour {
 
     IEnumerator CO_ActivateDrill() {
         var endRotation = new Vector3(0, 0, 0);
-        Drill.SliderJoint.transform.DOLocalRotate(endRotation, 4);
+        Drill.Slider.transform.DOLocalRotate(endRotation, 4);
         Drill.CaseJoint.transform.DOLocalRotate(endRotation, 6);
 
         yield return new WaitForSeconds(6);
@@ -259,7 +294,7 @@ public class MachineController : MonoBehaviour {
     IEnumerator CO_DeactivateDrill() {
         var endRotationSliderJoint = new Vector3(-30, 0, 0);
         var endRotationCaseJoint = new Vector3(15, 0, 0);
-        Drill.SliderJoint.transform.DOLocalRotate(endRotationSliderJoint, 4);
+        Drill.Slider.transform.DOLocalRotate(endRotationSliderJoint, 4);
         Drill.CaseJoint.transform.DOLocalRotate(endRotationCaseJoint, 6);
 
         yield return new WaitForSeconds(6);
@@ -284,18 +319,18 @@ public class MachineController : MonoBehaviour {
         }
         
         if (DrillSpinning) {
-            Drill.DrillTip.transform.Rotate(-Vector3.up * DrillSpinSpeed);
+            Drill.DrillTip.transform.Rotate(-Vector3.forward * DrillSpinSpeed);
         }
 
         if (DrillActive) {
             Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
-            Drill.SliderJoint.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
+            Drill.Slider.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
             Drill.Slider.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
 
         }
         else {
             CaseJointRotation = (float)Math.Round(Drill.CaseJoint.transform.eulerAngles.x, 2);
-            SliderJointRotation = (float)Math.Round(Drill.SliderJoint.transform.eulerAngles.x / 360, 2);
+            SliderJointRotation = (float)Math.Round(Drill.Slider.transform.eulerAngles.x / 360, 2);
             SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
         }
         
