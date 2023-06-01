@@ -4,10 +4,12 @@
 
 
     public class Patrol : MonoBehaviour {
-
+    [HideInInspector]
+        public Transform Gem=null;
         public Transform[] points;
         private int destPoint = 0;
         private NavMeshAgent agent;
+       [SerializeField] private bool Gemspawned = false; 
 
 
         void Start () {
@@ -26,9 +28,18 @@
             // Returns if no points have been set up
             if (points.Length == 0)
                 return;
+        agent.destination = points[destPoint].position;
 
-            // Set the agent to go to the currently selected destination.
-            agent.destination = points[destPoint].position;
+        // Set the agent to go to the currently selected destination.
+        if (!Gemspawned)
+        {
+            //agent.destination = points[destPoint].position;
+        }
+            else
+        {
+            Gem.position = GameObject.FindGameObjectWithTag("ChunkGem").transform.position;
+            //agent.destination = Gem.position;
+        }
 
             // Choose the next point in the array as the destination,
             // cycling to the start if necessary.
@@ -37,9 +48,17 @@
 
 
         void Update () {
-            // Choose the next destination point when the agent gets
-            // close to the current one.
+           
             if (!agent.pathPending && agent.remainingDistance < 0.5f)
                 GotoNextPoint();
+
+        if (GameObject.FindGameObjectsWithTag("ChunkGem") != null)
+        {
+            Gemspawned = true;
         }
+        else Gemspawned = false;
+        Debug.Log(agent.remainingDistance);
+
+    }
+            
     }
