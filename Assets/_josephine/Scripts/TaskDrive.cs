@@ -84,14 +84,14 @@ public class TaskDrive : MonoBehaviour
         ButtonSwitch(thisObject, breakButton, ref breakButtonOn);
     }
 
-    private void ButtonSwitch(GameObject thisObject, GameObject button, ref bool activateButton)
+    private void ButtonSwitch(GameObject thisObject, GameObject button, ref bool buttonOn)
     {
 
         if (thisObject == button)
         {
-            if (!activateButton)
+            if (!buttonOn)
             {
-                activateButton = true;
+                buttonOn = true;
 
                 if (button == activationSwitch)
                 {
@@ -104,7 +104,7 @@ public class TaskDrive : MonoBehaviour
             }
             else
             { 
-                activateButton = false;
+                buttonOn = false;
             }
         }
     }
