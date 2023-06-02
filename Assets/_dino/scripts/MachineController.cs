@@ -52,8 +52,8 @@ public class MachineController : MonoBehaviour {
     #endregion
     #region MachineVariables
 
-    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-100 , 100)] public float MachineMovementForce;
-    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-180, 180)] public float MachineRotationForce;
+    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-100 , 100)] public float MachineMovementForce = 4;
+    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-180, 180)] public float MachineRotationForce = 32;
 
     #endregion
     #region DrillVariables
@@ -81,11 +81,11 @@ public class MachineController : MonoBehaviour {
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
-        transform.Translate(Vector3.forward * force.y);
+        transform.Translate(Vector3.forward * force.y * MachineMovementForce * Time.deltaTime);
     }
 
     public void ChangeRotationForce(Vector2 force){
-        transform.Rotate(Vector3.up * force.x,Space.Self);
+        transform.Rotate(Vector3.up * force.x * MachineRotationForce * Time.deltaTime,Space.Self);
     }
     
     [DisableIf("@EngineActive")]
@@ -265,6 +265,7 @@ public class MachineController : MonoBehaviour {
         
         yield return new WaitUntil((() => !DOTween.IsTweening(this)));
         BrakesReleased = true;
+        MachineMovementForce = 4;
         OnBrakesReleased?.Invoke();
         yield return null;
     }
@@ -273,6 +274,7 @@ public class MachineController : MonoBehaviour {
         
         yield return new WaitUntil((() => !DOTween.IsTweening(this)));
         BrakesReleased = false;
+        MachineRotationForce = 32;
         OnBrakesActivated?.Invoke();
         yield return null;
     }
@@ -316,18 +318,18 @@ public class MachineController : MonoBehaviour {
         }
 
         #region DebugStuff
-
+        // testing ctrls for the machine
         if (Input.GetKey(KeyCode.W)) {
-            ChangeMovementForce(new Vector2(0, 1));
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            ChangeMovementForce(new Vector2(-1, 0));
-        }
-        if (Input.GetKey(KeyCode.S)) {
             ChangeMovementForce(new Vector2(0, -1));
         }
+        if (Input.GetKey(KeyCode.A)) {
+            ChangeRotationForce(new Vector2(-1, 0));
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            ChangeMovementForce(new Vector2(0, 1));
+        }
         if (Input.GetKey(KeyCode.D)) {
-            ChangeMovementForce(new Vector2(1, 0));
+            ChangeRotationForce(new Vector2(1, 0));
         }
 
         #endregion
