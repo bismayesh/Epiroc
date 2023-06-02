@@ -307,32 +307,13 @@ public class MachineController : MonoBehaviour {
 
     #endregion
 
-    private void Start() {
-        
-    }
-
     private void Update() {
+        Torch.intensity = torchIntensity;
+        Torch.spotAngle = torchSpread;
 
-        if (isTorchActive) {
-            Torch.intensity = torchIntensity;
-            Torch.spotAngle = torchSpread;
-        }
-        
         if (DrillSpinning) {
             Drill.DrillTip.transform.Rotate(-Vector3.forward * DrillSpinSpeed);
         }
 
-        if (DrillActive) {
-            Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
-            Drill.Slider.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
-            Drill.Slider.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
-
-        }
-        else {
-            CaseJointRotation = (float)Math.Round(Drill.CaseJoint.transform.eulerAngles.x, 2);
-            SliderJointRotation = (float)Math.Round(Drill.Slider.transform.eulerAngles.x / 360, 2);
-            SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
-        }
-        
     }
 }
