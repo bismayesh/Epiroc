@@ -11,6 +11,8 @@ TagManager:
   - Troll
   - Machine
   - LeftJoystick
+  - monster
+  - Cave
   layers:
   - Default
   - TransparentFX

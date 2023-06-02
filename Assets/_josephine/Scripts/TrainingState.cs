@@ -52,6 +52,14 @@ public class TrainingState : MonoBehaviour
     public TextMeshProUGUI textTaskTorchProgress;
     public TextMeshProUGUI textTaskTorchFailures;
 
+    //Singelton
+    public static TrainingState instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void LateUpdate()
     {
         if (!smoothLocomotionOn)

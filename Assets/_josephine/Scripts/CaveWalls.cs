@@ -17,5 +17,10 @@ public class CaveWalls : MonoBehaviour
         {
             currentTraining.MachineDamage++;
         }
+
+        if (other.gameObject.CompareTag("ChunkGem"))
+        {
+            Destroy(other.gameObject);
+        }
     }
 }
