@@ -315,5 +315,24 @@ public class MachineController : MonoBehaviour {
             Drill.DrillTip.transform.Rotate(-Vector3.forward * DrillSpinSpeed);
         }
 
+        #region DebugStuff
+
+        if (Input.GetKey(KeyCode.W)) {
+            ChangeMovementForce(new Vector2(0, 1));
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            ChangeMovementForce(new Vector2(-1, 0));
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            ChangeMovementForce(new Vector2(0, -1));
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            ChangeMovementForce(new Vector2(1, 0));
+        }
+
+        #endregion
+        
+        
+
     }
 }
