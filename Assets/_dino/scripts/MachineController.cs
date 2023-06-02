@@ -316,7 +316,7 @@ public class MachineController : MonoBehaviour {
         }
 
         #region DebugStuff
-
+        // testing ctrls for the machine
         if (Input.GetKey(KeyCode.W)) {
             ChangeMovementForce(new Vector2(0, 1));
         }
