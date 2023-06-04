@@ -26,6 +26,9 @@ public class MachineController : MonoBehaviour {
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillSpinning;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillStop;
 
+    [HorizontalGroup("Drill spin EVENTS")] [PropertyOrder(666)]
+    public UnityEvent OnTrollHit;
+
     #endregion
     #region References
 
@@ -315,6 +318,14 @@ public class MachineController : MonoBehaviour {
 
         if (DrillSpinning) {
             Drill.DrillTip.transform.Rotate(-Vector3.forward * DrillSpinSpeed);
+        }
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(Torch.transform.position, Torch.transform.forward, out hit)) {
+            if (hit.transform.CompareTag("Troll")) {
+                OnTrollHit?.Invoke();
+            }
         }
 
         #region DebugStuff
