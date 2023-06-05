@@ -47,6 +47,9 @@ public class TaskDrill : MonoBehaviour
     public int neededIterations = 5;
     int currentIteration = 0;
 
+    //Singelton
+    public static TaskDrill instance;
+
     public bool DrillMood
     {
         get { return jacksLeverOn; }
@@ -101,6 +104,7 @@ public class TaskDrill : MonoBehaviour
     {
         currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
         machineController = GameObject.Find("Machine").GetComponent<MachineController>();
+        //machineController.onTrollsKill.AddListener(currentTraining.UpdateTaskTorchProgress(neededIterations, currentIteration));
     }
 
     private void FixedUpdate()
