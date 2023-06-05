@@ -26,6 +26,9 @@ public class TaskLight : MonoBehaviour
     public int neededTrolls = 5;
     int currentTrolls = 0;
 
+    //Singelton
+    public static TaskLight instance;
+
     public bool LightMood
     {
         get { return activateButtonOn; }

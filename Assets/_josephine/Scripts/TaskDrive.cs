@@ -37,6 +37,9 @@ public class TaskDrive : MonoBehaviour
     public int neededCheckpoints = 5;
     int currentCheckpoint = 0;
 
+    //Singelton
+    public static TaskDrive instance;
+
     public bool DriveMood
     {
         get { return breakButtonOn; }

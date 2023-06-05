@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TestScriptTasks : MonoBehaviour
 {
@@ -16,43 +17,24 @@ public enum SupportLayer
     Ghost
 }
 
-public class DriveTask : MonoBehaviour
+
+[System.Serializable]
+public class SupportSystem
 {
-    public List<Task> taskControl = new List<Task>();
+    public List<SupportLayer> layers;
+}
 
-    public AudioSource audioSource;
+
+public class TestDriveTask : Task
+{
+    [Header("Events")]
+    public UnityEvent onDriving;
+
+    public List<SingleTask> taskControl = new List<SingleTask>();
     public AudioClip driveAudio;
-    bool audioOn = false;
 
-    [SerializeField]
-    bool holdingJoystick = false;
-    [SerializeField]
-    bool failRecorded = false;
-
-    [HideInInspector]
-    public MachineController machineController;
     [HideInInspector]
     public TaskDrill taskDrill;
-
-    public bool HoldingJoystick
-    {
-        get { return holdingJoystick; } 
-        set
-        {
-            holdingJoystick = value;
-            if (!holdingJoystick)
-            {
-                failRecorded = false;
-            }
-        }
-    }
-
-
-    private void Start()
-    {
-        machineController = GameObject.FindGameObjectWithTag("Machine").GetComponent<MachineController>();
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-    }
 
     public void TaskCheck(GameObject thisObject)
     {
@@ -72,7 +54,7 @@ public class DriveTask : MonoBehaviour
         }
         else
         {
-            
+
         }
     }
 
@@ -84,7 +66,7 @@ public class DriveTask : MonoBehaviour
         }
         else
         {
-            
+
         }
     }
 
@@ -102,9 +84,9 @@ public class DriveTask : MonoBehaviour
             SetAudio(driveAudio, false);
             return;
         }
-            
 
-        if (taskDrill.MachineStabalized)
+
+        if (TaskDrill.instance.MachineStabalized)
         {
             TaskFailure(5);
             return;
@@ -114,8 +96,10 @@ public class DriveTask : MonoBehaviour
         {
             if (taskControl[0].isOn)
             {
+                //event driving
+                onDriving.Invoke();
                 SetAudio(driveAudio, true);
-                machineController.ChangeMovementForce(force); 
+                machineController.ChangeMovementForce(force);
             }
         }
         else
@@ -123,8 +107,39 @@ public class DriveTask : MonoBehaviour
             TaskFailure();
         }
     }
+}
 
-    private void SetAudio(AudioClip clip, bool setOn)
+public class Task : MonoBehaviour
+{
+    public AudioSource audioSource;
+
+    [SerializeField]
+    protected bool holdingJoystick = false;
+    [SerializeField]
+    bool failRecorded = false;
+
+    [HideInInspector]
+    public MachineController machineController;
+
+    public bool HoldingJoystick
+    {
+        get { return holdingJoystick; } 
+        set
+        {
+            holdingJoystick = value;
+            if (!holdingJoystick)
+            {
+                failRecorded = false;
+            }
+        }
+    }
+
+    private void Start()
+    {
+        machineController = FindObjectOfType<MachineController>();
+    }
+
+    protected void SetAudio(AudioClip clip, bool setOn)
     {
         if (setOn)
         {
@@ -138,7 +153,7 @@ public class DriveTask : MonoBehaviour
         }
     }
 
-    private void TaskFailure()
+    protected void TaskFailure()
     {
         if (!failRecorded)
         {
@@ -147,7 +162,7 @@ public class DriveTask : MonoBehaviour
         }
     }
 
-    private void TaskFailure(int damage)
+    protected void TaskFailure(int damage)
     {
         if (!failRecorded)
         {
@@ -158,17 +173,8 @@ public class DriveTask : MonoBehaviour
     }
 }
 
-
-
 [System.Serializable]
-public class SupportSystem
-{
-    public List<SupportLayer> layers;
-}
-
-
-[System.Serializable]
-public class Task
+public class SingleTask
 {
     public GameObject task;
     public bool isOn = false;
@@ -189,17 +195,11 @@ public class Task
 
     private void ButtonSwitch()
     {
-        if (!isOn)
-        {
-            isOn = true;
-        }
-        else
-        {
-            isOn = false;
-        }
+        isOn = !isOn;
     }
 }
 
+[System.Serializable]
 public class TextTask
 {
     public TextMeshProUGUI textTask;
