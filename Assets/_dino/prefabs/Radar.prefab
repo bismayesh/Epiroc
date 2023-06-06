@@ -428,7 +428,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 120
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -8770,8 +8770,8 @@ GameObject:
   - component: {fileID: 7543724717227577998}
   - component: {fileID: 6067895736587882494}
   - component: {fileID: 4599778978700401069}
-  - component: {fileID: 4111095041668866440}
   - component: {fileID: 330819239824054014}
+  - component: {fileID: 1459763349541427077}
   m_Layer: 0
   m_Name: Prism
   m_TagString: Untagged
@@ -8844,20 +8844,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986052909648898638}
   m_Mesh: {fileID: 0}
---- !u!64 &4111095041668866440
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4986052909648898638}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!114 &330819239824054014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8872,6 +8858,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Gem: {fileID: 6811702326097726505, guid: 186c2b270fcbc5d4883f4ec35e46885d, type: 3}
   Troll: {fileID: 6811702326097726505, guid: 67a743b3ecca8ea49a3089a158fbe97e, type: 3}
+--- !u!65 &1459763349541427077
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4986052909648898638}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 46.69259, z: 36.495438}
+  m_Center: {x: -5.315082e-13, y: -7.9596763, z: -2.7303548}
 --- !u!1 &5630709441627653686
 GameObject:
   m_ObjectHideFlags: 0
