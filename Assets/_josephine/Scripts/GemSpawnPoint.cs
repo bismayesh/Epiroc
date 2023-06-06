@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GemSpawnPoint : MonoBehaviour
 {
-    public TaskDrill taskDrill;
     public List<GameObject> gemObjects = new List<GameObject>();
     public bool spawnGems = false;
     public Transform spawnTransform;
@@ -12,7 +11,6 @@ public class GemSpawnPoint : MonoBehaviour
 
     private void Start()
     {
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
         spawnPosition = spawnTransform.position;
     }
 
@@ -20,8 +18,8 @@ public class GemSpawnPoint : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Machine"))
         {
-            taskDrill.SpawnArea = true;
-            taskDrill.GemSpawnObject = gameObject.GetComponent<GemSpawnPoint>();
+            TaskDrill.instance.SpawnArea = true;
+            TaskDrill.instance.GemSpawnObject = gameObject.GetComponent<GemSpawnPoint>();
         }
     }
 
@@ -29,8 +27,8 @@ public class GemSpawnPoint : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Machine"))
         {
-            taskDrill.SpawnArea = false;
-            taskDrill.GemSpawnObject = null;
+            TaskDrill.instance.SpawnArea = false;
+            TaskDrill.instance.GemSpawnObject = null;
         }
     }
 

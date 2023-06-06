@@ -18,21 +18,6 @@ public class Lever : MonoBehaviour
     [SerializeField]
     Material materialNoLight;
 
-    private bool isActive = false;
-
-    public TaskDrive taskDrive;
-    public TaskDrill taskDrill;
-    public TaskLight taskLights;
-    public SupportLevels supportLevels;
-
-    private void Start()
-    {
-        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-        taskLights = GameObject.Find("Torch").GetComponent<TaskLight>();
-        supportLevels = GameObject.Find("SupportLevels").GetComponent<SupportLevels>();
-    }
-
     public void SwitchTurning()
     {
         float angle = hingeTransform.localEulerAngles.x;
@@ -40,7 +25,6 @@ public class Lever : MonoBehaviour
 
         if (angle >= 60)
         {
-            isActive = true;
             lightOn.material = materialOn;
             lightOff.material = materialNoLight;
         }
@@ -51,7 +35,6 @@ public class Lever : MonoBehaviour
         }
         else
         {
-            isActive = false;
             lightOn.material = materialNoLight;
             lightOff.material = materialOff;
         }
@@ -59,7 +42,7 @@ public class Lever : MonoBehaviour
 
     public void SwitchOnOff()
     {
-        taskDrill.ActivateButton(gameObject);
-        supportLevels.UserSupport(gameObject);
+        TaskDrill.instance.TaskCheck(gameObject);
+        SupportLevels.instance.UserSupport(gameObject);
     }
 }

@@ -1,177 +1,134 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.Events;
 
-public class TaskDrive : MonoBehaviour
+public class TaskDrive : Task
 {
-    //Only for testing movement on prototype
-    public MoveForward moveForward;
-    //Only for testing movement on prototype
+    //[Header("Events")]
+    //public UnityEvent onDriving;
 
-    public GameObject activationSwitch;
-    public GameObject allocateButton;
-    public GameObject breakButton;
-
-    [SerializeField]
-    bool activationSwitchOn = false;
-    [SerializeField]
-    bool allocateButtonOn = false;
-    [SerializeField]
-    bool breakButtonOn = false;
-    [SerializeField]
-    bool driving = false;
-    [SerializeField]
-    bool holdingJoystick = false;
-    [SerializeField]
-    bool failureRecorded = false;
-
-    public TrainingState currentTraining;
-    public MachineController machineController;
-    public TaskDrill taskDrill;
-
-    public AudioSource audioSource;
     public AudioClip driveAudio;
-    bool audioOn = false;
-
-    public int neededCheckpoints = 5;
-    int currentCheckpoint = 0;
+    public List<SingleTask> taskControl = new List<SingleTask>();
+    GameObject lastCheckpoint = null;
 
     //Singelton
     public static TaskDrive instance;
 
+    private void Awake()
+    {
+        instance = this;
+    }
+
     public bool DriveMood
     {
-        get { return breakButtonOn; }
-        private set { breakButtonOn = value; }
+        get { return taskControl[2].isOn; }
+        private set { taskControl[2].isOn = value; }
     }
 
-    public int CurrentCheckpoint
+    public void TaskCheck(GameObject thisObject)
     {
-        get { return currentCheckpoint; }
-        set 
-        { 
-            currentCheckpoint = value;
-            currentTraining.UpdateTaskDriveProgress( neededCheckpoints, currentCheckpoint);
-        }
+        if (taskControl[0].TaskCheck(thisObject))
+            ActivationSwitch();
+        if (taskControl[1].TaskCheck(thisObject))
+            AllocateButton();
+        if (taskControl[2].TaskCheck(thisObject))
+            BreakButton();
     }
 
-    public bool HoldingJoystick
+    private void ActivationSwitch()
     {
-        get { return holdingJoystick; }
-        set 
+        if (taskControl[0].isOn)
         {
-            holdingJoystick = value;
+            machineController.ActivateEngine();
+        }
+        else
+        {
+
         }
     }
 
-    private void Start()
+    private void AllocateButton()
     {
-        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
-        machineController = GameObject.Find("Machine").GetComponent<MachineController>();
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
+        if (taskControl[1].isOn)
+        {
+            machineController.ReleaseBrakes();
+        }
+        else
+        {
+
+        }
     }
 
-    private void Update()
+    private void BreakButton()
+    {
+        if (taskControl[2].isOn)
+        {
+            machineController.ReleaseBrakes();
+        }
+        else
+        {
+            SetAudio(driveAudio, false, false);
+        }
+    }
+
+    public void Drive(Vector2 force, GameObject thisObject)
     {
         if (!holdingJoystick)
         {
-            failureRecorded = false;
+            SetAudio(driveAudio, false, false);
+            return;
         }
-    }
 
-    public void ActivateButton(GameObject thisObject)
-    {
-        ButtonSwitch(thisObject, activationSwitch, ref activationSwitchOn);
-        ButtonSwitch(thisObject, allocateButton, ref allocateButtonOn);
-        ButtonSwitch(thisObject, breakButton, ref breakButtonOn);
-    }
 
-    private void ButtonSwitch(GameObject thisObject, GameObject button, ref bool buttonOn)
-    {
-
-        if (thisObject == button)
+        if (TaskDrill.instance.MachineStabalized)
         {
-            if (!buttonOn)
-            {
-                buttonOn = true;
-
-                if (button == activationSwitch)
-                {
-                    machineController.ActivateEngine();
-                }
-                else if (button == breakButton)
-                {
-                    machineController.ReleaseBrakes();
-                }
-            }
-            else
-            { 
-                buttonOn = false;
-            }
+            DriveFailure(5);
+            return;
         }
-    }
 
-    //Take away input parameter thisobject when stop using method for testdrive
-    public void Drive(Vector2 force, GameObject thisObject)
-    {
-        if (holdingJoystick)
+        if (taskControl[0].isOn && taskControl[1].isOn)
         {
-            if (taskDrill.MachineStabalized && !failureRecorded)
+            if (taskControl[2].isOn)
             {
-                failureRecorded = true;
-                Debug.Log("Serius damage inflicted to vehicle");
-                currentTraining.MachineDamage += 5;
-                TaskFailure();
-                return;
-            }
+                SetAudio(driveAudio, true, false);
+                
 
-            if (activationSwitchOn && allocateButtonOn)
-            {
-                if (breakButtonOn)
+
+                if (!thisObject.CompareTag("LeftJoystick"))
                 {
-                    driving = true;
-
-                    if (!audioOn)
-                    {
-                        audioOn = true;
-                        audioSource.clip = driveAudio;
-                        audioSource.Play();
-                    }
-                    
-                    //Only for testing movement on prototype
-                    moveForward.DriveTest(force, thisObject);
-                    //Only for testing movement on prototype
-
+                    force = force * -1;
                     machineController.ChangeMovementForce(force);
                 }
-            }
-            else
-            {
-                if (!failureRecorded)
+                if (thisObject.CompareTag("LeftJoystick"))
                 {
-                    failureRecorded = true;
-                    Debug.Log(failureRecorded);
-                    TaskFailure();
+                    machineController.ChangeRotationForce(force);
                 }
             }
         }
         else
         {
-            driving = false;
-
-            if (audioOn)
-            {
-                audioSource.Stop();
-                audioSource.clip = null;
-            }
+            DriveFailure();
         }
     }
 
-    void TaskFailure()
+    public void DriveProgress(GameObject thisCheckpoint)
     {
-        Debug.Log("Drive task fail!");
-        currentTraining.UpdateTrainingFailures();
-        //Show ghost animation
+        if (thisCheckpoint != lastCheckpoint)
+        {
+            lastCheckpoint = thisCheckpoint;
+            currentIteration++;
+            TrainingState.instance.UpdateTaskDriveProgress(neededIterations, currentIteration);
+        }
+    }
+
+    void DriveFailure(int damage = 0)
+    {
+        if (failRecorded)
+            return;
+
+        failRecorded = true;
+        TaskFailure(damage);
+        TrainingState.instance.UpdateDriveFailure();
     }
 }

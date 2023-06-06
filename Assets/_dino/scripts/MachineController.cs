@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
+using static UnityEngine.Rendering.DebugUI;
 
 public class MachineController : MonoBehaviour {
 
@@ -69,13 +70,14 @@ public class MachineController : MonoBehaviour {
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(-1.75f, 1.75f)] public float SliderPosition;
     [ShowIf("@DrillActive")]
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, 100)] public float DrillSpinSpeed;
-    
-    
+
+
 
     #endregion
-    
+
     #region TorchVariables
 
+    public float torchSpeed = 5.0f;
     public float torchIntensity;
     public float torchSpread;
     public bool isTorchActive;
@@ -187,13 +189,20 @@ public class MachineController : MonoBehaviour {
     }
 
     public void ChangeTorchRotationX(Vector2 rot) { // plug this function in on the right joystick
-        var torchEuler = Torch.transform.eulerAngles;
-        Torch.transform.eulerAngles = new Vector3(rot.x, torchEuler.y);
+        //var torchEuler = Torch.transform.localEulerAngles;
+        //Torch.transform.eulerAngles += new Vector3(rot.x, torchEuler.y);
+        Torch.transform.localEulerAngles += new Vector3(rot.y * torchSpeed * Time.deltaTime, 0, 0);
+        
     }
     
     public void ChangeTorchRotationY(Vector2 rot) { // plug this function in on the left joystick
-        var torchEuler = Torch.transform.eulerAngles;
-        Torch.transform.eulerAngles = new Vector3(torchEuler.x, rot.y);
+        //var torchEuler = Torch.transform.localEulerAngles;
+        Torch.transform.localEulerAngles += new Vector3( 0, rot.x * torchSpeed * Time.deltaTime, 0);
+    }
+
+    public void ResetRotation()
+    {
+        Torch.transform.Rotate(0, 0, 0);
     }
 
     #endregion
@@ -325,6 +334,9 @@ public class MachineController : MonoBehaviour {
         if (Physics.Raycast(Torch.transform.position, Torch.transform.forward, out hit)) {
             if (hit.transform.CompareTag("Troll")) {
                 OnTrollHit?.Invoke();
+
+                //Destroy troll
+                Destroy(hit.transform.gameObject);
             }
         }
 

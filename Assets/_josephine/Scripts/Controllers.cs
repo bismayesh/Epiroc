@@ -6,10 +6,6 @@ public class Controllers : MonoBehaviour
 {
     public Transform switchTransform;
     public Renderer lightRenderer;
-    public TaskDrive taskDrive;
-    public TaskDrill taskDrill;
-    public TaskLight taskLights;
-    public SupportLevels supportLevels;
     public bool isActive = false;
 
     public Material MaterialOn;
@@ -17,14 +13,6 @@ public class Controllers : MonoBehaviour
 
     float localRotation;
     bool initialSwitch = true;
-
-    private void Start()
-    {
-        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-        taskLights = GameObject.Find("Torch").GetComponent<TaskLight>();
-        supportLevels = GameObject.Find("SupportLevels").GetComponent<SupportLevels>();
-    }
 
     public void ButtonPressed()
     {
@@ -40,9 +28,9 @@ public class Controllers : MonoBehaviour
             lightRenderer.material = MaterialOn;
         }
 
-        taskDrive.ActivateButton(this.gameObject);
-        taskLights.ActivateButton(this.gameObject);
-        supportLevels.UserSupport(this.gameObject);
+        TaskDrive.instance.TaskCheck(this.gameObject);
+        TaskTorch.instance.TaskCheck(this.gameObject);
+        SupportLevels.instance.UserSupport(this.gameObject);
     }
 
     public void TurnSwitch()
@@ -61,8 +49,8 @@ public class Controllers : MonoBehaviour
             lightRenderer.material = MaterialOn;
         }
 
-        taskDrive.ActivateButton(this.gameObject);
-        supportLevels.UserSupport(this.gameObject);
+        TaskDrive.instance.TaskCheck(this.gameObject);
+        SupportLevels.instance.UserSupport(this.gameObject);
     }
 
     public void Switch()
@@ -87,8 +75,8 @@ public class Controllers : MonoBehaviour
             lightRenderer.material = MaterialOn;
         }
 
-        taskDrive.ActivateButton(this.gameObject);
-        taskLights.ActivateButton(this.gameObject);
-        supportLevels.UserSupport(this.gameObject);
+        TaskDrive.instance.TaskCheck(this.gameObject);
+        TaskTorch.instance.TaskCheck(this.gameObject);
+        SupportLevels.instance.UserSupport(this.gameObject);
     }
 }

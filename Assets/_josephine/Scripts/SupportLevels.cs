@@ -21,6 +21,7 @@ public class SupportLevels : MonoBehaviour
     [Header("Intro")]
     public GameObject textBackground;
     public GameObject introText;
+    public float introTime = 10.0f;
 
     //Drive
     [Header("Drive")]
@@ -88,6 +89,9 @@ public class SupportLevels : MonoBehaviour
     bool supportStarted = false;
     bool supportTaskRunning = false;
 
+    //Singelton
+    public static SupportLevels instance;
+
     public bool DriveSupportOn
     {
         get { return driveSupportOn; }
@@ -106,6 +110,11 @@ public class SupportLevels : MonoBehaviour
         set { torchSupportOn = value; }
     }
 
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         textBackground.SetActive(true);
@@ -115,7 +124,7 @@ public class SupportLevels : MonoBehaviour
 
     IEnumerator DriveTaskDelay()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(introTime);
         introText.SetActive(false);
         textBackground.SetActive(false);
         driveSupportOn = true;
@@ -133,8 +142,6 @@ public class SupportLevels : MonoBehaviour
             DrillSupport(gameObject);
         }
     }
-
-    
 
     public void UserSupport(GameObject thisObject)
     {
@@ -344,7 +351,7 @@ public class SupportLevels : MonoBehaviour
 
     public void ToggleActive(InputAction.CallbackContext context)
     {
-        if (supportMenu && !holdingJoystick && !supportTaskRunning)
+        if (supportMenu && !holdingJoystick)
         {
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
@@ -372,22 +379,31 @@ public class SupportLevels : MonoBehaviour
 
     private void CheckSupportToggle(Toggle toggle,ref bool supportLayer)
     {
-        if (toggle.isOn)
-        {
-            toggle.isOn = false;
-            supportLayer = false;
-        }
-        else
-        {
-            toggle.isOn = true;
-            supportLayer = true;
-        }
+        toggle.isOn = !toggle.isOn;
+        supportLayer = toggle.isOn;
     }
 }
 
 
 
 //Testa och skriva om klassen
+
+/*
+public enum SupportLayer
+{
+    Text,
+    Light,
+    Voice,
+    Ghost
+}
+
+
+[System.Serializable]
+public class SupportSystem
+{
+    public List<SupportLayer> layers;
+} 
+
 public class Tasks
 {
     public List<GameObject> tasks = new List<GameObject>();
@@ -423,4 +439,5 @@ public class Tasks
         return false;
     }
 }
+*/
 

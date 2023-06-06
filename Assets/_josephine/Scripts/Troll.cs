@@ -2,53 +2,41 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class Patrol : MonoBehaviour
+public class Troll : MonoBehaviour
 {
     [HideInInspector]
     public Transform Gem = null;
     public Transform[] points;
     private int destPoint = 0;
     private NavMeshAgent agent;
-    private bool Gemspawned = false; 
+    private bool Gemspawned = false;
+
+    MachineController controller;
 
     void Start ()
     {
-        
-
         agent = GetComponent<NavMeshAgent>();
-
-        // Disabling auto-braking allows for continuous movement
-        // between points (ie, the agent doesn't slow down as it
-        // approaches a destination point).
+        points = TrollSpawner.instance.spawnPoints;
+        controller = FindObjectOfType<MachineController>();
+        
         agent.autoBraking = false;
-
         GotoNextPoint();
     }
 
-
     void GotoNextPoint()
     {
-        Debug.Log("Next waypoint");
-
-        // Returns if no points have been set up
         if (points.Length == 0)
             return;
         
 
-        // Set the agent to go to the currently selected destination.
         if (!Gemspawned)
         {
             agent.destination = points[destPoint].position;
         }
         else
         {
-            //Gem = GameObject.FindGameObjectWithTag("ChunkGem").transform;
-            //agent.destination = Gem.position;
             agent.destination = RandomGem();
         }
-
-        // Choose the next point in the array as the destination,
-        // cycling to the start if necessary.
         destPoint = (destPoint + 1) % points.Length;
     }
 
@@ -66,9 +54,7 @@ public class Patrol : MonoBehaviour
 
         if (GameObject.FindGameObjectWithTag("ChunkGem") != null)
         {
-            //Activate if statemant when cave colliders are in place
-            //Gemspawned = true;
-
+            Gemspawned = true;
         }
         else
         {
