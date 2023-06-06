@@ -20,6 +20,8 @@ public class TaskDrill : Task
     [SerializeField]
     bool spawnArea = false;
     bool firstTime = true;
+    bool torchInstruction = false;
+    bool instructionShowed = false;
     GemSpawnPoint gemSpawnPoint = null;
     [SerializeField]
     bool machineStabalized = false;
@@ -79,11 +81,15 @@ public class TaskDrill : Task
         {
             machineStabalized = false;
 
-            if (spawnTrolls)
+            if (torchInstruction && !instructionShowed)
+            {
+                instructionShowed = true;
+                TaskTorch.instance.FirstTorchInstructions();
+            }
+            else if (instructionShowed && spawnTrolls)
             {
                 spawnTrolls = false;
                 TrollSpawner.instance.InstanciateTrolls();
-                TaskTorch.instance.FirstTorchInstructions();
             }
         }
         else
@@ -143,6 +149,7 @@ public class TaskDrill : Task
                     spawnArea = false;
                     TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
                     gemSpawnPoint.SpawnGems();
+                    torchInstruction = true;
                     spawnTrolls = true;
                 }
             }
