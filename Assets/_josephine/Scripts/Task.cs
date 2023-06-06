@@ -79,19 +79,34 @@ public class Task : MonoBehaviour
 public class SingleTask
 {
     public GameObject task;
-    public bool isOn = false;
+    [SerializeField]
+    private bool isOn = false;
 
+    public GameObject supportText;
     public GameObject supportLight;
     public GameObject supportVoice;
     public GameObject supportGhost;
 
-    public bool TaskCheck(GameObject thisObject)
+    public bool IsOn
     {
-        if (thisObject == task)
+        get { return isOn; }
+        protected set { isOn = value; }
+    }
+
+    public bool TaskCheck(GameObject thisObject, bool setOn)
+    {
+        if (thisObject == task && setOn)
         {
-            ButtonSwitch();
+            //ButtonSwitch();
+            isOn = true;
             return true;
         }
+        if (thisObject == task && !setOn)
+        {
+            isOn = false;
+            return true;
+        }
+
         return false;
     }
 

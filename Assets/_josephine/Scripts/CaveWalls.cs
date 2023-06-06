@@ -8,7 +8,7 @@ public class CaveWalls : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Machine"))
         {
-            TrainingState.instance.MachineDamage(1);
+            TrainingState.instance.MachineDamage(5);
         }
 
         if (other.gameObject.CompareTag("ChunkGem"))

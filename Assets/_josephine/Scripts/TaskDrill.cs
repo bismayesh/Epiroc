@@ -14,9 +14,9 @@ public class TaskDrill : Task
     public TextMeshProUGUI textFrontJacks;
     public TextMeshProUGUI textRearJacks;
     [SerializeField]
-    bool frontJacksUp = false;
+    public bool frontJacksUp = false;
     [SerializeField]
-    bool rearJacksUp = false;
+    public bool rearJacksUp = false;
     [SerializeField]
     bool spawnArea = false;
     bool firstTime = true;
@@ -33,8 +33,7 @@ public class TaskDrill : Task
 
     public bool DrillMood
     {
-        get { return taskControl[0].isOn; }
-        private set { taskControl[0].isOn = value; }
+        get { return taskControl[0].IsOn; }
     }
 
     public bool MachineStabalized
@@ -71,19 +70,20 @@ public class TaskDrill : Task
         if (spawnArea && firstTime)
         {
             firstTime = false;
-            SupportLevels.instance.DrillInstructions();
+            SupportLevels.instance.SupportInstructions(SupportMood.Drill);
         }
     }
 
     void MachineStabalised()
     {
-        if (!taskControl[0].isOn && !taskControl[1].isOn && !taskControl[2].isOn)
+        if (!taskControl[0].IsOn && !taskControl[1].IsOn && !taskControl[2].IsOn)
         {
             machineStabalized = false;
 
             if (torchInstruction && !instructionShowed)
             {
                 instructionShowed = true;
+                spawnTrolls = false;
                 TaskTorch.instance.FirstTorchInstructions();
             }
             else if (instructionShowed && spawnTrolls)
@@ -98,19 +98,19 @@ public class TaskDrill : Task
         }
     }
 
-    public void TaskCheck(GameObject thisObject)
+    public void TaskCheck(GameObject thisObject, bool setOn)
     {
-        if (taskControl[0].TaskCheck(thisObject))
+        if (taskControl[0].TaskCheck(thisObject, setOn))
             JacksLever();
-        if (taskControl[1].TaskCheck(thisObject))
+        if (taskControl[1].TaskCheck(thisObject, setOn))
             JacksToggle();
-        if (taskControl[2].TaskCheck(thisObject))
+        if (taskControl[2].TaskCheck(thisObject, setOn))
             DrillLever();
     }
 
     private void JacksLever()
     {
-        if (taskControl[0].isOn)
+        if (taskControl[0].IsOn)
         {
             SetAudio(drillAudio[0], true, true);
             machineController.ExtendJacks();
@@ -124,7 +124,7 @@ public class TaskDrill : Task
 
     private void JacksToggle()
     {
-        if (taskControl[1].isOn)
+        if (taskControl[1].IsOn)
         {
             
         }
@@ -136,9 +136,9 @@ public class TaskDrill : Task
 
     private void DrillLever()
     {
-        if (taskControl[2].isOn)
+        if (taskControl[2].IsOn)
         {
-            if (taskControl[0].isOn && frontJacksUp && rearJacksUp)
+            if (taskControl[0].IsOn && frontJacksUp && rearJacksUp)
             {
                 SetAudio(drillAudio[1], true, false);
                 machineController.ActivateDrill();
@@ -174,17 +174,15 @@ public class TaskDrill : Task
             return;
         }
 
-        if (TaskTorch.instance.taskControl[2].isOn)
+        if (TaskTorch.instance.taskControl[2].IsOn)
         {
             DrillFailure(3);
             return;
         }
 
-        if (taskControl[0].isOn)
+        if (taskControl[0].IsOn)
         {
-            Debug.Log(value);
-
-            if (taskControl[1].isOn)
+            if (taskControl[1].IsOn)
             {
                 if (value.y >= 0.4f)
                 {

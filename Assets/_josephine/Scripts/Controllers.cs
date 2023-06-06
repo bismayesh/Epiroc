@@ -21,16 +21,18 @@ public class Controllers : MonoBehaviour
         {
             isActive = false;
             lightRenderer.material = MaterialOff;
+            TaskDrive.instance.TaskCheck(this.gameObject, false);
+            TaskTorch.instance.TaskCheck(this.gameObject, false);
         }
         else
         {
             isActive = true;
             lightRenderer.material = MaterialOn;
+            TaskDrive.instance.TaskCheck(this.gameObject, true);
+            TaskTorch.instance.TaskCheck(this.gameObject, true);
         }
 
-        TaskDrive.instance.TaskCheck(this.gameObject);
-        TaskTorch.instance.TaskCheck(this.gameObject);
-        SupportLevels.instance.UserSupport(this.gameObject);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 
     public void TurnSwitch()
@@ -42,15 +44,16 @@ public class Controllers : MonoBehaviour
         {
             isActive = false;
             lightRenderer.material = MaterialOff;
+            TaskDrive.instance.TaskCheck(this.gameObject, false);
         }
         else
         {
             isActive = true;
             lightRenderer.material = MaterialOn;
+            TaskDrive.instance.TaskCheck(this.gameObject, true);
         }
 
-        TaskDrive.instance.TaskCheck(this.gameObject);
-        SupportLevels.instance.UserSupport(this.gameObject);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 
     public void Switch()
@@ -68,15 +71,17 @@ public class Controllers : MonoBehaviour
         {
             isActive = false;
             lightRenderer.material = MaterialOff;
+            TaskDrive.instance.TaskCheck(this.gameObject, false);
+            TaskTorch.instance.TaskCheck(this.gameObject, false);
         }
         else
         {
             isActive = true;
             lightRenderer.material = MaterialOn;
+            TaskDrive.instance.TaskCheck(this.gameObject, true);
+            TaskTorch.instance.TaskCheck(this.gameObject, true);
         }
 
-        TaskDrive.instance.TaskCheck(this.gameObject);
-        TaskTorch.instance.TaskCheck(this.gameObject);
-        SupportLevels.instance.UserSupport(this.gameObject);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 }

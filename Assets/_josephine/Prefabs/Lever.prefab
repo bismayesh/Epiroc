@@ -573,7 +573,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4814014550528057161}
         m_TargetAssemblyTypeName: Lever, Assembly-CSharp
-        m_MethodName: SwitchOnOff
+        m_MethodName: SwitchOff
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -588,7 +588,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4814014550528057161}
         m_TargetAssemblyTypeName: Lever, Assembly-CSharp
-        m_MethodName: SwitchOnOff
+        m_MethodName: SwitchOn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -40,9 +40,15 @@ public class Lever : MonoBehaviour
         }
     }
 
-    public void SwitchOnOff()
+    public void SwitchOn()
     {
-        TaskDrill.instance.TaskCheck(gameObject);
-        SupportLevels.instance.UserSupport(gameObject);
+        TaskDrill.instance.TaskCheck(gameObject, true);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
+    }
+
+    public void SwitchOff()
+    {
+        TaskDrill.instance.TaskCheck(gameObject, false);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 }

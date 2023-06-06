@@ -75,7 +75,7 @@ public class TrainingState : MonoBehaviour
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
         textTrainingFailures.text =  "Failures: " + trainingFailures;
         textTrainingScore.text = "Training score: " + trainingScore;
-        textTrainingScoreMultiplier.text = scoreMultiplier.ToString() + "X";
+        textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
 
         textTaskDriveProgress.text = taskDriveProgress + "%";
         textTaskDriveFailures.text = taskDriveFailures.ToString();
@@ -83,6 +83,7 @@ public class TrainingState : MonoBehaviour
         UpdateDamageMeter();
     }
 
+    /*
     void LateUpdate()
     {
         if (smoothLocomotionChanged)
@@ -93,6 +94,7 @@ public class TrainingState : MonoBehaviour
 
         playerPosition.localPosition = playerStartPosition;
     }
+    */
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
@@ -114,7 +116,7 @@ public class TrainingState : MonoBehaviour
         textTaskTorchProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
 
         trollsKill++;
-        textTrainingTrollsKill.text = trollsKill.ToString();
+        textTrainingTrollsKill.text = "Trolls Kill: " + trollsKill.ToString();
 
         UpdateTrainingProgress();
     }
@@ -150,8 +152,8 @@ public class TrainingState : MonoBehaviour
         scoreMultiplier *= 2;
         gemsCount++;
         textTrainingScore.text = "Score: " + trainingScore;
-        textTrainingScoreMultiplier.text = scoreMultiplier.ToString() + "X";
-        textTrainingGemsCount.text = gemsCount.ToString();
+        textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
+        textTrainingGemsCount.text = "Gems: " + gemsCount.ToString();
     }
 
     public void UpdateTrainingFailures()

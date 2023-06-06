@@ -52,7 +52,7 @@ public class GemSpawnPoint : MonoBehaviour
         {
             foreach (var g in gemObjects)
             {
-                Vector3 randomDir = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(5.0f, 15.0f), Random.Range(-5.0f, 5.0f));
+                Vector3 randomDir = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(5.0f, 10.0f), Random.Range(-3.0f, 3.0f));
                 var gem = Instantiate(g, spawnPosition, Quaternion.identity);
                 gem.GetComponent<Rigidbody>().AddForce(randomDir, ForceMode.Impulse);
 

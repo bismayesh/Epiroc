@@ -50,7 +50,7 @@ public class JoyStick : MonoBehaviour
             TaskDrive.instance.HoldingJoystick = false;
             TaskDrill.instance.HoldingJoystick = false;
             TaskTorch.instance.HoldingJoystick = false;
-            SupportLevels.instance.holdingJoystick = false;
+            SupportLevels.instance.HoldingJoystick = false;
         }
     }
 
@@ -69,7 +69,7 @@ public class JoyStick : MonoBehaviour
             TaskDrive.instance.HoldingJoystick = true;
             TaskDrill.instance.HoldingJoystick = true;
             TaskTorch.instance.HoldingJoystick = true;
-            SupportLevels.instance.holdingJoystick = true;
+            SupportLevels.instance.HoldingJoystick = true;
         }
     }
 
@@ -100,17 +100,20 @@ public class JoyStick : MonoBehaviour
             {
                 isActive = false;
                 light.material = MaterialOff;
+                TaskDrive.instance.TaskCheck(topButton, false);
+                TaskDrill.instance.TaskCheck(topButton, false);
+                TaskTorch.instance.TaskCheck(topButton, false);
             }
             else
             {
                 isActive = true;
                 light.material = MaterialOn;
+                TaskDrive.instance.TaskCheck(topButton, true);
+                TaskDrill.instance.TaskCheck(topButton, true);
+                TaskTorch.instance.TaskCheck(topButton, true);
             }
 
-            TaskDrive.instance.TaskCheck(topButton);
-            TaskDrill.instance.TaskCheck(topButton);
-            TaskTorch.instance.TaskCheck(topButton);
-            SupportLevels.instance.UserSupport(topButton);
+            SupportLevels.instance.SupportInstructions( SupportMood.Old, topButton);
         }
     }
 

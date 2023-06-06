@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Troll : MonoBehaviour
 {
@@ -42,8 +43,10 @@ public class Troll : MonoBehaviour
 
     private Vector3 RandomGem()
     {
-        GameObject[] gems = GameObject.FindGameObjectsWithTag("ChunkGem");
-        Vector3 gem = gems[Random.Range(0, gems.Length - 1)].transform.position;
+        List<GameObject> gems = new List<GameObject>();
+        gems.AddRange(GameObject.FindGameObjectsWithTag("ChunkGem"));
+        gems.RemoveAll(x => x == null);
+        Vector3 gem = gems[Random.Range(0, gems.Count - 1)].transform.position;
         return gem;
     }
 
@@ -60,14 +63,6 @@ public class Troll : MonoBehaviour
         {
             Gemspawned = false;
             Gem = null;
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "ChunkGem")
-        {
-            Destroy(collision.gameObject);
         }
     }
 

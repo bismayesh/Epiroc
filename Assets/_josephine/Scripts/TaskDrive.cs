@@ -22,23 +22,22 @@ public class TaskDrive : Task
 
     public bool DriveMood
     {
-        get { return taskControl[2].isOn; }
-        private set { taskControl[2].isOn = value; }
+        get { return taskControl[2].IsOn; }
     }
 
-    public void TaskCheck(GameObject thisObject)
+    public void TaskCheck(GameObject thisObject, bool setOn)
     {
-        if (taskControl[0].TaskCheck(thisObject))
+        if (taskControl[0].TaskCheck(thisObject, setOn))
             ActivationSwitch();
-        if (taskControl[1].TaskCheck(thisObject))
+        if (taskControl[1].TaskCheck(thisObject, setOn))
             AllocateButton();
-        if (taskControl[2].TaskCheck(thisObject))
+        if (taskControl[2].TaskCheck(thisObject, setOn))
             BreakButton();
     }
 
     private void ActivationSwitch()
     {
-        if (taskControl[0].isOn)
+        if (taskControl[0].IsOn)
         {
             machineController.ActivateEngine();
         }
@@ -50,7 +49,7 @@ public class TaskDrive : Task
 
     private void AllocateButton()
     {
-        if (taskControl[1].isOn)
+        if (taskControl[1].IsOn)
         {
             machineController.ReleaseBrakes();
         }
@@ -62,7 +61,7 @@ public class TaskDrive : Task
 
     private void BreakButton()
     {
-        if (taskControl[2].isOn)
+        if (taskControl[2].IsOn)
         {
             machineController.ReleaseBrakes();
         }
@@ -87,9 +86,9 @@ public class TaskDrive : Task
             return;
         }
 
-        if (taskControl[0].isOn && taskControl[1].isOn)
+        if (taskControl[0].IsOn && taskControl[1].IsOn)
         {
-            if (taskControl[2].isOn)
+            if (taskControl[2].IsOn)
             {
                 SetAudio(driveAudio, true, false);
                 

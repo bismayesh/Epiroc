@@ -19,8 +19,7 @@ public class TaskTorch : Task
 
     public bool LightMood
     {
-        get { return taskControl[0].isOn; }
-        private set { taskControl[0].isOn = value; }
+        get { return taskControl[0].IsOn; }
     }
 
     public void FirstTorchInstructions()
@@ -28,23 +27,23 @@ public class TaskTorch : Task
         if (firstTime)
         {
             firstTime = false;
-            SupportLevels.instance.TorchInstructions();
+            SupportLevels.instance.SupportInstructions(SupportMood.Torch);
         }
     }
 
-    public void TaskCheck(GameObject thisObject)
+    public void TaskCheck(GameObject thisObject, bool setOn)
     {
-        if (taskControl[0].TaskCheck(thisObject))
+        if (taskControl[0].TaskCheck(thisObject, setOn))
             ActivateButton();
-        if (taskControl[1].TaskCheck(thisObject))
+        if (taskControl[1].TaskCheck(thisObject, setOn))
             FucusSlider();
-        if (taskControl[2].TaskCheck(thisObject))
+        if (taskControl[2].TaskCheck(thisObject, setOn))
             IntensitySlider();
     }
 
     private void ActivateButton()
     {
-        if (taskControl[0].isOn)
+        if (taskControl[0].IsOn)
         {
             machineController.ActivateTorch();
         }
@@ -56,7 +55,7 @@ public class TaskTorch : Task
     
     private void FucusSlider()
     {
-        if (taskControl[1].isOn)
+        if (taskControl[1].IsOn)
         {
             machineController.torchSpread = 0.0f;
         }
@@ -68,7 +67,7 @@ public class TaskTorch : Task
 
     private void IntensitySlider()
 {
-        if (taskControl[2].isOn)
+        if (taskControl[2].IsOn)
         {
             machineController.torchIntensity = 5.0f;
         }
@@ -94,7 +93,7 @@ public class TaskTorch : Task
             return;
         }
 
-        if (taskControl[0].isOn && taskControl[1].isOn && taskControl[2].isOn)
+        if (taskControl[0].IsOn && taskControl[1].IsOn && taskControl[2].IsOn)
         {
             //SetAudio(torchAudio, true);
 
