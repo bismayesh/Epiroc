@@ -54,6 +54,7 @@ public class SupportLevels : MonoBehaviour
     bool taskJacksComplete = false;
     [SerializeField]
     bool taskHasRun = false;
+    bool firstTrollSpawn = true;
 
     //Torch
     [Header("Torch")]
@@ -335,6 +336,12 @@ public class SupportLevels : MonoBehaviour
             supportStarted = false;
             torchSupportOn = false;
             supportTaskRunning = false;
+
+            if (firstTrollSpawn)
+            {
+                firstTrollSpawn = false;
+                TrollSpawner.instance.InstanciateTrolls();
+            }
         }
     }
 
