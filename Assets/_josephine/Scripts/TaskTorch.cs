@@ -34,14 +34,14 @@ public class TaskTorch : Task
     public void TaskCheck(GameObject thisObject, bool setOn)
     {
         if (taskControl[0].TaskCheck(thisObject, setOn))
-            ActivateButton();
+            ActivateSwitch();
         if (taskControl[1].TaskCheck(thisObject, setOn))
-            FucusSlider();
+            FucusButton();
         if (taskControl[2].TaskCheck(thisObject, setOn))
-            IntensitySlider();
+            LightBeamButton();
     }
 
-    private void ActivateButton()
+    private void ActivateSwitch()
     {
         if (taskControl[0].IsOn)
         {
@@ -52,8 +52,8 @@ public class TaskTorch : Task
             machineController.DeactivateTorch();
         }
     }
-    
-    private void FucusSlider()
+
+    private void FucusButton()
     {
         if (taskControl[1].IsOn)
         {
@@ -65,10 +65,21 @@ public class TaskTorch : Task
         }
     }
 
-    private void IntensitySlider()
-{
+    private void LightBeamButton()
+    {
         if (taskControl[2].IsOn)
         {
+            if (!taskControl[0].IsOn || !taskControl[0].IsOn)
+            {
+                TorchFailure();
+            }
+
+            if (TaskDrill.instance.MachineStabalized)
+            {
+                TorchFailure(5);
+                return;
+            }
+
             machineController.torchIntensity = 5.0f;
         }
         else
@@ -77,7 +88,26 @@ public class TaskTorch : Task
         }
     }
 
-    public void Torch(Vector2 rotation, GameObject thisObject)
+    public void TorchProgress()
+    {
+        currentIteration++;
+        TrainingState.instance.UpdateTaskTorchProgress(neededIterations, currentIteration);
+    }
+
+    void TorchFailure(int damage = 0)
+    {
+        if (failRecorded)
+            return;
+
+        failRecorded = true;
+        TaskFailure(damage);
+        TrainingState.instance.UpdateTorchFailure();
+    }
+}
+
+
+/*
+     public void Torch(Vector2 rotation, GameObject thisObject)
     {
         if (!holdingJoystick)
         {
@@ -113,20 +143,4 @@ public class TaskTorch : Task
             TorchFailure();
         }
     }
-
-    public void TorchProgress()
-    {
-        currentIteration++;
-        TrainingState.instance.UpdateTaskTorchProgress(neededIterations, currentIteration);
-    }
-
-    void TorchFailure(int damage = 0)
-    {
-        if (failRecorded)
-            return;
-
-        failRecorded = true;
-        TaskFailure(damage);
-        TrainingState.instance.UpdateTorchFailure();
-    }
-}
+*/

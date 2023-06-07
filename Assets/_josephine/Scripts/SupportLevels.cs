@@ -36,11 +36,10 @@ public class SupportLevels : MonoBehaviour
     //Tasks
     List<SingleTask> driveTasks;
     List<SingleTask> drillTasks;
-    List <SingleTask> torchTasks;
+    List<SingleTask> torchTasks;
     public SupportMood supportMood;
     [SerializeField]
     int index = 0;
-    bool jacksUp = false;
     bool firstTorchInstruction = true;
 
     //Supportlayers
@@ -76,14 +75,6 @@ public class SupportLevels : MonoBehaviour
         SupportInstructions(SupportMood.Intro);
     }
 
-    private void FixedUpdate()
-    {
-        if (supportMood == SupportMood.Drill && TaskDrill.instance.frontJacksUp && TaskDrill.instance.rearJacksUp)
-        {
-            SupportLayerChain(drillTasks);
-        }
-    }
-
     public void SupportInstructions(SupportMood newMood = SupportMood.Old, GameObject thisObject = null, bool resetIndex = false)
     {
         if (newMood != SupportMood.Old)
@@ -99,7 +90,7 @@ public class SupportLevels : MonoBehaviour
             case SupportMood.Drive: SupportLayerChain(driveTasks, thisObject); break;
             case SupportMood.Drill: SupportLayerChain(drillTasks, thisObject); break;
             case SupportMood.Torch: SupportLayerChain(torchTasks, thisObject); break;
-        } 
+        }
     }
 
     void IntroSupport()
@@ -122,8 +113,6 @@ public class SupportLevels : MonoBehaviour
     {
         if (index == 0 || tasks[index - 1].task == thisObject)
         {
-            jacksUp = false;
-
             if (index == tasks.Count)
             {
                 if (supportMood == SupportMood.Torch && firstTorchInstruction)
@@ -220,7 +209,7 @@ public class SupportLevels : MonoBehaviour
     public void ButtonTextSupport()
     {
         ResetSupportLayers();
-        CheckSupportToggle(supportTextToggle,ref supportlayerText);
+        CheckSupportToggle(supportTextToggle, ref supportlayerText);
     }
 
     public void ButtonLightSupport()
@@ -241,7 +230,7 @@ public class SupportLevels : MonoBehaviour
         CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
     }
 
-    private void CheckSupportToggle(Toggle toggle,ref bool supportLayer)
+    private void CheckSupportToggle(Toggle toggle, ref bool supportLayer)
     {
         toggle.isOn = !toggle.isOn;
         supportLayer = toggle.isOn;
