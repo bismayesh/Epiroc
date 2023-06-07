@@ -52,7 +52,7 @@ public class TaskTorch : Task
             machineController.DeactivateTorch();
         }
     }
-    
+
     private void FucusButton()
     {
         if (taskControl[1].IsOn)
@@ -66,7 +66,7 @@ public class TaskTorch : Task
     }
 
     private void LightBeamButton()
-{
+    {
         if (taskControl[2].IsOn)
         {
             if (!taskControl[0].IsOn || !taskControl[0].IsOn)

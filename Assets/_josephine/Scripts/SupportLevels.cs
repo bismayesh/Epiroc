@@ -36,7 +36,7 @@ public class SupportLevels : MonoBehaviour
     //Tasks
     List<SingleTask> driveTasks;
     List<SingleTask> drillTasks;
-    List <SingleTask> torchTasks;
+    List<SingleTask> torchTasks;
     public SupportMood supportMood;
     [SerializeField]
     int index = 0;
@@ -90,7 +90,7 @@ public class SupportLevels : MonoBehaviour
             case SupportMood.Drive: SupportLayerChain(driveTasks, thisObject); break;
             case SupportMood.Drill: SupportLayerChain(drillTasks, thisObject); break;
             case SupportMood.Torch: SupportLayerChain(torchTasks, thisObject); break;
-        } 
+        }
     }
 
     void IntroSupport()
@@ -209,7 +209,7 @@ public class SupportLevels : MonoBehaviour
     public void ButtonTextSupport()
     {
         ResetSupportLayers();
-        CheckSupportToggle(supportTextToggle,ref supportlayerText);
+        CheckSupportToggle(supportTextToggle, ref supportlayerText);
     }
 
     public void ButtonLightSupport()
@@ -230,7 +230,7 @@ public class SupportLevels : MonoBehaviour
         CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
     }
 
-    private void CheckSupportToggle(Toggle toggle,ref bool supportLayer)
+    private void CheckSupportToggle(Toggle toggle, ref bool supportLayer)
     {
         toggle.isOn = !toggle.isOn;
         supportLayer = toggle.isOn;

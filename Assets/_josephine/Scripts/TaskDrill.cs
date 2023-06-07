@@ -122,11 +122,11 @@ public class TaskDrill : Task
     {
         if (taskControl[1].IsOn)
         {
-            
+
         }
         else
         {
-            
+
         }
     }
 
