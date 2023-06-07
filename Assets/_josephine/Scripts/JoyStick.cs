@@ -75,9 +75,12 @@ public class JoyStick : MonoBehaviour
 
     public void ReadJoystickInput(Vector2 value)
     {
+        TaskDrive.instance.Drive(value, this.gameObject);
+
+        /*
         if (TaskDrive.instance.DriveMood)
         {
-            TaskDrive.instance.Drive(value, this.gameObject);
+            
         }
 
         /*
