@@ -75,9 +75,12 @@ public class JoyStick : MonoBehaviour
 
     public void ReadJoystickInput(Vector2 value)
     {
+        TaskDrive.instance.Drive(value, this.gameObject);
+
+        /*
         if (TaskDrive.instance.DriveMood)
         {
-            TaskDrive.instance.Drive(value, this.gameObject);
+            
         }
         else if (TaskDrill.instance.DrillMood)
         {
@@ -87,6 +90,7 @@ public class JoyStick : MonoBehaviour
         {
             TaskTorch.instance.Torch(value, this.gameObject);
         }
+        */
     }
 
     private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
