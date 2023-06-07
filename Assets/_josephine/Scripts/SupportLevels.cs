@@ -40,7 +40,6 @@ public class SupportLevels : MonoBehaviour
     public SupportMood supportMood;
     [SerializeField]
     int index = 0;
-    bool jacksUp = false;
     bool firstTorchInstruction = true;
 
     //Supportlayers
@@ -74,14 +73,6 @@ public class SupportLevels : MonoBehaviour
         torchTasks = TaskTorch.instance.taskControl;
 
         SupportInstructions(SupportMood.Intro);
-    }
-
-    private void FixedUpdate()
-    {
-        if (supportMood == SupportMood.Drill && TaskDrill.instance.frontJacksUp && TaskDrill.instance.rearJacksUp)
-        {
-            SupportLayerChain(drillTasks);
-        }
     }
 
     public void SupportInstructions(SupportMood newMood = SupportMood.Old, GameObject thisObject = null, bool resetIndex = false)
@@ -122,8 +113,6 @@ public class SupportLevels : MonoBehaviour
     {
         if (index == 0 || tasks[index - 1].task == thisObject)
         {
-            jacksUp = false;
-
             if (index == tasks.Count)
             {
                 if (supportMood == SupportMood.Torch && firstTorchInstruction)
