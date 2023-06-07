@@ -80,7 +80,6 @@ public class SupportLevels : MonoBehaviour
     {
         if (supportMood == SupportMood.Drill && TaskDrill.instance.frontJacksUp && TaskDrill.instance.rearJacksUp)
         {
-            jacksUp = true;
             SupportLayerChain(drillTasks);
         }
     }
@@ -121,7 +120,7 @@ public class SupportLevels : MonoBehaviour
 
     void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
     {
-        if (index == 0 || tasks[index - 1].task == thisObject || supportMood == SupportMood.Drill && index == 2 && jacksUp)
+        if (index == 0 || tasks[index - 1].task == thisObject)
         {
             jacksUp = false;
 

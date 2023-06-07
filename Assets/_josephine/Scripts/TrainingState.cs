@@ -196,8 +196,12 @@ public class TrainingState : MonoBehaviour
         float damageSize = 1.0f / (float)maxDamage;
         float meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
 
-        damageMeter.localScale = new Vector3(meterSize, 1, 1);
-        damageIndicator.material.color = damageColor.Evaluate(meterSize);
-        //damageIndicator.material.SetColor("_EmissiveColor", emissiveColor.Evaluate(meterSize) * 3.9f);
+        if (damageSize >= 0)
+        {
+            damageMeter.localScale = new Vector3(meterSize, 1, 1);
+            damageIndicator.material.color = damageColor.Evaluate(meterSize);
+            //damageIndicator.material.SetColor("_EmissiveColor", emissiveColor.Evaluate(meterSize) * 3.9f);
+        }
+
     }
 }
