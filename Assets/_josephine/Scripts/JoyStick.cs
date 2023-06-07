@@ -79,6 +79,8 @@ public class JoyStick : MonoBehaviour
         {
             TaskDrive.instance.Drive(value, this.gameObject);
         }
+
+        /*
         else if (TaskDrill.instance.DrillMood)
         {
             TaskDrill.instance.Drill(value);
@@ -87,6 +89,7 @@ public class JoyStick : MonoBehaviour
         {
             TaskTorch.instance.Torch(value, this.gameObject);
         }
+        */
     }
 
     private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
