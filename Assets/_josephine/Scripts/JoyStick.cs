@@ -82,6 +82,8 @@ public class JoyStick : MonoBehaviour
         {
             
         }
+
+        /*
         else if (TaskDrill.instance.DrillMood)
         {
             TaskDrill.instance.Drill(value);
