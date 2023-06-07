@@ -99,7 +99,6 @@ public class TrainingState : MonoBehaviour
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
         textTaskDriveProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
-
         UpdateTrainingProgress();
     }
 
@@ -107,17 +106,14 @@ public class TrainingState : MonoBehaviour
     {
         currentIt++;
         textTaskDrillProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
-
         UpdateTrainingProgress();
     }
 
     public void UpdateTaskTorchProgress(int neededIt, int currentIt)
     {
         textTaskTorchProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
-
         trollsKill++;
         textTrainingTrollsKill.text = "Trolls Kill: " + trollsKill.ToString();
-
         UpdateTrainingProgress();
     }
 
