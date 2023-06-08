@@ -22,6 +22,7 @@ public class Controllers : MonoBehaviour
             isActive = false;
             lightRenderer.material = MaterialOff;
             TaskDrive.instance.TaskCheck(this.gameObject, false);
+            TaskDrill.instance.TaskCheck(this.gameObject, false);
             TaskTorch.instance.TaskCheck(this.gameObject, false);
         }
         else
@@ -29,6 +30,7 @@ public class Controllers : MonoBehaviour
             isActive = true;
             lightRenderer.material = MaterialOn;
             TaskDrive.instance.TaskCheck(this.gameObject, true);
+            TaskDrill.instance.TaskCheck(this.gameObject, true);
             TaskTorch.instance.TaskCheck(this.gameObject, true);
         }
 

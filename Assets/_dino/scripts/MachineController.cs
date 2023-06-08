@@ -56,8 +56,8 @@ public class MachineController : MonoBehaviour {
     #endregion
     #region MachineVariables
 
-    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-100 , 100)] public float MachineMovementForce = 4;
-    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-180, 180)] public float MachineRotationForce = 32;
+    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-100 , 100)] public float MachineMovementForce;
+    [PropertyOrder(1)] [TabGroup("Machine Controlls")] [Range(-180, 180)] public float MachineRotationForce;
 
     #endregion
     #region DrillVariables
@@ -86,7 +86,7 @@ public class MachineController : MonoBehaviour {
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
-        transform.Translate(Vector3.forward * force.y * MachineMovementForce * Time.deltaTime);
+        transform.Translate(Vector3.forward * force.y * MachineMovementForce * Time.deltaTime * 4);
     }
 
     public void ChangeRotationForce(Vector2 force){

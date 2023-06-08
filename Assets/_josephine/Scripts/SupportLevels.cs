@@ -32,6 +32,9 @@ public class SupportLevels : MonoBehaviour
     public GameObject textBackground;
     public GameObject introText;
     public float introTime = 10.0f;
+    [HideInInspector]
+    public AudioSource AudioSource;
+    bool introFinnished = false;
 
     //Tasks
     List<SingleTask> driveTasks;
@@ -68,10 +71,12 @@ public class SupportLevels : MonoBehaviour
 
     private void Start()
     {
+        AudioSource = GetComponent<AudioSource>();
         driveTasks = TaskDrive.instance.taskControl;
         drillTasks = TaskDrill.instance.taskControl;
         torchTasks = TaskTorch.instance.taskControl;
 
+        ResetSupportLayers();
         SupportInstructions(SupportMood.Intro);
     }
 
@@ -105,13 +110,14 @@ public class SupportLevels : MonoBehaviour
         yield return new WaitForSeconds(introTime);
         introText.SetActive(false);
         textBackground.SetActive(false);
+        introFinnished = true;
 
         SupportInstructions(SupportMood.Drive);
     }
 
     void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
     {
-        if (index == 0 || tasks[index - 1].task == thisObject)
+        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject)
         {
             if (index == tasks.Count)
             {
@@ -130,8 +136,13 @@ public class SupportLevels : MonoBehaviour
             if (supportlayerText)
             {
                 textBackground.SetActive(true);
-                if (index != 0) tasks[index - 1].supportText.SetActive(false);
+                if (index != 0)
+                {
+                    tasks[index - 1].supportText.SetActive(false);
+                    tasks[index - 1].supportTextSmall.SetActive(false);
+                }
                 tasks[index].supportText.SetActive(true);
+                tasks[index].supportTextSmall.SetActive(true);
             }
             if (supportlayerLight)
             {
@@ -141,17 +152,16 @@ public class SupportLevels : MonoBehaviour
             /*
             if (supportlayerVoice)
             {
-                if (index != 0)
-                    tasks[index - 1].supportVoice.SetActive(false);
-                tasks[index].supportVoice.SetActive(true);
+                AudioSource.Stop();
+                AudioSource.PlayOneShot(tasks[index].supportVoice);
             }
             if (supportlayerGhost)
             {
                 if (index != 0)
                     tasks[index - 1].supportGhost.SetActive(false);
                 tasks[index].supportGhost.SetActive(true);
-            }*/
-
+            }
+            */
             index++;
         }
     }
@@ -164,6 +174,7 @@ public class SupportLevels : MonoBehaviour
         foreach (SingleTask task in driveTasks)
         {
             task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
             //task.supportVoice.SetActive(false);
             //task.supportGhost.SetActive(false);
@@ -172,6 +183,7 @@ public class SupportLevels : MonoBehaviour
         foreach (SingleTask task in drillTasks)
         {
             task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
             //task.supportVoice.SetActive(false);
             //task.supportGhost.SetActive(false);
@@ -180,6 +192,7 @@ public class SupportLevels : MonoBehaviour
         foreach (SingleTask task in torchTasks)
         {
             task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
             //task.supportVoice.SetActive(false);
             //task.supportGhost.SetActive(false);
@@ -196,36 +209,54 @@ public class SupportLevels : MonoBehaviour
 
     public void ButtonDrill()
     {
+        if (!introFinnished)
+            return;
+
         ResetSupportLayers();
         SupportInstructions(SupportMood.Drill, default, true);
     }
 
     public void ButtonTorch()
     {
+        if (!introFinnished)
+            return;
+
         ResetSupportLayers();
         SupportInstructions(SupportMood.Torch, default, true);
     }
 
     public void ButtonTextSupport()
     {
+        if (!introFinnished)
+            return;
+
         ResetSupportLayers();
         CheckSupportToggle(supportTextToggle, ref supportlayerText);
     }
 
     public void ButtonLightSupport()
     {
+        if (!introFinnished)
+            return;
+
         ResetSupportLayers();
         CheckSupportToggle(supportLightToggle, ref supportlayerLight);
     }
 
     public void ButtonVoiceSupport()
     {
+        if (!introFinnished)
+            return;
+
         ResetSupportLayers();
         CheckSupportToggle(supportVoiceToggle, ref supportlayerVoice);
     }
 
     public void ButtonGhostSupport()
     {
+        if (!introFinnished)
+            return;
+
         ResetSupportLayers();
         CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
     }

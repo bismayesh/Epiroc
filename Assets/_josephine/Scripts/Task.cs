@@ -11,9 +11,7 @@ public class Task : MonoBehaviour
     public AudioSource audioSource;
     bool audioIsOn = false;
 
-    [SerializeField]
     protected bool holdingJoystick = false;
-    [SerializeField]
     public bool failRecorded = false;
 
     [HideInInspector]
@@ -83,8 +81,9 @@ public class SingleTask
     private bool isOn = false;
 
     public GameObject supportText;
+    public GameObject supportTextSmall;
     public GameObject supportLight;
-    public GameObject supportVoice;
+    public AudioClip supportVoice;
     public GameObject supportGhost;
 
     public bool IsOn

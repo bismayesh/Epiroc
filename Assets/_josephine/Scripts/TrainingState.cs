@@ -2,6 +2,7 @@ using BNG;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,8 +10,9 @@ public class TrainingState : MonoBehaviour
 {
     //public SmoothLocomotion smoothLocomotion;
     bool smoothLocomotionChanged = true;
-    public Transform playerPosition;
-    Vector3 playerStartPosition;
+    public List<Transform> playerPosition = new List<Transform>();
+    List<Vector3> playerStartPosition = new List<Vector3>();
+    bool positionSet = false;
 
     //Training figures
     int neededTrainingIterations;
@@ -35,7 +37,7 @@ public class TrainingState : MonoBehaviour
     public Transform damageMeter;
     public Renderer damageIndicator;
     public Gradient damageColor;
-    //public Gradient emissiveColor;
+    public Gradient emissiveColor;
     [SerializeField]
     int maxDamage = 100;
     [SerializeField]
@@ -69,7 +71,7 @@ public class TrainingState : MonoBehaviour
 
     void Start()
     {
-        playerStartPosition = playerPosition.localPosition;
+        StartCoroutine(PlayerStartPosition());
         neededTrainingIterations = TaskDrive.instance.neededIterations + TaskDrill.instance.neededIterations + TaskTorch.instance.neededIterations;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
@@ -83,16 +85,34 @@ public class TrainingState : MonoBehaviour
         UpdateDamageMeter();
     }
 
-    /*
-    void LateUpdate()
+    IEnumerator PlayerStartPosition()
     {
+
+        yield return new WaitForSeconds(1);
+
         if (smoothLocomotionChanged)
         {
             smoothLocomotionChanged = false;
-            playerPosition.GetComponentInChildren<SmoothLocomotion>().enabled = false;
+            playerPosition[0].GetComponentInParent<SmoothLocomotion>().enabled = false;
         }
 
-        playerPosition.localPosition = playerStartPosition;
+        foreach (Transform t in playerPosition)
+        {
+            playerStartPosition.Add(t.position);
+        }
+        positionSet = true;
+    }
+
+    /*
+    void LateUpdate()
+    {
+        if (!positionSet)
+            return;
+
+        for (int i = 0; i < playerPosition.Count; i++)
+        {
+            playerPosition[i].position = playerStartPosition[i];
+        }
     }
     */
 
@@ -200,7 +220,7 @@ public class TrainingState : MonoBehaviour
         {
             damageMeter.localScale = new Vector3(meterSize, 1, 1);
             damageIndicator.material.color = damageColor.Evaluate(meterSize);
-            //damageIndicator.material.SetColor("_EmissiveColor", emissiveColor.Evaluate(meterSize) * 3.9f);
+            damageIndicator.material.SetColor("_EmissiveColor", emissiveColor.Evaluate(meterSize) * 3.9f);
         }
 
     }
