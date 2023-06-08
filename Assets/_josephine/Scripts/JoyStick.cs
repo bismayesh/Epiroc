@@ -6,17 +6,18 @@ using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum JoystickMood
+{ 
+  Drive, 
+  Drill,
+  Light
+}
+
 public class JoyStick : MonoBehaviour
 {
     public InputActionProperty primaryButtonAction;
     public InputActionProperty secondaryButtonAction;
     public InputActionProperty gripButtonAction;
-
-    public TrainingState currentTraining;
-    public TaskDrive taskDrive;
-    public TaskDrill taskDrill;
-    public TaskLight taskLight;
-    public SupportLevels supportLevels;
 
     public GameObject primaryButton;
     public GameObject secondaryButton;
@@ -34,17 +35,8 @@ public class JoyStick : MonoBehaviour
     float secondaryButtonValue;
     float gripButtonValue;
 
-    enum JoystickMood { Drive, Drill, Light}
-    JoystickMood joystickMood = JoystickMood.Drive;
-
-    private void Start()
-    {
-        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
-        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-        taskLight = GameObject.Find("Torch").GetComponent<TaskLight>();
-        supportLevels = GameObject.Find("SupportLevels").GetComponent<SupportLevels>();
-    }
+    
+    //JoystickMood joystickMood = JoystickMood.Drive;
 
     void FixedUpdate()
     {
@@ -55,10 +47,10 @@ public class JoyStick : MonoBehaviour
         if (gripButtonValue == 0f)
         {
             holdingJoystick = false;
-            taskDrive.HoldingJoystick = false;
-            taskDrill.HoldingJoystick = false;
-            taskLight.HoldingJoystick = false;
-            supportLevels.holdingJoystick = false;
+            TaskDrive.instance.HoldingJoystick = false;
+            TaskDrill.instance.HoldingJoystick = false;
+            TaskTorch.instance.HoldingJoystick = false;
+            SupportLevels.instance.HoldingJoystick = false;
         }
     }
 
@@ -74,27 +66,33 @@ public class JoyStick : MonoBehaviour
         if (other.gameObject.CompareTag("Player") && gripButtonValue > 0.5f)
         {
             holdingJoystick = true;
-            taskDrive.HoldingJoystick = true;
-            taskDrill.HoldingJoystick = true;
-            taskLight.HoldingJoystick = true;
-            supportLevels.holdingJoystick = true;
+            TaskDrive.instance.HoldingJoystick = true;
+            TaskDrill.instance.HoldingJoystick = true;
+            TaskTorch.instance.HoldingJoystick = true;
+            SupportLevels.instance.HoldingJoystick = true;
         }
     }
 
     public void ReadJoystickInput(Vector2 value)
     {
-        if (taskDrive.DriveMood)
+        TaskDrive.instance.Drive(value, this.gameObject);
+
+        /*
+        if (TaskDrive.instance.DriveMood)
         {
-            taskDrive.Drive(value, this.gameObject);
+            
         }
-        else if (taskDrill.DrillMood)
+
+        /*
+        else if (TaskDrill.instance.DrillMood)
         {
-            taskDrill.Drill(value);
+            TaskDrill.instance.Drill(value);
         }
-        else if (taskLight.LightMood)
+        else if (TaskTorch.instance.LightMood)
         {
-            taskLight.Torch(value, this.gameObject);
-        }     
+            TaskTorch.instance.Torch(value, this.gameObject);
+        }
+        */
     }
 
     private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
@@ -108,17 +106,20 @@ public class JoyStick : MonoBehaviour
             {
                 isActive = false;
                 light.material = MaterialOff;
+                TaskDrive.instance.TaskCheck(topButton, false);
+                TaskDrill.instance.TaskCheck(topButton, false);
+                TaskTorch.instance.TaskCheck(topButton, false);
             }
             else
             {
                 isActive = true;
                 light.material = MaterialOn;
+                TaskDrive.instance.TaskCheck(topButton, true);
+                TaskDrill.instance.TaskCheck(topButton, true);
+                TaskTorch.instance.TaskCheck(topButton, true);
             }
 
-            taskDrive.ActivateButton(topButton);
-            taskDrill.ActivateButton(topButton);
-            taskLight.ActivateButton(topButton);
-            supportLevels.UserSupport(topButton);
+            SupportLevels.instance.SupportInstructions( SupportMood.Old, topButton);
         }
     }
 

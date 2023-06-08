@@ -1,21 +1,20 @@
-  using UnityEngine;
-    using UnityEngine.AI;
-    using System.Collections;
-
+using UnityEngine;
+using UnityEngine.AI;
+using System.Collections;
 
 public class Patrol : MonoBehaviour
 {
-//[HideInInspector]
+    [HideInInspector]
     public Transform Gem = null;
     public Transform[] points;
     private int destPoint = 0;
     private NavMeshAgent agent;
-    [SerializeField]
     private bool Gemspawned = false; 
-
 
     void Start ()
     {
+        
+
         agent = GetComponent<NavMeshAgent>();
 
         // Disabling auto-braking allows for continuous movement
@@ -41,15 +40,23 @@ public class Patrol : MonoBehaviour
         {
             agent.destination = points[destPoint].position;
         }
-            else
+        else
         {
-            Gem = GameObject.FindGameObjectWithTag("ChunkGem").transform;
-            agent.destination = Gem.position;
+            //Gem = GameObject.FindGameObjectWithTag("ChunkGem").transform;
+            //agent.destination = Gem.position;
+            agent.destination = RandomGem();
         }
 
         // Choose the next point in the array as the destination,
         // cycling to the start if necessary.
         destPoint = (destPoint + 1) % points.Length;
+    }
+
+    private Vector3 RandomGem()
+    {
+        GameObject[] gems = GameObject.FindGameObjectsWithTag("ChunkGem");
+        Vector3 gem = gems[Random.Range(0, gems.Length - 1)].transform.position;
+        return gem;
     }
 
     void Update ()
@@ -76,5 +83,10 @@ public class Patrol : MonoBehaviour
         {
             Destroy(collision.gameObject);
         }
+    }
+
+    public void DestroyTroll()
+    {
+        Destroy(gameObject);
     }
 }

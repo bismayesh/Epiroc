@@ -6,10 +6,6 @@ public class Controllers : MonoBehaviour
 {
     public Transform switchTransform;
     public Renderer lightRenderer;
-    public TaskDrive taskDrive;
-    public TaskDrill taskDrill;
-    public TaskLight taskLights;
-    public SupportLevels supportLevels;
     public bool isActive = false;
 
     public Material MaterialOn;
@@ -18,14 +14,6 @@ public class Controllers : MonoBehaviour
     float localRotation;
     bool initialSwitch = true;
 
-    private void Start()
-    {
-        taskDrive = GameObject.Find("Drive").GetComponent<TaskDrive>();
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
-        taskLights = GameObject.Find("Torch").GetComponent<TaskLight>();
-        supportLevels = GameObject.Find("SupportLevels").GetComponent<SupportLevels>();
-    }
-
     public void ButtonPressed()
     {
         
@@ -33,16 +21,20 @@ public class Controllers : MonoBehaviour
         {
             isActive = false;
             lightRenderer.material = MaterialOff;
+            TaskDrive.instance.TaskCheck(this.gameObject, false);
+            TaskDrill.instance.TaskCheck(this.gameObject, false);
+            TaskTorch.instance.TaskCheck(this.gameObject, false);
         }
         else
         {
             isActive = true;
             lightRenderer.material = MaterialOn;
+            TaskDrive.instance.TaskCheck(this.gameObject, true);
+            TaskDrill.instance.TaskCheck(this.gameObject, true);
+            TaskTorch.instance.TaskCheck(this.gameObject, true);
         }
 
-        taskDrive.ActivateButton(this.gameObject);
-        taskLights.ActivateButton(this.gameObject);
-        supportLevels.UserSupport(this.gameObject);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 
     public void TurnSwitch()
@@ -54,15 +46,16 @@ public class Controllers : MonoBehaviour
         {
             isActive = false;
             lightRenderer.material = MaterialOff;
+            TaskDrive.instance.TaskCheck(this.gameObject, false);
         }
         else
         {
             isActive = true;
             lightRenderer.material = MaterialOn;
+            TaskDrive.instance.TaskCheck(this.gameObject, true);
         }
 
-        taskDrive.ActivateButton(this.gameObject);
-        supportLevels.UserSupport(this.gameObject);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 
     public void Switch()
@@ -80,15 +73,17 @@ public class Controllers : MonoBehaviour
         {
             isActive = false;
             lightRenderer.material = MaterialOff;
+            TaskDrive.instance.TaskCheck(this.gameObject, false);
+            TaskTorch.instance.TaskCheck(this.gameObject, false);
         }
         else
         {
             isActive = true;
             lightRenderer.material = MaterialOn;
+            TaskDrive.instance.TaskCheck(this.gameObject, true);
+            TaskTorch.instance.TaskCheck(this.gameObject, true);
         }
 
-        taskDrive.ActivateButton(this.gameObject);
-        taskLights.ActivateButton(this.gameObject);
-        supportLevels.UserSupport(this.gameObject);
+        SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 }

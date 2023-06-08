@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GemSpawnPoint : MonoBehaviour
 {
-    public TaskDrill taskDrill;
     public List<GameObject> gemObjects = new List<GameObject>();
     public bool spawnGems = false;
     public Transform spawnTransform;
@@ -12,7 +11,6 @@ public class GemSpawnPoint : MonoBehaviour
 
     private void Start()
     {
-        taskDrill = GameObject.Find("Drill").GetComponent<TaskDrill>();
         spawnPosition = spawnTransform.position;
     }
 
@@ -20,8 +18,8 @@ public class GemSpawnPoint : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Machine"))
         {
-            taskDrill.SpawnArea = true;
-            taskDrill.GemSpawnObject = gameObject.GetComponent<GemSpawnPoint>();
+            TaskDrill.instance.SpawnArea = true;
+            TaskDrill.instance.GemSpawnObject = gameObject.GetComponent<GemSpawnPoint>();
         }
     }
 
@@ -29,8 +27,8 @@ public class GemSpawnPoint : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Machine"))
         {
-            taskDrill.SpawnArea = false;
-            taskDrill.GemSpawnObject = null;
+            TaskDrill.instance.SpawnArea = false;
+            TaskDrill.instance.GemSpawnObject = null;
         }
     }
 
@@ -54,7 +52,7 @@ public class GemSpawnPoint : MonoBehaviour
         {
             foreach (var g in gemObjects)
             {
-                Vector3 randomDir = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(5.0f, 15.0f), Random.Range(-5.0f, 5.0f));
+                Vector3 randomDir = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(5.0f, 10.0f), Random.Range(-3.0f, 3.0f));
                 var gem = Instantiate(g, spawnPosition, Quaternion.identity);
                 gem.GetComponent<Rigidbody>().AddForce(randomDir, ForceMode.Impulse);
 

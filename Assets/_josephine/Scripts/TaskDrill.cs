@@ -4,53 +4,33 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 
-public class TaskDrill : MonoBehaviour
+public class TaskDrill : Task
 {
-    public GameObject jacksLever;
-    public GameObject jacksToggle;
-    public GameObject drillLever;
+    public List<AudioClip> drillAudio = new List<AudioClip>();
+    public List<SingleTask> taskControl = new List<SingleTask>();
 
-    public TextMeshProUGUI textFrontJacks;
-    public TextMeshProUGUI textRearJacks;
-
-    [SerializeField]
-    bool jacksLeverOn = false;
-    [SerializeField]
-    bool jacksToggleOn = false;
-    [SerializeField]
-    bool frontJacksUp = false;
-    [SerializeField]
-    bool rearJacksUp = false;
-    [SerializeField]
-    bool drillLeverOn = false;
-    [SerializeField]
-    bool drilling = false;
     [SerializeField]
     bool spawnArea = false;
-    bool firstTime = true;
-    GemSpawnPoint gemSpawnPoint = null;
+    bool firstDrillInstruction = true;
+    bool firstTorchInstruction = true;
     [SerializeField]
     bool machineStabalized = false;
-    bool holdingJoystick = false;
-    bool failureRecorded = false;
+    GemSpawnPoint gemSpawnPoint = null;
+    [SerializeField]
+    bool spawnTrolls = false;
 
-    public TrainingState currentTraining;
-    public MachineController machineController;
-    public SupportLevels supportLevels;
-
-    public AudioSource audioSource;
-    public AudioClip jacksAudio;
-    public AudioClip drillAudio;
-    bool audioDrillOn = false;
-    bool audioJacksOn = false;
-
-    public int neededIterations = 5;
-    int currentIteration = 0;
+    //Singelton
+    public static TaskDrill instance;
 
     public bool DrillMood
     {
-        get { return jacksLeverOn; }
-        private set { jacksLeverOn = value;}
+        get { return taskControl[0].IsOn; }
+    }
+
+    public bool MachineStabalized
+    {
+        get { return machineStabalized; }
+        private set { machineStabalized = value; }
     }
 
     public GemSpawnPoint GemSpawnObject
@@ -62,52 +42,49 @@ public class TaskDrill : MonoBehaviour
     public bool SpawnArea
     {
         get { return spawnArea; }
-        set 
-        { 
-            spawnArea = value; 
-        }
+        set { spawnArea = value; }
     }
 
-    public bool MachineStabalized
+    private void Awake()
     {
-        get { return machineStabalized; }
-        private set { machineStabalized = value; }
-    }
-
-    public bool HoldingJoystick
-    {
-        get { return holdingJoystick; }
-        set
-        {
-            holdingJoystick = value;
-        }
+        instance = this;
     }
 
     private void Update()
     {
-        if (!holdingJoystick)
-        {
-            failureRecorded = false;
-        }
+        FirstDrillInstructions();
+        MachineStabalised();
+    }
 
-        if (spawnArea && firstTime)
+    void FirstDrillInstructions()
+    {
+        if (spawnArea && firstDrillInstruction)
         {
-            firstTime = false;
-            supportLevels.DrillInstructions();
+            firstDrillInstruction = false;
+            SupportLevels.instance.SupportInstructions(SupportMood.Drill);
         }
     }
 
-    private void Start()
+    void MachineStabalised()
     {
-        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
-        machineController = GameObject.Find("Machine").GetComponent<MachineController>();
-    }
-
-    private void FixedUpdate()
-    {
-        if (!jacksLeverOn && !frontJacksUp && !rearJacksUp && !drillLeverOn)
+        if (!taskControl[0].IsOn && !taskControl[1].IsOn && !taskControl[2].IsOn && !taskControl[3].IsOn)
         {
             machineStabalized = false;
+
+            if (spawnTrolls)
+            {
+                spawnTrolls = false;
+
+                if (firstTorchInstruction)
+                {
+                    firstTorchInstruction = false;
+                    TaskTorch.instance.FirstTorchInstructions();
+                }
+                else
+                {
+                    TrollSpawner.instance.InstanciateTrolls();
+                }
+            }
         }
         else
         {
@@ -115,136 +92,147 @@ public class TaskDrill : MonoBehaviour
         }
     }
 
-    public void ActivateButton(GameObject thisObject)
+    public void TaskCheck(GameObject thisObject, bool setOn)
     {
-        ButtonSwitch(thisObject, jacksLever, ref jacksLeverOn);
-        ButtonSwitch(thisObject, jacksToggle, ref jacksToggleOn);
-        ButtonSwitch(thisObject, drillLever, ref drillLeverOn);
+        if (taskControl[0].TaskCheck(thisObject, setOn))
+            JacksLever();
+        if (taskControl[1].TaskCheck(thisObject, setOn))
+            FrontJacks();
+        if (taskControl[2].TaskCheck(thisObject, setOn))
+            RearJacks();
+        if (taskControl[3].TaskCheck(thisObject, setOn))
+            DrillLever();
     }
 
-    private void ButtonSwitch(GameObject thisObject, GameObject button, ref bool activateButton)
+    private void JacksLever()
     {
-        if (thisObject == button)
+        if (taskControl[0].IsOn)
         {
-            if (!activateButton)
+            SetAudio(drillAudio[0], true, true);
+            machineController.ExtendJacks();
+        }
+        else
+        {
+            SetAudio(drillAudio[0], false, true);
+            machineController.RetrieveJacks();
+        }
+    }
+
+    private void FrontJacks()
+    {
+        if (taskControl[1].IsOn)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    private void RearJacks()
+    {
+        if (taskControl[2].IsOn)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    private void DrillLever()
+    {
+        if (taskControl[3].IsOn)
+        {
+            if (taskControl[0].IsOn && taskControl[1].IsOn && taskControl[2].IsOn)
             {
-                activateButton = true;
+                SetAudio(drillAudio[1], true, false);
+                machineController.ActivateDrill();
+                machineController.SpinDrill();
 
-                if (button == jacksLever)
+                if (spawnArea)
                 {
-                    machineController.ExtendJacks();
-
-                    if (!audioJacksOn)
-                    {
-                        audioJacksOn = true;
-                        audioSource.clip = jacksAudio;
-                        audioSource.PlayOneShot(jacksAudio);
-                    }
-                }
-                else if (button == drillLever)
-                {
-                    if (jacksLeverOn && frontJacksUp && rearJacksUp)
-                    {
-                        drilling = true;
-
-                        if (!audioDrillOn)
-                        {
-                            audioDrillOn = true;
-                            audioSource.clip = drillAudio;
-                            audioSource.Play();
-                        }
-                        
-                        machineController.ActivateDrill();
-                        machineController.SpinDrill();
-
-                        if (spawnArea)
-                        {
-                            spawnArea = false;
-                            currentTraining.UpdateTaskDrillProgress( neededIterations, currentIteration);
-                            gemSpawnPoint.SpawnGems();
-                            //Spawning trolls
-                        }
-                    }
-                    else
-                    {
-                        TaskFailure();
-                    }
+                    spawnArea = false;
+                    TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
+                    gemSpawnPoint.SpawnGems();
+                    spawnTrolls = true;
                 }
             }
             else
             {
-                activateButton = false;
-                if (button == jacksLever)
-                {
-                    audioJacksOn = false;
-                    machineController.RetrieveJacks();
-                }
-                else if (button == drillLever)
-                {
-                    drilling = false;
-
-                    if (audioDrillOn)
-                    {
-                        audioDrillOn = false;
-                        audioSource.Stop();
-                        audioSource.clip = null;
-                    }
-
-                    machineController.DeactivateDrill();
-                    machineController.StopDrill();
-                }  
+                DrillFailure(5);
+                failRecorded = false;
             }
         }
-    }
-
-    public void Drill(Vector2 value)
-    {
-        if (holdingJoystick)
+        else
         {
-            if (jacksLeverOn)
-            {
-                if (jacksToggleOn)
-                {
-                    if (value.y >= 0.5f)
-                    {
-                        frontJacksUp = true;
-                        textFrontJacks.text = "Front Jacks Up";
-                    }
-                    else if (value.y <= -0.5f)
-                    {
-                        frontJacksUp = false;
-                        textFrontJacks.text = "Front Jacks Down";
-                    }
-                }
-                else if(!jacksToggleOn)
-                {
-                    if (value.y >= 0.5f)
-                    {
-                        rearJacksUp = true;
-                        textRearJacks.text = "Rear Jacks Up";
-                    }
-                    else if (value.y <= -0.5f)
-                    {
-                        rearJacksUp = false;
-                        textRearJacks.text = "Rear Jacks Down";
-                    }
-                }
-            }
-            else
-            {
-                if (!failureRecorded)
-                {
-                    failureRecorded = true;
-                    TaskFailure();
-                }
-            }
+            SetAudio(drillAudio[1], false, false);
+            machineController.DeactivateDrill();
+            machineController.StopDrill();
         }
     }
 
-    void TaskFailure()
+    public void DrillProgress()
     {
-        Debug.Log("Drill task fail!");
-        currentTraining.UpdateTrainingFailures();
-        //Show ghost animation
+        currentIteration++;
+        TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
+    }
+
+    void DrillFailure(int damage = 0)
+    {
+        if (failRecorded)
+            return;
+
+        failRecorded = true;
+        TaskFailure(damage);
+        TrainingState.instance.UpdateDrillFailure();
     }
 }
+
+/*
+public void Drill(Vector2 value)
+{
+if (!holdingJoystick)
+{
+    return;
+}
+
+if (TaskTorch.instance.taskControl[2].IsOn)
+{
+    DrillFailure(3);
+    return;
+}
+
+if (taskControl[0].IsOn)
+{
+    if (taskControl[1].IsOn)
+    {
+        if (value.y >= 0.4f)
+        {
+            frontJacksUp = true;
+            textFrontJacks.text = "Front Jacks Up";
+        }
+        else if (value.y <= -0.4f)
+        {
+            frontJacksUp = false;
+            textFrontJacks.text = "Front Jacks Down";
+        }
+    }
+    else
+    {
+        if (value.y >= 0.4f)
+        {
+            rearJacksUp = true;
+            textRearJacks.text = "Rear Jacks Up";
+        }
+        else if (value.y <= -0.4f)
+        {
+            rearJacksUp = false;
+            textRearJacks.text = "Rear Jacks Down";
+        }
+    }
+}
+}
+*/

@@ -5,70 +5,47 @@ using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+public enum SupportMood
+{
+    None,
+    Old,
+    Intro,
+    Drive,
+    Drill,
+    Torch
+}
+
 public class SupportLevels : MonoBehaviour
 {
     //Support menu
     [Header("Support Menu")]
-    public GameObject supportMenu;
     public InputActionReference InputAction = default;
-    public bool holdingJoystick = false;
+    public GameObject supportMenu;
     public Toggle supportTextToggle;
     public Toggle supportLightToggle;
     public Toggle supportVoiceToggle;
     public Toggle supportGhostToggle;
+    bool holdingJoystick = false;
 
     //Intro
     [Header("Intro")]
     public GameObject textBackground;
     public GameObject introText;
+    public float introTime = 10.0f;
+    [HideInInspector]
+    public AudioSource AudioSource;
+    bool introFinnished = false;
 
-    //Drive
-    [Header("Drive")]
-    public GameObject driveTask1;
-    public GameObject driveTask2;
-    public GameObject driveTask3;
-
-    public GameObject driveText;
-
-    public GameObject driveLight1;
-    public GameObject driveLight2;
-    public GameObject driveLight3;
-
-    //Drill
-    [Header("Drill")]
-    public GameObject drillTask1;
-    public TextMeshProUGUI textFrontJacks;
-    public TextMeshProUGUI textRearJacks;
-    public GameObject drillTask3;
-
-    public GameObject drillText;
-
-    public GameObject drillLight1;
-    public GameObject drillLight2;
-    public GameObject drillLight3;
-
-    string frontJacks;
-    string rearJacks;
+    //Tasks
+    List<SingleTask> driveTasks;
+    List<SingleTask> drillTasks;
+    List<SingleTask> torchTasks;
+    public SupportMood supportMood;
     [SerializeField]
-    bool taskJacksComplete = false;
-    [SerializeField]
-    bool taskHasRun = false;
-
-    //Torch
-    [Header("Torch")]
-    public GameObject torchTask1;
-    public GameObject torchTask2;
-    public GameObject torchTask3;
-
-    public GameObject torchText;
-
-    public GameObject torchLight1;
-    public GameObject torchLight2;
-    public GameObject torchLight3;
+    int index = 0;
+    bool firstTorchInstruction = true;
 
     //Supportlayers
-    enum SupportLayers { Light, Text, Voice, Ghost }
-    private SupportLayers supportLight = SupportLayers.Light;
     [SerializeField]
     bool supportlayerText = true;
     [SerializeField]
@@ -78,259 +55,219 @@ public class SupportLevels : MonoBehaviour
     [SerializeField]
     bool supportlayerGhost = true;
 
-    [SerializeField]
-    bool driveSupportOn = true;
-    [SerializeField]
-    bool drillSupportOn = false;
-    [SerializeField]
-    bool torchSupportOn = false;
-    [SerializeField]
-    bool supportStarted = false;
-    bool supportTaskRunning = false;
+    //Singelton
+    public static SupportLevels instance;
 
-    public bool DriveSupportOn
+    public bool HoldingJoystick
     {
-        get { return driveSupportOn; }
-        set { driveSupportOn = value; }
+        get { return holdingJoystick; }
+        set { holdingJoystick = value; }
     }
 
-    public bool DrillSupportOn
+    private void Awake()
     {
-        get { return drillSupportOn; }
-        set { drillSupportOn = value; }
-    }
-
-    public bool TorchSupportOn
-    {
-        get { return torchSupportOn; }
-        set { torchSupportOn = value; }
+        instance = this;
     }
 
     private void Start()
     {
+        AudioSource = GetComponent<AudioSource>();
+        driveTasks = TaskDrive.instance.taskControl;
+        drillTasks = TaskDrill.instance.taskControl;
+        torchTasks = TaskTorch.instance.taskControl;
+
+        ResetSupportLayers();
+        SupportInstructions(SupportMood.Intro);
+    }
+
+    public void SupportInstructions(SupportMood newMood = SupportMood.Old, GameObject thisObject = null, bool resetIndex = false)
+    {
+        if (newMood != SupportMood.Old)
+            supportMood = newMood;
+
+        if (resetIndex)
+            index = 0;
+
+        switch (supportMood)
+        {
+            case SupportMood.None: break;
+            case SupportMood.Intro: IntroSupport(); break;
+            case SupportMood.Drive: SupportLayerChain(driveTasks, thisObject); break;
+            case SupportMood.Drill: SupportLayerChain(drillTasks, thisObject); break;
+            case SupportMood.Torch: SupportLayerChain(torchTasks, thisObject); break;
+        }
+    }
+
+    void IntroSupport()
+    {
         textBackground.SetActive(true);
         introText.SetActive(true);
-        StartCoroutine(DriveTaskDelay());
+        StartCoroutine(IntroTaskTime());
     }
 
-    IEnumerator DriveTaskDelay()
+    IEnumerator IntroTaskTime()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(introTime);
         introText.SetActive(false);
         textBackground.SetActive(false);
-        driveSupportOn = true;
-        UserSupport(gameObject);
+        introFinnished = true;
+
+        SupportInstructions(SupportMood.Drive);
     }
 
-    private void FixedUpdate()
+    void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
     {
-        frontJacks = textFrontJacks.text;
-        rearJacks = textRearJacks.text;
-
-        if (drillSupportOn && frontJacks == "Front Jacks Up" && rearJacks == "Rear Jacks Up" && !taskJacksComplete)
+        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject)
         {
-            taskJacksComplete = true;
-            DrillSupport(gameObject);
-        }
-    }
+            if (index == tasks.Count)
+            {
+                if (supportMood == SupportMood.Torch && firstTorchInstruction)
+                {
+                    firstTorchInstruction = false;
+                    TrollSpawner.instance.InstanciateTrolls();
+                }
 
-    
+                index = 0;
+                supportMood = SupportMood.None;
+                ResetSupportLayers();
+                return;
+            }
 
-    public void UserSupport(GameObject thisObject)
-    {
-        if (driveSupportOn)
-        {
-            DriveSupport(thisObject);
-        }
-        else if (drillSupportOn)
-        {
-            DrillSupport(thisObject);
-        }
-        else if (torchSupportOn)
-        {
-            TorchSupport(thisObject);
-        } 
-    }
-
-    public void DriveInstructions()
-    {
-        DriveSupportOn = true;
-        DriveSupport(gameObject);
-    }
-
-    public void DrillInstructions()
-    {
-        DrillSupportOn = true;
-        DrillSupport(gameObject);
-    }
-
-    public void TorchInstructions()
-    {
-        TorchSupportOn = true;
-        TorchSupport(gameObject);
-    }
-
-    private void DriveSupport(GameObject thisObject)
-    {
-        supportTaskRunning = true;
-
-        if (!supportStarted)
-        {
-            supportStarted = true;
             if (supportlayerText)
             {
                 textBackground.SetActive(true);
-                driveText.SetActive(true);
+                if (index != 0)
+                {
+                    tasks[index - 1].supportText.SetActive(false);
+                    tasks[index - 1].supportTextSmall.SetActive(false);
+                }
+                tasks[index].supportText.SetActive(true);
+                tasks[index].supportTextSmall.SetActive(true);
             }
             if (supportlayerLight)
             {
-                driveLight1.SetActive(true);
+                if (index != 0) tasks[index - 1].supportLight.SetActive(false);
+                tasks[index].supportLight.SetActive(true);
             }
-        }
-        else if (thisObject == driveTask1)
-        {
-            if (supportlayerLight)
+            /*
+            if (supportlayerVoice)
             {
-                driveLight1.SetActive(false);
-                driveLight2.SetActive(true);
+                AudioSource.Stop();
+                AudioSource.PlayOneShot(tasks[index].supportVoice);
             }
-            
-        }
-        else if (thisObject == driveTask2)
-        {
-            if (supportlayerLight)
+            if (supportlayerGhost)
             {
-                driveLight2.SetActive(false);
-                driveLight3.SetActive(true);
+                if (index != 0)
+                    tasks[index - 1].supportGhost.SetActive(false);
+                tasks[index].supportGhost.SetActive(true);
             }
-            
-        }
-        else if (thisObject == driveTask3)
-        {
-            if (supportlayerText)
-            {
-                textBackground.SetActive(false);
-                driveText.SetActive(false);
-            }
-            if (supportlayerLight)
-            {
-                driveLight3.SetActive(false);
-            }
-            
-            supportStarted = false;
-            driveSupportOn = false;
-            supportTaskRunning = false;
+            */
+            index++;
         }
     }
 
-    private void DrillSupport(GameObject thisObject)
+    void ResetSupportLayers()
     {
-        supportTaskRunning = true;
+        textBackground.SetActive(false);
+        introText.SetActive(false);
 
-        if (!supportStarted)
+        foreach (SingleTask task in driveTasks)
         {
-            supportStarted = true;
-            if (supportlayerText)
-            {
-                textBackground.SetActive(true);
-                drillText.SetActive(true);
-            }
-            if (supportlayerLight)
-            {
-                drillLight1.SetActive(true);
-            }
+            task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
+            task.supportLight.SetActive(false);
+            //task.supportVoice.SetActive(false);
+            //task.supportGhost.SetActive(false);
         }
-        else if (thisObject == drillTask1)
-        {
-            if (supportlayerLight)
-            {
-                drillLight1.SetActive(false);
-                drillLight2.SetActive(true);
-            }
 
-        }
-        else if (taskJacksComplete && !taskHasRun)
+        foreach (SingleTask task in drillTasks)
         {
-            taskHasRun = true;
-            if (supportlayerLight)
-            {
-                drillLight2.SetActive(false);
-                drillLight3.SetActive(true);
-            }
+            task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
+            task.supportLight.SetActive(false);
+            //task.supportVoice.SetActive(false);
+            //task.supportGhost.SetActive(false);
         }
-        else if (thisObject == drillTask3)
-        {
-            if (supportlayerText)
-            {
-                drillText.SetActive(false);
-                textBackground.SetActive(false);
-            }
-            if (supportlayerLight)
-            {
-                drillLight3.SetActive(false);
-            }
 
-            supportStarted = false;
-            drillSupportOn = false;
-            taskJacksComplete = false;
-            taskHasRun = false;
-            supportTaskRunning = false;
+        foreach (SingleTask task in torchTasks)
+        {
+            task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
+            task.supportLight.SetActive(false);
+            //task.supportVoice.SetActive(false);
+            //task.supportGhost.SetActive(false);
         }
     }
 
-    private void TorchSupport(GameObject thisObject)
+    //Buttons
+
+    public void ButtonDrive()
     {
-        supportTaskRunning = true;
-
-        if (!supportStarted)
-        {
-            supportStarted = true;
-            if (supportlayerText)
-            {
-                textBackground.SetActive(true);
-                torchText.SetActive(true);
-            }
-            if (supportlayerLight)
-            {
-                torchLight1.SetActive(true);
-            }
-        }
-        else if (thisObject == torchTask1)
-        {
-            if (supportlayerLight)
-            {
-                torchLight1.SetActive(false);
-                torchLight2.SetActive(true);
-            }
-
-        }
-        else if (thisObject == torchTask2)
-        {
-            if (supportlayerLight)
-            {
-                torchLight2.SetActive(false);
-                torchLight3.SetActive(true);
-            }
-
-        }
-        else if (thisObject == torchTask3)
-        {
-            if (supportlayerText)
-            {
-                torchText.SetActive(false);
-                textBackground.SetActive(false);
-            }
-            if (supportlayerLight)
-            {
-                torchLight3.SetActive(false);
-            }
-
-            supportStarted = false;
-            torchSupportOn = false;
-            supportTaskRunning = false;
-        }
+        ResetSupportLayers();
+        SupportInstructions(SupportMood.Drive, default, true);
     }
 
+    public void ButtonDrill()
+    {
+        if (!introFinnished)
+            return;
+
+        ResetSupportLayers();
+        SupportInstructions(SupportMood.Drill, default, true);
+    }
+
+    public void ButtonTorch()
+    {
+        if (!introFinnished)
+            return;
+
+        ResetSupportLayers();
+        SupportInstructions(SupportMood.Torch, default, true);
+    }
+
+    public void ButtonTextSupport()
+    {
+        if (!introFinnished)
+            return;
+
+        ResetSupportLayers();
+        CheckSupportToggle(supportTextToggle, ref supportlayerText);
+    }
+
+    public void ButtonLightSupport()
+    {
+        if (!introFinnished)
+            return;
+
+        ResetSupportLayers();
+        CheckSupportToggle(supportLightToggle, ref supportlayerLight);
+    }
+
+    public void ButtonVoiceSupport()
+    {
+        if (!introFinnished)
+            return;
+
+        ResetSupportLayers();
+        CheckSupportToggle(supportVoiceToggle, ref supportlayerVoice);
+    }
+
+    public void ButtonGhostSupport()
+    {
+        if (!introFinnished)
+            return;
+
+        ResetSupportLayers();
+        CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
+    }
+
+    private void CheckSupportToggle(Toggle toggle, ref bool supportLayer)
+    {
+        toggle.isOn = !toggle.isOn;
+        supportLayer = toggle.isOn;
+    }
+
+    //Turn hand menu on/off
 
     private void OnEnable()
     {
@@ -344,83 +281,13 @@ public class SupportLevels : MonoBehaviour
 
     public void ToggleActive(InputAction.CallbackContext context)
     {
-        if (supportMenu && !holdingJoystick && !supportTaskRunning)
+        if (supportMenu.activeSelf || !holdingJoystick)
         {
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
     }
-
-    public void TextSupportButton()
-    {
-        CheckSupportToggle( supportTextToggle,ref supportlayerText);
-    }
-
-    public void LightSupportButton()
-    {
-        CheckSupportToggle(supportLightToggle, ref supportlayerLight);
-    }
-
-    public void VoiceSupportButton()
-    {
-        CheckSupportToggle(supportVoiceToggle, ref supportlayerVoice);
-    }
-
-    public void GhostSupportButton()
-    {
-        CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
-    }
-
-    private void CheckSupportToggle(Toggle toggle,ref bool supportLayer)
-    {
-        if (toggle.isOn)
-        {
-            toggle.isOn = false;
-            supportLayer = false;
-        }
-        else
-        {
-            toggle.isOn = true;
-            supportLayer = true;
-        }
-    }
 }
 
 
 
-//Testa och skriva om klassen
-public class Tasks
-{
-    public List<GameObject> tasks = new List<GameObject>();
-    public List<TextMeshProUGUI> textTasks = new List<TextMeshProUGUI>();
-    public List<string> taskMessages = new List<string>();
-
-    bool textTaskComplete = false;
-
-    private void FixedUpdate()
-    {
-        if (textTasks[0].text == taskMessages[0] && textTasks[1].text == taskMessages[1] && !textTaskComplete)
-        {
-            textTaskComplete = true;
-            TaskCompleted(textTaskComplete);
-        }
-    }
-
-    public bool TaskCompleted(GameObject taskObject, GameObject thisObject)
-    {
-        if (taskObject = thisObject)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public bool TaskCompleted(bool textTaskComplete)
-    {
-        if (textTaskComplete)
-        {
-            return true;
-        }
-        return false;
-    }
-}
 

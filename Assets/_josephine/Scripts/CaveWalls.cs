@@ -4,18 +4,11 @@ using UnityEngine;
 
 public class CaveWalls : MonoBehaviour
 {
-    public TrainingState currentTraining;
-
-    private void Start()
-    {
-        currentTraining = GameObject.FindGameObjectWithTag("Training").GetComponent<TrainingState>();
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Machine"))
         {
-            currentTraining.MachineDamage++;
+            TrainingState.instance.MachineDamage(5);
         }
 
         if (other.gameObject.CompareTag("ChunkGem"))

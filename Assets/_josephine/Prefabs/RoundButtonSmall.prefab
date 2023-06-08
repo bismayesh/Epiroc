@@ -408,11 +408,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac72115dcb11cf4cad99ccb9aa5613d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knobAngle: {fileID: 0}
+  switchTransform: {fileID: 0}
   lightRenderer: {fileID: 4201247391956135125}
-  taskDrive: {fileID: 0}
-  taskDrill: {fileID: 0}
-  taskLights: {fileID: 0}
   isActive: 0
   MaterialOn: {fileID: 2100000, guid: 935f92a18a2ee4a4189c998033c7ad18, type: 2}
   MaterialOff: {fileID: 2100000, guid: 5e80cc6acf16d804a9446d4eb5118f54, type: 2}
@@ -629,7 +626,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 3ceadf14726b0864fb39bb646c0f9ba0, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.75
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0

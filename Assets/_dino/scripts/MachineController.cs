@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
+using static UnityEngine.Rendering.DebugUI;
 
 public class MachineController : MonoBehaviour {
 
@@ -25,6 +26,9 @@ public class MachineController : MonoBehaviour {
     [HorizontalGroup("Brakes EVENTS")][PropertyOrder(666)] public UnityEvent OnBrakesActivated;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillSpinning;
     [HorizontalGroup("Drill spin EVENTS")][PropertyOrder(666)] public UnityEvent OnDrillStop;
+
+    [HorizontalGroup("Drill spin EVENTS")] [PropertyOrder(666)]
+    public UnityEvent OnTrollHit;
 
     #endregion
     #region References
@@ -66,13 +70,14 @@ public class MachineController : MonoBehaviour {
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(-1.75f, 1.75f)] public float SliderPosition;
     [ShowIf("@DrillActive")]
     [PropertyOrder(1)] [TabGroup("Drill Controlls")] [Range(0, 100)] public float DrillSpinSpeed;
-    
-    
+
+
 
     #endregion
-    
+
     #region TorchVariables
 
+    public float torchSpeed = 5.0f;
     public float torchIntensity;
     public float torchSpread;
     public bool isTorchActive;
@@ -81,11 +86,11 @@ public class MachineController : MonoBehaviour {
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
-        transform.Translate(Vector3.forward * force.y);
+        transform.Translate(Vector3.forward * force.y * MachineMovementForce * Time.deltaTime * 4);
     }
 
     public void ChangeRotationForce(Vector2 force){
-        transform.Rotate(Vector3.up * force.x,Space.Self);
+        transform.Rotate(Vector3.up * force.x * MachineRotationForce * Time.deltaTime,Space.Self);
     }
     
     [DisableIf("@EngineActive")]
@@ -184,13 +189,20 @@ public class MachineController : MonoBehaviour {
     }
 
     public void ChangeTorchRotationX(Vector2 rot) { // plug this function in on the right joystick
-        var torchEuler = Torch.transform.eulerAngles;
-        Torch.transform.eulerAngles = new Vector3(rot.x, torchEuler.y);
+        //var torchEuler = Torch.transform.localEulerAngles;
+        //Torch.transform.eulerAngles += new Vector3(rot.x, torchEuler.y);
+        Torch.transform.localEulerAngles += new Vector3(rot.y * torchSpeed * Time.deltaTime, 0, 0);
+        
     }
     
     public void ChangeTorchRotationY(Vector2 rot) { // plug this function in on the left joystick
-        var torchEuler = Torch.transform.eulerAngles;
-        Torch.transform.eulerAngles = new Vector3(torchEuler.x, rot.y);
+        //var torchEuler = Torch.transform.localEulerAngles;
+        Torch.transform.localEulerAngles += new Vector3( 0, rot.x * torchSpeed * Time.deltaTime, 0);
+    }
+
+    public void ResetRotation()
+    {
+        Torch.transform.Rotate(0, 0, 0);
     }
 
     #endregion
@@ -265,6 +277,7 @@ public class MachineController : MonoBehaviour {
         
         yield return new WaitUntil((() => !DOTween.IsTweening(this)));
         BrakesReleased = true;
+        MachineMovementForce = 4;
         OnBrakesReleased?.Invoke();
         yield return null;
     }
@@ -273,6 +286,7 @@ public class MachineController : MonoBehaviour {
         
         yield return new WaitUntil((() => !DOTween.IsTweening(this)));
         BrakesReleased = false;
+        MachineRotationForce = 32;
         OnBrakesActivated?.Invoke();
         yield return null;
     }
@@ -307,32 +321,43 @@ public class MachineController : MonoBehaviour {
 
     #endregion
 
-    private void Start() {
-        
-    }
-
     private void Update() {
+        Torch.intensity = torchIntensity;
+        Torch.spotAngle = torchSpread;
 
-        if (isTorchActive) {
-            Torch.intensity = torchIntensity;
-            Torch.spotAngle = torchSpread;
-        }
-        
         if (DrillSpinning) {
             Drill.DrillTip.transform.Rotate(-Vector3.forward * DrillSpinSpeed);
         }
 
-        if (DrillActive) {
-            Drill.CaseJoint.transform.localEulerAngles = new Vector3((float)Math.Round(CaseJointRotation, 2), 0, 0);
-            Drill.Slider.transform.localEulerAngles = new Vector3((float)Math.Round(SliderJointRotation, 2), 0, 0);
-            Drill.Slider.transform.localPosition = new Vector3(0, 0.375f, (float)Math.Round(SliderPosition, 2));
+        RaycastHit hit;
 
+        if (Physics.Raycast(Torch.transform.position, Torch.transform.forward, out hit)) {
+            if (hit.transform.CompareTag("Troll")) {
+                OnTrollHit?.Invoke();
+
+                //Destroy troll
+                Destroy(hit.transform.gameObject);
+            }
         }
-        else {
-            CaseJointRotation = (float)Math.Round(Drill.CaseJoint.transform.eulerAngles.x, 2);
-            SliderJointRotation = (float)Math.Round(Drill.Slider.transform.eulerAngles.x / 360, 2);
-            SliderPosition = (float)Math.Round(Drill.Slider.transform.localPosition.z, 2);
+
+        #region DebugStuff
+        // testing ctrls for the machine
+        if (Input.GetKey(KeyCode.W)) {
+            ChangeMovementForce(new Vector2(0, -1));
         }
+        if (Input.GetKey(KeyCode.A)) {
+            ChangeRotationForce(new Vector2(-1, 0));
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            ChangeMovementForce(new Vector2(0, 1));
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            ChangeRotationForce(new Vector2(1, 0));
+        }
+
+        #endregion
         
+        
+
     }
 }
