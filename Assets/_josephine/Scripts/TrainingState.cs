@@ -14,6 +14,16 @@ public class TrainingState : MonoBehaviour
     List<Vector3> playerStartPosition = new List<Vector3>();
     bool positionSet = false;
 
+    [Header("Damage Meter")]
+    public Transform damageMeter;
+    public Renderer damageIndicator;
+    public Gradient damageColor;
+    public Gradient emissiveColor;
+    [SerializeField]
+    int maxDamage = 100;
+    [SerializeField]
+    int curDamage = 0;
+
     //Training figures
     int neededTrainingIterations;
     int currentTrainingIteration = 0;
@@ -32,17 +42,6 @@ public class TrainingState : MonoBehaviour
     int taskDrillFailures = 0;
     int taskTorchProgress = 0;
     int taskTorchFailures = 0;
-
-    [Header("Damage")]
-    public Transform damageMeter;
-    public Renderer damageIndicator;
-    public Gradient damageColor;
-    public Gradient emissiveColor;
-    [SerializeField]
-    int maxDamage = 100;
-    [SerializeField]
-    int curDamage = 0;
-    
 
     //UI
     [Header("Training info")]
@@ -103,7 +102,7 @@ public class TrainingState : MonoBehaviour
         positionSet = true;
     }
 
-    /*
+    
     void LateUpdate()
     {
         if (!positionSet)
@@ -114,7 +113,7 @@ public class TrainingState : MonoBehaviour
             playerPosition[i].position = playerStartPosition[i];
         }
     }
-    */
+    
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
@@ -212,16 +211,14 @@ public class TrainingState : MonoBehaviour
 
     void UpdateDamageMeter()
     {
-        
         float damageSize = 1.0f / (float)maxDamage;
         float meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
 
-        if (damageSize >= 0)
+        if (meterSize >= 0)
         {
             damageMeter.localScale = new Vector3(meterSize, 1, 1);
             damageIndicator.material.color = damageColor.Evaluate(meterSize);
-            damageIndicator.material.SetColor("_EmissiveColor", emissiveColor.Evaluate(meterSize) * 3.9f);
+            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 1.9f);
         }
-
     }
 }

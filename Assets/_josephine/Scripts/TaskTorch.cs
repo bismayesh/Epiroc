@@ -9,8 +9,18 @@ public class TaskTorch : Task
     public List<SingleTask> taskControl = new List<SingleTask>();
     bool firstTime = true;
 
+    public bool testDrive = false;
+
     //Singelton
     public static TaskTorch instance;
+
+    private void Update()
+    {
+        if (testDrive)
+        {
+            machineController.ChangeMovementForce(new Vector2(1.0f, 1.0f));
+        }
+    }
 
     private void Awake()
     {
