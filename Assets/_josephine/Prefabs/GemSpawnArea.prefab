@@ -99,8 +99,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2.25
-  m_Center: {x: -2.66, y: 0.874048, z: 2.19}
+  m_Radius: 1.1243519
+  m_Center: {x: -2.71, y: 0.84, z: 2.04}
 --- !u!54 &5510878610968919598
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -129,7 +129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98c852775cb8b484a921f6260c40799f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taskDrill: {fileID: 0}
   gemObjects:
   - {fileID: 7576376475985966520, guid: 7657f86fab910634e8d97b7023cdc185, type: 3}
   - {fileID: 7576376475985966520, guid: d78a018951c2bbd40a61ee3b34bd5462, type: 3}

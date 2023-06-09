@@ -8,6 +8,7 @@ public class TaskDrive : Task
     //[Header("Events")]
     //public UnityEvent onDriving;
 
+    public AudioSource engineSound;
     public AudioClip driveAudio;
     public List<SingleTask> taskControl = new List<SingleTask>();
     GameObject lastCheckpoint = null;
@@ -39,11 +40,12 @@ public class TaskDrive : Task
     {
         if (taskControl[0].IsOn)
         {
+            engineSound.Play();
             machineController.ActivateEngine();
         }
         else
         {
-
+            engineSound.Stop();
         }
     }
 

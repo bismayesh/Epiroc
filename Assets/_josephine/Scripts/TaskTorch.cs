@@ -9,8 +9,18 @@ public class TaskTorch : Task
     public List<SingleTask> taskControl = new List<SingleTask>();
     bool firstTime = true;
 
+    public bool testDrive = false;
+
     //Singelton
     public static TaskTorch instance;
+
+    private void Update()
+    {
+        if (testDrive)
+        {
+            machineController.ChangeMovementForce(new Vector2(1.0f, 1.0f));
+        }
+    }
 
     private void Awake()
     {
@@ -46,10 +56,12 @@ public class TaskTorch : Task
         if (taskControl[0].IsOn)
         {
             machineController.ActivateTorch();
+            machineController.torchSpread = 35.0f;
         }
         else
         {
             machineController.DeactivateTorch();
+            machineController.torchSpread = 35.0f;
         }
     }
 
@@ -57,11 +69,11 @@ public class TaskTorch : Task
     {
         if (taskControl[1].IsOn)
         {
-            machineController.torchSpread = 0.0f;
+            machineController.torchIntensity = 1.0f;
         }
         else
         {
-            machineController.torchSpread = 10.0f;
+            machineController.torchIntensity = 0.5f;
         }
     }
 
@@ -72,6 +84,7 @@ public class TaskTorch : Task
             if (!taskControl[0].IsOn || !taskControl[0].IsOn)
             {
                 TorchFailure();
+                return;
             }
 
             if (TaskDrill.instance.MachineStabalized)
@@ -80,11 +93,11 @@ public class TaskTorch : Task
                 return;
             }
 
-            machineController.torchIntensity = 5.0f;
+            
         }
         else
         {
-            machineController.torchIntensity = 0.5f;
+            
         }
     }
 

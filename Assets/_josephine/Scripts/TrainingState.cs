@@ -2,6 +2,7 @@ using BNG;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,8 +10,23 @@ public class TrainingState : MonoBehaviour
 {
     //public SmoothLocomotion smoothLocomotion;
     bool smoothLocomotionChanged = true;
-    public Transform playerPosition;
-    Vector3 playerStartPosition;
+    public List<Transform> playerPosition = new List<Transform>();
+    List<Vector3> playerStartPosition = new List<Vector3>();
+    bool positionSet = false;
+    public AudioSource audioSource;
+    public AudioClip progressClip;
+    public AudioClip failureClip;
+    public AudioClip damageClip;
+
+    [Header("Damage Meter")]
+    public Transform damageMeter;
+    public Renderer damageIndicator;
+    public Gradient damageColor;
+    public Gradient emissiveColor;
+    [SerializeField]
+    int maxDamage = 100;
+    [SerializeField]
+    int curDamage = 0;
 
     //Training figures
     int neededTrainingIterations;
@@ -30,17 +46,6 @@ public class TrainingState : MonoBehaviour
     int taskDrillFailures = 0;
     int taskTorchProgress = 0;
     int taskTorchFailures = 0;
-
-    [Header("Damage")]
-    public Transform damageMeter;
-    public Renderer damageIndicator;
-    public Gradient damageColor;
-    //public Gradient emissiveColor;
-    [SerializeField]
-    int maxDamage = 100;
-    [SerializeField]
-    int curDamage = 0;
-    
 
     //UI
     [Header("Training info")]
@@ -69,7 +74,7 @@ public class TrainingState : MonoBehaviour
 
     void Start()
     {
-        playerStartPosition = playerPosition.localPosition;
+        StartCoroutine(PlayerStartPosition());
         neededTrainingIterations = TaskDrive.instance.neededIterations + TaskDrill.instance.neededIterations + TaskTorch.instance.neededIterations;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
@@ -83,18 +88,36 @@ public class TrainingState : MonoBehaviour
         UpdateDamageMeter();
     }
 
-    /*
-    void LateUpdate()
+    IEnumerator PlayerStartPosition()
     {
+
+        yield return new WaitForSeconds(1);
+
         if (smoothLocomotionChanged)
         {
             smoothLocomotionChanged = false;
-            playerPosition.GetComponentInChildren<SmoothLocomotion>().enabled = false;
+            playerPosition[0].GetComponentInParent<SmoothLocomotion>().enabled = false;
         }
 
-        playerPosition.localPosition = playerStartPosition;
+        foreach (Transform t in playerPosition)
+        {
+            playerStartPosition.Add(t.position);
+        }
+        positionSet = true;
     }
-    */
+
+    
+    void LateUpdate()
+    {
+        if (!positionSet)
+            return;
+
+        for (int i = 0; i < playerPosition.Count; i++)
+        {
+            playerPosition[i].position = playerStartPosition[i];
+        }
+    }
+    
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
@@ -127,6 +150,7 @@ public class TrainingState : MonoBehaviour
         currentTrainingIteration++;
         trainingProgress = Percentage(neededTrainingIterations, currentTrainingIteration);
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
+        audioSource.PlayOneShot(progressClip, 0.2f);
 
         if (currentTrainingIteration == neededTrainingIterations)
         {
@@ -157,6 +181,7 @@ public class TrainingState : MonoBehaviour
         trainingFailures++;
         textTrainingFailures.text = "Failures: " + trainingFailures;
         scoreMultiplier = 1;
+        audioSource.PlayOneShot(failureClip, 0.6f);
     }
 
     public void UpdateDriveFailure()
@@ -179,8 +204,11 @@ public class TrainingState : MonoBehaviour
 
     public void MachineDamage(int damage)
     {
+        if (damage <= 0) return;
+
         curDamage += damage;
         UpdateDamageMeter();
+        audioSource.PlayOneShot(damageClip, 0.1f);
 
         if (curDamage >= maxDamage)
         {
@@ -192,16 +220,14 @@ public class TrainingState : MonoBehaviour
 
     void UpdateDamageMeter()
     {
-        
         float damageSize = 1.0f / (float)maxDamage;
         float meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
 
-        if (damageSize >= 0)
+        if (meterSize >= 0)
         {
             damageMeter.localScale = new Vector3(meterSize, 1, 1);
             damageIndicator.material.color = damageColor.Evaluate(meterSize);
-            //damageIndicator.material.SetColor("_EmissiveColor", emissiveColor.Evaluate(meterSize) * 3.9f);
+            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 1.9f);
         }
-
     }
 }
