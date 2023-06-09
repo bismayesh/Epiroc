@@ -5,6 +5,7 @@ using UnityEngine;
 public class GemSpawnPoint : MonoBehaviour
 {
     public List<GameObject> gemObjects = new List<GameObject>();
+    public AudioSource audioSource;
     public bool spawnGems = false;
     public Transform spawnTransform;
     Vector3 spawnPosition;
@@ -12,6 +13,7 @@ public class GemSpawnPoint : MonoBehaviour
     private void Start()
     {
         spawnPosition = spawnTransform.position;
+        audioSource = gameObject.GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -20,6 +22,7 @@ public class GemSpawnPoint : MonoBehaviour
         {
             TaskDrill.instance.SpawnArea = true;
             TaskDrill.instance.GemSpawnObject = gameObject.GetComponent<GemSpawnPoint>();
+            audioSource.Play();
         }
     }
 
@@ -29,6 +32,7 @@ public class GemSpawnPoint : MonoBehaviour
         {
             TaskDrill.instance.SpawnArea = false;
             TaskDrill.instance.GemSpawnObject = null;
+            audioSource.Stop();
         }
     }
 

@@ -26,6 +26,9 @@ public class SupportLevels : MonoBehaviour
     public Toggle supportGhostToggle;
     bool holdingJoystick = false;
 
+    public GameObject supportAnimatedControlers;
+    bool animatedContolersIsOn = false;
+
     //Intro
     [Header("Intro")]
     public GameObject textBackground;
@@ -83,6 +86,8 @@ public class SupportLevels : MonoBehaviour
 
         ResetSupportLayers();
         StartCoroutine(IntroSupport());
+
+        supportAnimatedControlers.SetActive(false);
     }
 
     public void SupportInstructions(SupportMood newMood = SupportMood.Old, GameObject thisObject = null, bool resetIndex = false)
@@ -298,6 +303,12 @@ public class SupportLevels : MonoBehaviour
         CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
     }
 
+    public void ButtonAnimatedControlers()
+    {
+        animatedContolersIsOn = !animatedContolersIsOn;
+        supportAnimatedControlers.SetActive(animatedContolersIsOn);
+    }
+
     private void CheckSupportToggle(Toggle toggle, ref bool supportLayer)
     {
         toggle.isOn = !toggle.isOn;
@@ -324,7 +335,3 @@ public class SupportLevels : MonoBehaviour
         }
     }
 }
-
-
-
-
