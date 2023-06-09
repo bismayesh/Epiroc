@@ -34,6 +34,7 @@ public class SupportLevels : MonoBehaviour
     [HideInInspector]
     public AudioSource audioSource;
     public AudioClip introClip;
+    public AudioClip taskCompleteClip;
     public AudioClip driveFinalClip;
     public AudioClip drillFinalClip;
     public AudioClip torchFinalClip;
@@ -135,6 +136,11 @@ public class SupportLevels : MonoBehaviour
     {
         if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject)
         {
+            if (index != 0)
+            {
+                audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+            }
+
             if (index == tasks.Count)
             {
                 if (supportMood == SupportMood.Torch)
@@ -192,6 +198,7 @@ public class SupportLevels : MonoBehaviour
                 tasks[index].supportGhost.SetActive(true);
             }
             */
+
             index++;
         }
     }

@@ -13,6 +13,10 @@ public class TrainingState : MonoBehaviour
     public List<Transform> playerPosition = new List<Transform>();
     List<Vector3> playerStartPosition = new List<Vector3>();
     bool positionSet = false;
+    public AudioSource audioSource;
+    public AudioClip progressClip;
+    public AudioClip failureClip;
+    public AudioClip damageClip;
 
     [Header("Damage Meter")]
     public Transform damageMeter;
@@ -146,6 +150,7 @@ public class TrainingState : MonoBehaviour
         currentTrainingIteration++;
         trainingProgress = Percentage(neededTrainingIterations, currentTrainingIteration);
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
+        audioSource.PlayOneShot(progressClip, 0.2f);
 
         if (currentTrainingIteration == neededTrainingIterations)
         {
@@ -176,6 +181,7 @@ public class TrainingState : MonoBehaviour
         trainingFailures++;
         textTrainingFailures.text = "Failures: " + trainingFailures;
         scoreMultiplier = 1;
+        audioSource.PlayOneShot(failureClip, 0.6f);
     }
 
     public void UpdateDriveFailure()
@@ -198,8 +204,11 @@ public class TrainingState : MonoBehaviour
 
     public void MachineDamage(int damage)
     {
+        if (damage <= 0) return;
+
         curDamage += damage;
         UpdateDamageMeter();
+        audioSource.PlayOneShot(damageClip, 0.1f);
 
         if (curDamage >= maxDamage)
         {
