@@ -9,7 +9,6 @@ public enum SupportMood
 {
     None,
     Old,
-    Intro,
     Drive,
     Drill,
     Torch
@@ -33,8 +32,13 @@ public class SupportLevels : MonoBehaviour
     public GameObject introText;
     public float introTime = 10.0f;
     [HideInInspector]
-    public AudioSource AudioSource;
+    public AudioSource audioSource;
+    public AudioClip introClip;
+    public AudioClip driveFinalClip;
+    public AudioClip drillFinalClip;
+    public AudioClip torchFinalClip;
     bool introFinnished = false;
+    Coroutine lastCoroutine = null;
 
     //Tasks
     List<SingleTask> driveTasks;
@@ -71,17 +75,20 @@ public class SupportLevels : MonoBehaviour
 
     private void Start()
     {
-        AudioSource = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
         driveTasks = TaskDrive.instance.taskControl;
         drillTasks = TaskDrill.instance.taskControl;
         torchTasks = TaskTorch.instance.taskControl;
 
         ResetSupportLayers();
-        SupportInstructions(SupportMood.Intro);
+        StartCoroutine(IntroSupport());
     }
 
     public void SupportInstructions(SupportMood newMood = SupportMood.Old, GameObject thisObject = null, bool resetIndex = false)
     {
+        if (!introFinnished)
+            return;
+
         if (newMood != SupportMood.Old)
             supportMood = newMood;
 
@@ -91,28 +98,37 @@ public class SupportLevels : MonoBehaviour
         switch (supportMood)
         {
             case SupportMood.None: break;
-            case SupportMood.Intro: IntroSupport(); break;
             case SupportMood.Drive: SupportLayerChain(driveTasks, thisObject); break;
             case SupportMood.Drill: SupportLayerChain(drillTasks, thisObject); break;
             case SupportMood.Torch: SupportLayerChain(torchTasks, thisObject); break;
         }
     }
 
-    void IntroSupport()
+    IEnumerator IntroSupport()
     {
         textBackground.SetActive(true);
         introText.SetActive(true);
-        StartCoroutine(IntroTaskTime());
-    }
+        StartCoroutine(PlayAudio(introClip));
 
-    IEnumerator IntroTaskTime()
-    {
-        yield return new WaitForSeconds(introTime);
+        yield return new WaitForSeconds(introClip.length);
+
         introText.SetActive(false);
         textBackground.SetActive(false);
         introFinnished = true;
 
         SupportInstructions(SupportMood.Drive);
+    }
+
+    IEnumerator PlayAudio(AudioClip clip)
+    {
+        if(lastCoroutine != null)
+            StopCoroutine(lastCoroutine);
+
+        audioSource.clip = clip;
+        audioSource.Play();
+        yield return new WaitForSeconds(clip.length);
+        //audioSource.Stop();
+        //audioSource.clip = null;
     }
 
     void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
@@ -121,10 +137,25 @@ public class SupportLevels : MonoBehaviour
         {
             if (index == tasks.Count)
             {
-                if (supportMood == SupportMood.Torch && firstTorchInstruction)
+                if (supportMood == SupportMood.Torch)
                 {
-                    firstTorchInstruction = false;
-                    TrollSpawner.instance.InstanciateTrolls();
+                    lastCoroutine = StartCoroutine(PlayAudio(torchFinalClip));
+
+                    if (firstTorchInstruction)
+                    {
+                        firstTorchInstruction = false;
+                        TrollSpawner.instance.InstanciateTrolls();
+                    }
+                }
+
+                if (supportMood == SupportMood.Drive)
+                {
+                    lastCoroutine = StartCoroutine(PlayAudio(driveFinalClip));
+                }
+
+                if (supportMood == SupportMood.Drill)
+                {
+                    lastCoroutine = StartCoroutine(PlayAudio(drillFinalClip));
                 }
 
                 index = 0;
@@ -149,12 +180,11 @@ public class SupportLevels : MonoBehaviour
                 if (index != 0) tasks[index - 1].supportLight.SetActive(false);
                 tasks[index].supportLight.SetActive(true);
             }
-            /*
             if (supportlayerVoice)
             {
-                AudioSource.Stop();
-                AudioSource.PlayOneShot(tasks[index].supportVoice);
+                lastCoroutine = StartCoroutine(PlayAudio(tasks[index].supportVoice));
             }
+            /*
             if (supportlayerGhost)
             {
                 if (index != 0)
