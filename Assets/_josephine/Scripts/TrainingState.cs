@@ -74,7 +74,7 @@ public class TrainingState : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(PlayerStartPosition());
+        //StartCoroutine(PlayerStartPosition());
         neededTrainingIterations = TaskDrive.instance.neededIterations + TaskDrill.instance.neededIterations + TaskTorch.instance.neededIterations;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
@@ -88,9 +88,10 @@ public class TrainingState : MonoBehaviour
         UpdateDamageMeter();
     }
 
+    /*
     IEnumerator PlayerStartPosition()
     {
-
+        
         yield return new WaitForSeconds(1);
 
         if (smoothLocomotionChanged)
@@ -105,6 +106,7 @@ public class TrainingState : MonoBehaviour
         }
         positionSet = true;
     }
+    */
 
     
     void LateUpdate()

@@ -42,12 +42,16 @@ public class Lever : MonoBehaviour
 
     public void SwitchOn()
     {
+        lightOn.material = materialOn;
+        lightOff.material = materialNoLight;
         TaskDrill.instance.TaskCheck(gameObject, true);
         SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }
 
     public void SwitchOff()
     {
+        lightOn.material = materialNoLight;
+        lightOff.material = materialOff;
         TaskDrill.instance.TaskCheck(gameObject, false);
         SupportLevels.instance.SupportInstructions( SupportMood.Old, gameObject);
     }

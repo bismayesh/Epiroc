@@ -213,12 +213,14 @@ public class SupportLevels : MonoBehaviour
         textBackground.SetActive(false);
         introText.SetActive(false);
 
+        audioSource.Stop();
+        audioSource.clip = null;
+
         foreach (SingleTask task in driveTasks)
         {
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportVoice.SetActive(false);
             //task.supportGhost.SetActive(false);
         }
 
@@ -227,7 +229,6 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportVoice.SetActive(false);
             //task.supportGhost.SetActive(false);
         }
 
@@ -236,7 +237,6 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportVoice.SetActive(false);
             //task.supportGhost.SetActive(false);
         }
     }
@@ -245,26 +245,34 @@ public class SupportLevels : MonoBehaviour
 
     public void ButtonDrive()
     {
-        ResetSupportLayers();
-        SupportInstructions(SupportMood.Drive, default, true);
+        ButtonMoodCheck(SupportMood.Drive);
     }
 
     public void ButtonDrill()
     {
-        if (!introFinnished)
-            return;
-
-        ResetSupportLayers();
-        SupportInstructions(SupportMood.Drill, default, true);
+        ButtonMoodCheck(SupportMood.Drill);
     }
 
     public void ButtonTorch()
+    {
+        ButtonMoodCheck(SupportMood.Torch);
+    }
+
+    void ButtonMoodCheck(SupportMood newMood)
     {
         if (!introFinnished)
             return;
 
         ResetSupportLayers();
-        SupportInstructions(SupportMood.Torch, default, true);
+
+        if (supportMood != newMood)
+        {
+            SupportInstructions(newMood, default, true);
+        }
+        else
+        {
+            SupportInstructions(SupportMood.None);
+        }
     }
 
     public void ButtonTextSupport()
