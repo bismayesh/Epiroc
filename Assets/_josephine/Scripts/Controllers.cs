@@ -14,6 +14,22 @@ public class Controllers : MonoBehaviour
     float localRotation;
     bool initialSwitch = true;
 
+    public void MenuButtonPressed()
+    {
+        if (isActive)
+        {
+            isActive = false;
+            TaskInstructions.instance.TaskCheck(this.gameObject, false);
+        }
+        else
+        {
+            isActive = true;
+            TaskInstructions.instance.TaskCheck(this.gameObject, true);
+        }
+
+        SupportLevels.instance.SupportInstructions(SupportMood.Introduction, gameObject);
+    }
+
     public void ButtonPressed()
     {
         
