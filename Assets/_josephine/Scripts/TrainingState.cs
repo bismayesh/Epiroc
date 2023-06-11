@@ -168,13 +168,17 @@ public class TrainingState : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void UpdateScoreMultiplier()
+    {
+        scoreMultiplier *= 2;
+        textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
+    }
+
     public void UpdateTrainingScore(int gemScore)
     {
         trainingScore += gemScore * scoreMultiplier;
-        scoreMultiplier *= 2;
         gemsCount++;
         textTrainingScore.text = "Score: " + trainingScore;
-        textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
         textTrainingGemsCount.text = "Gems: " + gemsCount.ToString();
     }
 

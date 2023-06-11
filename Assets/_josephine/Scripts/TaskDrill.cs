@@ -155,8 +155,9 @@ public class TaskDrill : Task
                 if (spawnArea)
                 {
                     spawnArea = false;
+                    TrainingState.instance.UpdateScoreMultiplier();
                     TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
-                    gemSpawnPoint.SpawnGems();
+                    gemSpawnPoint.GemPilesSpawn();
                     spawnTrolls = true;
                 }
             }

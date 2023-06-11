@@ -14,9 +14,11 @@ public class Gem : MonoBehaviour
             Destroy(gameObject);
         }
 
+        /*
         if (collision.gameObject.CompareTag("Troll"))
         {
             Destroy(gameObject);
         }
+        */
     }
 }

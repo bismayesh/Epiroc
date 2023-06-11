@@ -13,6 +13,7 @@ TagManager:
   - LeftJoystick
   - monster
   - Cave
+  - Stone
   layers:
   - Default
   - TransparentFX
