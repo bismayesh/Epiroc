@@ -8,9 +8,6 @@ public class TrollSpawner : MonoBehaviour
     public Transform[] spawnPoints;
     public int spawnCount = 3;
     int index;
-    [SerializeField]
-
-    bool spawnTrolls = false;
 
     public static TrollSpawner instance;
 
@@ -19,13 +16,9 @@ public class TrollSpawner : MonoBehaviour
         instance = this;
     }
 
-    private void Update()
+    private void Start()
     {
-        if (spawnTrolls)
-        {
-            spawnTrolls = false;
-            InstanciateTrolls();
-        }
+        InstanciateTrolls();
     }
 
     public void InstanciateTrolls()
