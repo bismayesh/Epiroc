@@ -86,7 +86,7 @@ public class MachineController : MonoBehaviour {
     #region MachineAndDrillFunctions
     
     public void ChangeMovementForce(Vector2 force){
-        transform.Translate(Vector3.forward * force.y * MachineMovementForce * Time.deltaTime * 4);
+        transform.Translate(Vector3.forward * force.y * MachineMovementForce * Time.deltaTime * 3);
     }
 
     public void ChangeRotationForce(Vector2 force){

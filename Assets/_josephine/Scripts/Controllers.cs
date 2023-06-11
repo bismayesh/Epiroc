@@ -27,7 +27,10 @@ public class Controllers : MonoBehaviour
             TaskInstructions.instance.TaskCheck(this.gameObject, true);
         }
 
-        SupportLevels.instance.SupportInstructions(SupportMood.Introduction, gameObject);
+        if (!SupportLevels.instance.instructionsFinnished)
+        {
+            SupportLevels.instance.SupportInstructions(SupportMood.Introduction, gameObject);
+        }
     }
 
     public void ButtonPressed()

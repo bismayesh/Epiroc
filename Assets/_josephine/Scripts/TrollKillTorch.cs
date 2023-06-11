@@ -44,6 +44,7 @@ public class TrollKillTorch : MonoBehaviour
 
         foreach (Troll troll in trolls)
         {
+            trolls.Remove(troll);
             TaskTorch.instance.TorchProgress();
             troll.DestroyTroll();
         }

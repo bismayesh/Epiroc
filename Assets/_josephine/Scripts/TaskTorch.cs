@@ -102,7 +102,7 @@ public class TaskTorch : Task
 
     IEnumerator LightBeam()
     {
-        machineController.torchIntensity = 10.0f;
+        machineController.torchIntensity = 4.0f;
         yield return new WaitForSeconds(1);
         machineController.torchIntensity = 1.0f;
     }

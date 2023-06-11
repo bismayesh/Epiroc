@@ -75,15 +75,7 @@ public class TaskDrill : Task
             {
                 spawnTrolls = false;
 
-                if (firstTorchInstruction)
-                {
-                    firstTorchInstruction = false;
-                    TaskTorch.instance.FirstTorchInstructions();
-                }
-                else
-                {
-                    TrollSpawner.instance.InstanciateTrolls();
-                }
+                
             }
         }
         else
@@ -158,7 +150,8 @@ public class TaskDrill : Task
                     TrainingState.instance.UpdateScoreMultiplier();
                     TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
                     gemSpawnPoint.GemPilesSpawn();
-                    spawnTrolls = true;
+                    StartCoroutine(FirstTorchInstruction());
+                    //spawnTrolls = true;
                 }
             }
             else
@@ -172,6 +165,16 @@ public class TaskDrill : Task
             SetAudio(drillAudio[1], false, false);
             machineController.DeactivateDrill();
             machineController.StopDrill();
+        }
+    }
+
+    IEnumerator FirstTorchInstruction()
+    {
+        if (firstTorchInstruction)
+        {
+            yield return new WaitForSeconds(2);
+            firstTorchInstruction = false;
+            TaskTorch.instance.FirstTorchInstructions();
         }
     }
 

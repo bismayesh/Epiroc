@@ -1,4 +1,5 @@
 using BNG;
+using Photon.Voice;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,6 +18,8 @@ public class TrainingState : MonoBehaviour
     public AudioClip progressClip;
     public AudioClip failureClip;
     public AudioClip damageClip;
+    public AudioClip gemClip;
+    Coroutine lastCoroutine;
 
     [Header("Damage Meter")]
     public Transform damageMeter;
@@ -152,7 +155,7 @@ public class TrainingState : MonoBehaviour
         currentTrainingIteration++;
         trainingProgress = Percentage(neededTrainingIterations, currentTrainingIteration);
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
-        audioSource.PlayOneShot(progressClip, 0.2f);
+        lastCoroutine = StartCoroutine(PlayAudio(gemClip, 0.2f));
 
         if (currentTrainingIteration == neededTrainingIterations)
         {
@@ -176,6 +179,7 @@ public class TrainingState : MonoBehaviour
 
     public void UpdateTrainingScore(int gemScore)
     {
+        lastCoroutine = StartCoroutine(PlayAudio(gemClip, 0.2f));
         trainingScore += gemScore * scoreMultiplier;
         gemsCount++;
         textTrainingScore.text = "Score: " + trainingScore;
@@ -187,7 +191,7 @@ public class TrainingState : MonoBehaviour
         trainingFailures++;
         textTrainingFailures.text = "Failures: " + trainingFailures;
         scoreMultiplier = 1;
-        audioSource.PlayOneShot(failureClip, 0.6f);
+        lastCoroutine = StartCoroutine(PlayAudio(failureClip, 0.6f));
     }
 
     public void UpdateDriveFailure()
@@ -214,7 +218,7 @@ public class TrainingState : MonoBehaviour
 
         curDamage += damage;
         UpdateDamageMeter();
-        audioSource.PlayOneShot(damageClip, 0.1f);
+        lastCoroutine = StartCoroutine(PlayAudio(damageClip, 0.1f));
 
         if (curDamage >= maxDamage)
         {
@@ -233,7 +237,27 @@ public class TrainingState : MonoBehaviour
         {
             damageMeter.localScale = new Vector3(meterSize, 1, 1);
             damageIndicator.material.color = damageColor.Evaluate(meterSize);
-            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 1.9f);
+            StartCoroutine(MeterBlink(meterSize));
         }
+    }
+
+    IEnumerator MeterBlink(float meterSize)
+    {
+        damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 10.9f);
+        yield return new WaitForSeconds(0.6f);
+        damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f);
+    }
+
+    IEnumerator PlayAudio(AudioClip clip, float volume)
+    {
+        if (lastCoroutine != null)
+            StopCoroutine(lastCoroutine);
+
+        audioSource.clip = clip;
+        audioSource.volume = volume;
+        audioSource.Play();
+        yield return new WaitForSeconds(clip.length);
+        //audioSource.Stop();
+        //audioSource.clip = null;
     }
 }

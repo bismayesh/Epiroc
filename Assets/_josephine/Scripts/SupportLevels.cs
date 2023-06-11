@@ -43,9 +43,10 @@ public class SupportLevels : MonoBehaviour
     public AudioClip driveFinalClip;
     public AudioClip drillFinalClip;
     public AudioClip torchFinalClip;
+    [SerializeField]
     bool introFinnished = false;
     [SerializeField]
-    bool instructionsFinnished = false;
+    public bool instructionsFinnished = false;
     bool xButtonPressed = false;
     Coroutine lastCoroutine = null;
 
@@ -86,6 +87,7 @@ public class SupportLevels : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        taskCompleteSource.clip = taskCompleteClip;
         instructionTasks = TaskInstructions.instance.taskControl;
         driveTasks = TaskDrive.instance.taskControl;
         drillTasks = TaskDrill.instance.taskControl;
@@ -111,7 +113,7 @@ public class SupportLevels : MonoBehaviour
 
         switch (supportMood)
         {
-            case SupportMood.None: break;
+            case SupportMood.None: ResetSupportLayers(); break;
             case SupportMood.Introduction: SupportLayerChain(instructionTasks, thisObject); break;
             case SupportMood.Drive: SupportLayerChain(driveTasks, thisObject); break;
             case SupportMood.Drill: SupportLayerChain(drillTasks, thisObject); break;
@@ -160,30 +162,32 @@ public class SupportLevels : MonoBehaviour
             {
                 if (supportMood == SupportMood.Torch)
                 {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(torchFinalClip));
 
+                    /*
                     if (firstTorchInstruction)
                     {
                         firstTorchInstruction = false;
                         TrollSpawner.instance.InstanciateTrolls();
                     }
+                    */
                 }
 
                 if (supportMood == SupportMood.Drive)
                 {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(driveFinalClip));
                 }
 
                 if (supportMood == SupportMood.Drill)
                 {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(drillFinalClip));
                 }
 
                 if(supportMood == SupportMood.Introduction)
                 {
-                    Debug.Log("finninshed guide!");
-                    
-                    taskCompleteSource.clip = taskCompleteClip;
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     instructionsFinnished = true;
                 }
@@ -305,9 +309,6 @@ public class SupportLevels : MonoBehaviour
 
     void ButtonMoodCheck(SupportMood newMood)
     {
-        if (!introFinnished || !instructionsFinnished)
-            return;
-
         ResetSupportLayers();
 
         if (supportMood != newMood)

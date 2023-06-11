@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 239447354863165711}
   - component: {fileID: 698879140576021005}
   - component: {fileID: 8079750713429264620}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GemModel
   m_TagString: SuperGem
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 1932060928337170601}
   - component: {fileID: 5373764490386653276}
   - component: {fileID: 3991420575264054643}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GemAmythist
   m_TagString: ChunkGem
   m_Icon: {fileID: 0}

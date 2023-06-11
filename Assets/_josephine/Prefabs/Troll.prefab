@@ -781,7 +781,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1083
+  m_VersionIndex: 1089
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1255,6 +1255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 289ef027eb098824c93b2bea4749d25f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trollParent: {fileID: 8014482182844130870}
   gems:
   - {fileID: 7576376475985966520, guid: d78a018951c2bbd40a61ee3b34bd5462, type: 3}
   - {fileID: 7576376475985966520, guid: 530724527b73eaa40bd83f734937fd73, type: 3}
@@ -1266,7 +1267,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: df26d2120d23e4b40b39e5949a4cad43, type: 2}
   - {fileID: 2100000, guid: d2852e7be668c8a4e87a334b8b0638f7, type: 2}
   gemRenderer: {fileID: 858868362508647832}
-  gemPosition: {fileID: 8014482182844130869}
+  gemPosition: {fileID: 7827825051850999526}
   detectDistance: 5
   minWanderDistance: 15
   maxWanderDistance: 35
@@ -1283,7 +1284,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 10
+  m_Speed: 5
   m_Acceleration: 20
   avoidancePriority: 50
   m_AngularSpeed: 120

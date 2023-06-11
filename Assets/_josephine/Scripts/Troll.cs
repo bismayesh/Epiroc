@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Troll : MonoBehaviour
 {
+    public GameObject trollParent;
     public List<GameObject> gems = new List<GameObject>();
     public List<Material> gemMaterials = new List<Material>();
     public Renderer gemRenderer;
@@ -80,11 +81,11 @@ public class Troll : MonoBehaviour
 
     public void DestroyTroll()
     {
-        GameObject gem = Instantiate(gems[gemIndex], transform.position, Quaternion.identity);
+        GameObject gem = Instantiate(gems[gemIndex], gemPosition.position, Quaternion.identity);
         gem.transform.localScale = Vector3.one * 3;
 
 
-        Destroy(gameObject);
+        Destroy(trollParent);
     }
 }
 
