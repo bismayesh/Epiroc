@@ -29,6 +29,8 @@ public class SupportLevels : MonoBehaviour
 
     public GameObject supportAnimatedControlers;
     bool animatedContolersIsOn = false;
+    public GameObject objectivesCanvas;
+    bool objectiveCanvasIsOn = false;
 
     //Intro
     [Header("Intro")]
@@ -151,10 +153,13 @@ public class SupportLevels : MonoBehaviour
 
     void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
     {
-        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject || supportMood == SupportMood.Introduction && index == 3 && xButtonPressed)
+        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject || !instructionsFinnished && index == 2 || !instructionsFinnished && index == 4 && xButtonPressed || !instructionsFinnished && index == 5 || !instructionsFinnished && index == 6)
         {
+            
+
             if (index != 0)
             {
+                Debug.Log(tasks[index - 1].task + " ska va samma som " + thisObject);
                 audioSource.PlayOneShot(taskCompleteClip, 0.2f);
             }
 
@@ -186,7 +191,7 @@ public class SupportLevels : MonoBehaviour
                     lastCoroutine = StartCoroutine(PlayAudio(drillFinalClip));
                 }
 
-                if(supportMood == SupportMood.Introduction)
+                if (supportMood == SupportMood.Introduction)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     instructionsFinnished = true;
@@ -227,16 +232,21 @@ public class SupportLevels : MonoBehaviour
             {
                 lastCoroutine = StartCoroutine(PlayAudio(tasks[index].supportVoice));
             }
-            /*
             if (supportlayerGhost)
             {
                 if (index != 0)
                     tasks[index - 1].supportGhost.SetActive(false);
                 tasks[index].supportGhost.SetActive(true);
             }
-            */
 
             index++;
+
+
+            //Instructions
+            if (!instructionsFinnished && index == 2 || !instructionsFinnished && index == 5 || !instructionsFinnished && index == 6)
+            {
+                StartCoroutine(InstructionsTimer());
+            }
         }
     }
 
@@ -253,7 +263,7 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
 
         foreach (SingleTask task in driveTasks)
@@ -261,7 +271,7 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
 
         foreach (SingleTask task in drillTasks)
@@ -269,7 +279,7 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
 
         foreach (SingleTask task in torchTasks)
@@ -277,7 +287,7 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
     }
 
@@ -372,13 +382,12 @@ public class SupportLevels : MonoBehaviour
     {
         animatedContolersIsOn = !animatedContolersIsOn;
         supportAnimatedControlers.SetActive(animatedContolersIsOn);
+    }
 
-        /*
-        if (!instructionsFinnished)
-        {
-            TaskInstructions.instance.InstructionButton(this.gameObject);
-        }
-        */
+    public void ButtonTrainingObjectives()
+    {
+        objectiveCanvasIsOn = !objectiveCanvasIsOn;
+        objectivesCanvas.SetActive(objectiveCanvasIsOn);
     }
 
 
@@ -407,19 +416,55 @@ public class SupportLevels : MonoBehaviour
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
 
+        /*
         if (supportMenu.activeSelf == true)
         {
-            Time.timeScale = 0.0f;
+            //Time.timeScale = 0.0f;
         }
         else
         {
             Time.timeScale = 1.0f;
         }
+        */
+
 
         if (!instructionsFinnished)
         {
             xButtonPressed = true;
             SupportInstructions(SupportMood.Introduction);
+        }
+    }
+
+    IEnumerator InstructionsTimer()
+    {
+        switch (index)
+        {
+            case 2:
+                {
+                    ResetSupportLayers();
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+
+                    yield return new WaitForSeconds(5);
+
+                    objectivesCanvas.SetActive(false);
+                    textBackground.SetActive(true);
+                    instructionTasks[index - 1].supportText.SetActive(true);
+                    instructionTasks[index - 1].supportTextSmall.SetActive(true);
+                    lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index + 1].supportVoice));
+                    break;
+                }
+            case 5:
+                {
+                    yield return new WaitForSeconds(5);
+                    SupportInstructions(SupportMood.Introduction);
+                    break;
+                }
+            case 6:
+                {
+                    yield return new WaitForSeconds(5);
+                    SupportInstructions(SupportMood.Introduction);
+                    break;
+                }
         }
     }
 }

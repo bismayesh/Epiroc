@@ -16,6 +16,9 @@ public class Troll : MonoBehaviour
     public float minWanderWaitTime;
     public float maxWanderWaitTime;
 
+    public AudioSource audioSource;
+    public AudioClip dyingClip;
+
     private NavMeshAgent agent;
     private int gemIndex;
     private int colorIndex;
@@ -84,6 +87,8 @@ public class Troll : MonoBehaviour
         GameObject gem = Instantiate(gems[gemIndex], gemPosition.position, Quaternion.identity);
         gem.transform.localScale = Vector3.one * 3;
 
+        audioSource.clip = dyingClip;
+        audioSource.PlayOneShot(dyingClip);
 
         Destroy(trollParent);
     }

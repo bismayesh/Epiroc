@@ -31,6 +31,8 @@ public class TrainingState : MonoBehaviour
     float meterSize;
     bool damageMeterPulsatingOn = false;
     public float duration = 2.0f;
+    public AudioSource damageAudio;
+    bool damageAudioInOn = false;
 
     //Training figures
     Coroutine lastPopUp = null;
@@ -128,6 +130,12 @@ public class TrainingState : MonoBehaviour
         }
         else
         {
+            if (!damageAudioInOn)
+            {
+                damageAudioInOn = true;
+                damageAudio.Play();
+            }
+
             var amplitude = Mathf.PingPong(Time.time, duration / 3.0f);
             amplitude = amplitude / duration * 0.2f + 1.0f;
             damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f * amplitude);
@@ -189,7 +197,11 @@ public class TrainingState : MonoBehaviour
 
     public void UpdateScoreMultiplier()
     {
-        scoreMultiplier += 1;
+        if (scoreMultiplier <= 10)
+        {
+            scoreMultiplier += 1;
+        }
+        
         textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
     }
 
