@@ -56,13 +56,13 @@ public class TaskTorch : Task
         if (taskControl[0].IsOn)
         {
             machineController.ActivateTorch();
-            machineController.torchSpread = 35.0f;
+            machineController.torchIntensity = 1.0f;
 
         }
         else
         {
             machineController.DeactivateTorch();
-            machineController.torchSpread = 35.0f;
+            machineController.torchIntensity = 0.5f;
         }
     }
 
@@ -70,11 +70,11 @@ public class TaskTorch : Task
     {
         if (taskControl[1].IsOn)
         {
-            machineController.torchIntensity = 1.0f;
+            machineController.torchSpread = 35.0f;
         }
         else
         {
-            machineController.torchIntensity = 0.5f;
+            machineController.torchSpread = 0.0f;
         }
     }
 
@@ -90,6 +90,8 @@ public class TaskTorch : Task
 
             if (TaskDrill.instance.MachineStabalized)
             {
+
+                // deactivate button after a while
                 TorchFailure(5);
                 return;
             }
