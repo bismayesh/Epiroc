@@ -9,17 +9,15 @@ using UnityEngine.SceneManagement;
 
 public class TrainingState : MonoBehaviour
 {
-    //public SmoothLocomotion smoothLocomotion;
-    bool smoothLocomotionChanged = true;
-    public List<Transform> playerPosition = new List<Transform>();
-    List<Vector3> playerStartPosition = new List<Vector3>();
-    bool positionSet = false;
+    //Audio
     public AudioSource audioSource;
     public AudioClip progressClip;
     public AudioClip failureClip;
     public AudioClip damageClip;
     public AudioClip gemClip;
     Coroutine lastCoroutine;
+
+    public GameObject megaGem;
 
     [Header("Damage Meter")]
     public Transform damageMeter;
@@ -30,8 +28,14 @@ public class TrainingState : MonoBehaviour
     int maxDamage = 100;
     [SerializeField]
     int curDamage = 0;
+    float meterSize;
+    bool damageMeterPulsatingOn = false;
+    public float duration = 2.0f;
 
     //Training figures
+    Coroutine lastPopUp = null;
+    public GameObject popUpMessage;
+    public TextMeshProUGUI popUpText;
     int neededTrainingIterations;
     int currentTrainingIteration = 0;
 
@@ -88,6 +92,8 @@ public class TrainingState : MonoBehaviour
         textTaskDriveProgress.text = taskDriveProgress + "%";
         textTaskDriveFailures.text = taskDriveFailures.ToString();
 
+        megaGem.SetActive(false);
+        popUpMessage.SetActive(false);
         UpdateDamageMeter();
     }
 
@@ -114,12 +120,17 @@ public class TrainingState : MonoBehaviour
     
     void LateUpdate()
     {
-        if (!positionSet)
-            return;
-
-        for (int i = 0; i < playerPosition.Count; i++)
+        if (!damageMeterPulsatingOn)
         {
-            playerPosition[i].position = playerStartPosition[i];
+            var amplitude = Mathf.PingPong(Time.time, duration);
+            amplitude = amplitude / duration * 0.5f + 1.0f;
+            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f * amplitude);
+        }
+        else
+        {
+            var amplitude = Mathf.PingPong(Time.time, duration / 3.0f);
+            amplitude = amplitude / duration * 0.2f + 1.0f;
+            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f * amplitude);
         }
     }
     
@@ -128,6 +139,7 @@ public class TrainingState : MonoBehaviour
     {
         textTaskDriveProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
         UpdateTrainingProgress();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + Percentage(neededIt, currentIt).ToString()));
     }
 
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
@@ -135,14 +147,17 @@ public class TrainingState : MonoBehaviour
         currentIt++;
         textTaskDrillProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
         UpdateTrainingProgress();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drill progress: " + Percentage(neededIt, currentIt).ToString()));
     }
 
     public void UpdateTaskTorchProgress(int neededIt, int currentIt)
     {
-        textTaskTorchProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
+        string progress = Percentage(neededIt, currentIt).ToString();
+        textTaskTorchProgress.text = progress + "%";
         trollsKill++;
         textTrainingTrollsKill.text = "Trolls Kill: " + trollsKill.ToString();
         UpdateTrainingProgress();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Torch progress: " + progress + "%\nTrolls Kill: +1"));
     }
 
     int Percentage(int neededIt, int currentIt)
@@ -162,6 +177,7 @@ public class TrainingState : MonoBehaviour
             Debug.Log("Training finnished!");
             Invoke("TrainingFinnished", 2);
             //Spawn mega gem
+            megaGem.SetActive(true);
         }
     }
 
@@ -173,7 +189,7 @@ public class TrainingState : MonoBehaviour
 
     public void UpdateScoreMultiplier()
     {
-        scoreMultiplier *= 2;
+        scoreMultiplier += 1;
         textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
     }
 
@@ -184,6 +200,7 @@ public class TrainingState : MonoBehaviour
         gemsCount++;
         textTrainingScore.text = "Score: " + trainingScore;
         textTrainingGemsCount.text = "Gems: " + gemsCount.ToString();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Score: +" + (gemScore * scoreMultiplier) + "\nGems: +1"));
     }
 
     public void UpdateTrainingFailures()
@@ -192,6 +209,7 @@ public class TrainingState : MonoBehaviour
         textTrainingFailures.text = "Failures: " + trainingFailures;
         scoreMultiplier = 1;
         lastCoroutine = StartCoroutine(PlayAudio(failureClip, 0.6f));
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Failures: +1 \nScore multiplier: 1X"));
     }
 
     public void UpdateDriveFailure()
@@ -218,6 +236,8 @@ public class TrainingState : MonoBehaviour
 
         curDamage += damage;
         UpdateDamageMeter();
+
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Damage: +" + damage));
         lastCoroutine = StartCoroutine(PlayAudio(damageClip, 0.1f));
 
         if (curDamage >= maxDamage)
@@ -231,19 +251,24 @@ public class TrainingState : MonoBehaviour
     void UpdateDamageMeter()
     {
         float damageSize = 1.0f / (float)maxDamage;
-        float meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
+        meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
 
         if (meterSize >= 0)
         {
             damageMeter.localScale = new Vector3(meterSize, 1, 1);
             damageIndicator.material.color = damageColor.Evaluate(meterSize);
-            StartCoroutine(MeterBlink(meterSize));
+            lastPopUp = StartCoroutine(MeterBlink(meterSize));
+        }
+
+        if (meterSize < 0.5f)
+        {
+            damageMeterPulsatingOn = true;
         }
     }
 
     IEnumerator MeterBlink(float meterSize)
     {
-        damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 10.9f);
+        damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 15.9f);
         yield return new WaitForSeconds(0.6f);
         damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f);
     }
@@ -259,5 +284,16 @@ public class TrainingState : MonoBehaviour
         yield return new WaitForSeconds(clip.length);
         //audioSource.Stop();
         //audioSource.clip = null;
+    }
+
+    IEnumerator ShowPopUpMessage(string message)
+    {
+        if (lastPopUp != null) 
+            StopCoroutine(lastPopUp);
+
+        popUpText.text = message;
+        popUpMessage.SetActive(true);
+        yield return new WaitForSeconds(3);
+        popUpMessage.SetActive(false);
     }
 }

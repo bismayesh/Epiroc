@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class PulsatingText : MonoBehaviour
 {
-    public RectTransform transform;
+    public RectTransform rTransform;
     void Start()
     {
-        transform = GetComponent<RectTransform>();
+        rTransform = GetComponent<RectTransform>();
         StartAnimation();
     }
 
     public void StartAnimation()
     {
-        transform.DOScale(0.7f, 2.0f).SetLoops(-1, LoopType.Yoyo);
+        rTransform.DOScale(0.7f, 2.0f).SetLoops(-1, LoopType.Yoyo);
     }
 }
 

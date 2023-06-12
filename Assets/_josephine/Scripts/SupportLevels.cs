@@ -407,6 +407,15 @@ public class SupportLevels : MonoBehaviour
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
 
+        if (supportMenu.activeSelf == true)
+        {
+            Time.timeScale = 0.0f;
+        }
+        else
+        {
+            Time.timeScale = 1.0f;
+        }
+
         if (!instructionsFinnished)
         {
             xButtonPressed = true;

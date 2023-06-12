@@ -1,3 +1,4 @@
+using BNG;
 using Photon.Voice.PUN;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,6 +64,7 @@ public class JoyStick : MonoBehaviour
 
     private void HoldingJoystick(Collider other)
     {
+
         if (other.gameObject.CompareTag("Player") && gripButtonValue > 0.5f)
         {
             holdingJoystick = true;
@@ -94,6 +96,8 @@ public class JoyStick : MonoBehaviour
         }
         */
     }
+
+
 
     private void TopButtonPressed(GameObject topButton, float topButtonValue, ref bool isActive, Renderer light)
     {
