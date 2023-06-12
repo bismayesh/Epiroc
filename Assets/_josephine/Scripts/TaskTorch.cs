@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class TaskTorch : Task
 {
-    //public AudioClip torchAudio = null;
+    public AudioClip torchAudio = null;
     public List<SingleTask> taskControl = new List<SingleTask>();
     bool firstTime = true;
 
+    public Controllers lightPulseButton;
     public bool testDrive = false;
 
     //Singelton
@@ -96,6 +97,9 @@ public class TaskTorch : Task
                 return;
             }
 
+            audioSource.clip = torchAudio;
+            audioSource.PlayOneShot(torchAudio);
+
             StartCoroutine(LightBeam());
             TrollKillTorch.instance.FireLightPulse();
             TrainingState.instance.UpdateScoreMultiplier();
@@ -107,6 +111,8 @@ public class TaskTorch : Task
         machineController.torchIntensity = 4.0f;
         yield return new WaitForSeconds(1);
         machineController.torchIntensity = 1.0f;
+        lightPulseButton.ButtonPressed();
+        TaskCheck(lightPulseButton.gameObject, false);
     }
 
     public void TorchProgress()

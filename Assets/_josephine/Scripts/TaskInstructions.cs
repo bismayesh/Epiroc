@@ -39,6 +39,11 @@ public class TaskInstructions : Task
 
     public void TaskCheck(GameObject thisObject, bool setOn)
     {
+        for (int x = 0; x < taskControl.Count; x++)
+        {
+            taskControl[x].TaskCheck(thisObject, setOn);
+        }
+        /*
         if (taskControl[0].TaskCheck(thisObject, setOn))
             JacksLever();
         if (taskControl[1].TaskCheck(thisObject, setOn))
@@ -47,6 +52,7 @@ public class TaskInstructions : Task
             RearJacks();
         if (taskControl[3].TaskCheck(thisObject, setOn))
             DrillLever();
+        */
     }
 
     private void JacksLever()

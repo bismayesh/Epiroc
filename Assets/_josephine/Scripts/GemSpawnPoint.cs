@@ -8,6 +8,7 @@ public class GemSpawnPoint : MonoBehaviour
     public List<GameObject> stones = new List<GameObject>();
     public int spawnCount;
     public AudioSource audioSource;
+    public AudioClip explosionClip;
     public bool spawn = false;
     public Transform stoneSpawnTransform;
     public Transform trollSpawnTransform;
@@ -53,6 +54,9 @@ public class GemSpawnPoint : MonoBehaviour
 
     IEnumerator SpawnDelay()
     {
+        audioSource.clip = explosionClip;
+        audioSource.PlayOneShot(explosionClip);
+
         StartCoroutine (SpawnStones());
 
         for (int i = 0; i < spawnCount; i++)
