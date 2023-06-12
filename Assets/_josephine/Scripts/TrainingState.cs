@@ -147,7 +147,7 @@ public class TrainingState : MonoBehaviour
     {
         textTaskDriveProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
         UpdateTrainingProgress();
-        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + Percentage(neededIt, currentIt).ToString()));
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + Percentage(neededIt, currentIt).ToString()) + "%");
     }
 
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
@@ -155,7 +155,7 @@ public class TrainingState : MonoBehaviour
         currentIt++;
         textTaskDrillProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
         UpdateTrainingProgress();
-        lastPopUp = StartCoroutine(ShowPopUpMessage("Drill progress: " + Percentage(neededIt, currentIt).ToString()));
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drill progress: " + Percentage(neededIt, currentIt).ToString()) + "%");
     }
 
     public void UpdateTaskTorchProgress(int neededIt, int currentIt)
