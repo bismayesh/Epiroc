@@ -61,7 +61,7 @@ public class TaskDrill : Task
         if (spawnArea && firstDrillInstruction)
         {
             firstDrillInstruction = false;
-            SupportLevels.instance.SupportInstructions(SupportMood.Drill);
+            SupportLevels.instance.ButtonDrill();
         }
     }
 
@@ -172,9 +172,10 @@ public class TaskDrill : Task
     {
         if (firstTorchInstruction)
         {
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(5);
             firstTorchInstruction = false;
-            TaskTorch.instance.FirstTorchInstructions();
+            SupportLevels.instance.ButtonTorch();
+            //TaskTorch.instance.FirstTorchInstructions();
         }
     }
 
