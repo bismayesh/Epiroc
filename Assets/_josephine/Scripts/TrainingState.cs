@@ -153,27 +153,37 @@ public class TrainingState : MonoBehaviour
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
-        textTaskDriveProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
+        taskDriveProgress = Percentage(neededIt, currentIt);
+        if(taskDriveProgress >= 100)
+            taskDriveProgress = 100;
+
+        textTaskDriveProgress.text = taskDriveProgress + "%";
         UpdateTrainingProgress();
-        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + Percentage(neededIt, currentIt).ToString()) + "%");
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + taskDriveProgress.ToString()) + "%");
     }
 
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
     {
-        currentIt++;
-        textTaskDrillProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
+        taskDrillProgress = Percentage(neededIt, currentIt);
+        if (taskDrillProgress >= 100)
+            taskDrillProgress = 100;
+
+        textTaskDrillProgress.text = taskDrillProgress + "%";
         UpdateTrainingProgress();
-        lastPopUp = StartCoroutine(ShowPopUpMessage("Drill progress: " + Percentage(neededIt, currentIt).ToString()) + "%");
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drill progress: " + taskDrillProgress + "%"));
     }
 
     public void UpdateTaskTorchProgress(int neededIt, int currentIt)
     {
-        string progress = Percentage(neededIt, currentIt).ToString();
-        textTaskTorchProgress.text = progress + "%";
+        taskTorchProgress = Percentage(neededIt, currentIt);
+        if (taskTorchProgress >= 100)
+            taskTorchProgress = 100;
+
+        textTaskTorchProgress.text = taskTorchProgress + "%";
         trollsKill++;
         textTrainingTrollsKill.text = "Trolls Kill: " + trollsKill.ToString();
         UpdateTrainingProgress();
-        lastPopUp = StartCoroutine(ShowPopUpMessage("Torch progress: " + progress + "%\nTrolls Kill: +1"));
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Torch progress: " + taskTorchProgress + "%\nTrolls Kill: +1"));
     }
 
     int Percentage(int neededIt, int currentIt)
@@ -184,14 +194,15 @@ public class TrainingState : MonoBehaviour
     void UpdateTrainingProgress()
     {
         currentTrainingIteration++;
-        trainingProgress = Percentage(neededTrainingIterations, currentTrainingIteration);
+        trainingProgress = (int)(((float)taskDriveProgress + (float)taskDrillProgress + (float)taskTorchProgress)/3);
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
         lastCoroutine = StartCoroutine(PlayAudio(gemClip, 0.2f));
 
-        if (currentTrainingIteration == neededTrainingIterations)
+        if (trainingProgress >= 100)
         {
             //Spawn mega gem
             megaGem.SetActive(true);
+            TrainingFinnished();
         }
     }
 
@@ -202,7 +213,7 @@ public class TrainingState : MonoBehaviour
         finalScore.text = "Score: " + trainingScore;
         finalTime.text = "Time: " + Watch.instance.playTime;
         StartCoroutine(StartSound(winClip, 4.0f));
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
     }
 
     IEnumerator StartSound(AudioClip clip, float delay)
@@ -277,7 +288,7 @@ public class TrainingState : MonoBehaviour
             trainingScore = 0;
             LoseObject.SetActive(true);
             StartCoroutine(StartSound(loseClip, 4.0f));
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
         }
     }
 

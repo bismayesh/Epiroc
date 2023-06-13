@@ -165,7 +165,6 @@ public class SupportLevels : MonoBehaviour
 
             if (index != 0)
             {
-                Debug.Log(tasks[index - 1].task + " ska va samma som " + thisObject);
                 audioSource.PlayOneShot(taskCompleteClip, 0.2f);
             }
 
@@ -452,14 +451,11 @@ public class SupportLevels : MonoBehaviour
         
         if (supportMenu.activeSelf == true)
         {
-            Time.timeScale = 0.0f;
-            lastCoroutine = StartCoroutine(PlayAudio(objectiveClip));
+            //Time.timeScale = 0.0f;
         }
         else
         {
-            Time.timeScale = 1.0f;
-            if (lastCoroutine != null)
-                StopCoroutine(lastCoroutine);
+            //Time.timeScale = 1.0f;
         }
         
 

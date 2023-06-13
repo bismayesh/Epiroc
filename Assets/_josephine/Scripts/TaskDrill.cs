@@ -148,7 +148,7 @@ public class TaskDrill : Task
                 {
                     spawnArea = false;
                     TrainingState.instance.UpdateScoreMultiplier();
-                    TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
+                    DrillProgress();
                     gemSpawnPoint.GemPilesSpawn();
                     StartCoroutine(FirstTorchInstruction());
                     //spawnTrolls = true;
