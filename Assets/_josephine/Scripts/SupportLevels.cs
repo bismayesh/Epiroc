@@ -30,7 +30,10 @@ public class SupportLevels : MonoBehaviour
     public GameObject supportAnimatedControlers;
     bool animatedContolersIsOn = false;
     public GameObject objectivesCanvas;
+    public AudioClip objectiveClip;
     bool objectiveCanvasIsOn = false;
+    public GameObject dontForgetParkBrake;
+    public GameObject endDriveGhost;
 
     //Intro
     [Header("Intro")]
@@ -183,6 +186,8 @@ public class SupportLevels : MonoBehaviour
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(driveFinalClip));
+                    if (supportlayerGhost)
+                        StartCoroutine(ShowObjectTimer(endDriveGhost, 5.0f));
                 }
 
                 if (supportMood == SupportMood.Drill)
@@ -222,6 +227,9 @@ public class SupportLevels : MonoBehaviour
                 }
                 tasks[index].supportText.SetActive(true);
                 tasks[index].supportTextSmall.SetActive(true);
+
+                if (supportMood == SupportMood.Drill && index == 0)
+                    StartCoroutine(ShowObjectTimer(dontForgetParkBrake, 3.0f, 1.5f));
             }
             if (supportlayerLight)
             {
@@ -416,16 +424,19 @@ public class SupportLevels : MonoBehaviour
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
 
-        /*
+        
         if (supportMenu.activeSelf == true)
         {
-            //Time.timeScale = 0.0f;
+            Time.timeScale = 0.0f;
+            lastCoroutine = StartCoroutine(PlayAudio(objectiveClip));
         }
         else
         {
             Time.timeScale = 1.0f;
+            if (lastCoroutine != null)
+                StopCoroutine(lastCoroutine);
         }
-        */
+        
 
 
         if (!instructionsFinnished)
@@ -466,5 +477,13 @@ public class SupportLevels : MonoBehaviour
                     break;
                 }
         }
+    }
+
+    IEnumerator ShowObjectTimer(GameObject someGameObject,float showTime, float beginDelay = 0)
+    {
+        yield return new WaitForSeconds(beginDelay);
+        someGameObject.SetActive(true);
+        yield return new WaitForSeconds(showTime);
+        someGameObject.SetActive(false);
     }
 }
