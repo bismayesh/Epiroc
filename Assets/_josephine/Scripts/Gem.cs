@@ -5,6 +5,7 @@ using UnityEngine;
 public class Gem : MonoBehaviour
 {
     public int gemScore;
+    public bool superGem = false;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -12,13 +13,11 @@ public class Gem : MonoBehaviour
         {
             TrainingState.instance.UpdateTrainingScore(gemScore);
             Destroy(gameObject);
-        }
 
-        /*
-        if (collision.gameObject.CompareTag("Troll"))
-        {
-            Destroy(gameObject);
+            if (superGem)
+            {
+                TrainingState.instance.TrainingFinnished();
+            }
         }
-        */
     }
 }

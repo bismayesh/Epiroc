@@ -15,8 +15,13 @@ public class TrainingState : MonoBehaviour
     public AudioClip failureClip;
     public AudioClip damageClip;
     public AudioClip gemClip;
+    public AudioClip winClip;
+    public AudioClip loseClip;
     Coroutine lastCoroutine;
 
+    [Header("Win/Lose Objects")]
+    public GameObject WinObject;
+    public GameObject LoseObject;
     public GameObject megaGem;
 
     [Header("Damage Meter")]
@@ -182,17 +187,27 @@ public class TrainingState : MonoBehaviour
 
         if (currentTrainingIteration == neededTrainingIterations)
         {
-            Debug.Log("Training finnished!");
-            Invoke("TrainingFinnished", 2);
             //Spawn mega gem
             megaGem.SetActive(true);
         }
     }
 
-    void TrainingFinnished()
+    public void TrainingFinnished()
     {
         //SceneManager.LoadScene(0);
-        Time.timeScale = 1;
+        WinObject.SetActive(true);
+        StartCoroutine(StartSound(winClip, 4.0f));
+        Time.timeScale = 0;
+    }
+
+    IEnumerator StartSound(AudioClip clip, float delay)
+    {
+        if (lastCoroutine != null)
+            StopCoroutine(lastCoroutine);
+
+        yield return new WaitForSeconds(delay);
+        audioSource.clip = clip;
+        audioSource.Play();
     }
 
     public void UpdateScoreMultiplier()
@@ -255,8 +270,9 @@ public class TrainingState : MonoBehaviour
         if (curDamage >= maxDamage)
         {
             trainingScore = 0;
-
-            //You fired screen
+            LoseObject.SetActive(true);
+            StartCoroutine(StartSound(loseClip, 4.0f));
+            Time.timeScale = 0;
         }
     }
 
@@ -272,7 +288,7 @@ public class TrainingState : MonoBehaviour
             lastPopUp = StartCoroutine(MeterBlink(meterSize));
         }
 
-        if (meterSize < 0.5f)
+        if (meterSize < 0.2f)
         {
             damageMeterPulsatingOn = true;
         }
