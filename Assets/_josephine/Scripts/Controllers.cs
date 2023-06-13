@@ -23,14 +23,12 @@ public class Controllers : MonoBehaviour
         }
         else
         {
-            Debug.Log("knapp tryckt");
             isActive = true;
             TaskInstructions.instance.TaskCheck(this.gameObject, true);
         }
 
         if (!SupportLevels.instance.instructionsFinnished)
         {
-            Debug.Log("controllers script 2: " + gameObject);
             SupportLevels.instance.SupportInstructions(SupportMood.Introduction, gameObject);
         }
     }

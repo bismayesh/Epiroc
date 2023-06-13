@@ -5,9 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/_duane/Scenes/MainScene.unity
-    guid: afa1d83c22dd664479bd171d4e8a31db
   - enabled: 1
     path: Assets/_Antonia/IntroScene.unity
     guid: d53fcfff8d660f0479378d01b2e88aa8

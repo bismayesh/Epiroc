@@ -7,7 +7,20 @@ using UnityEngine.InputSystem;
 public class IntroScene : MonoBehaviour
 {
     public InputActionProperty primaryButtonAction;
+    public AudioClip introClip;
     float primaryButtonValue;
+
+    private void Start()
+    {
+        StartCoroutine(ForcedSceneTransition());
+    }
+
+    IEnumerator ForcedSceneTransition()
+    {
+        yield return new WaitForSeconds(introClip.length);
+        SceneManager.LoadScene(1);
+    }
+
     public void FixedUpdate()
     {
         primaryButtonValue = primaryButtonAction.action.ReadValue<float>();

@@ -20,9 +20,12 @@ public class TrainingState : MonoBehaviour
     Coroutine lastCoroutine;
 
     [Header("Win/Lose Objects")]
-    public GameObject WinObject;
     public GameObject LoseObject;
+    public GameObject WinObject;
+    public TextMeshProUGUI finalScore;
+    public TextMeshProUGUI finalTime;
     public GameObject megaGem;
+
 
     [Header("Damage Meter")]
     public Transform damageMeter;
@@ -196,6 +199,8 @@ public class TrainingState : MonoBehaviour
     {
         //SceneManager.LoadScene(0);
         WinObject.SetActive(true);
+        finalScore.text = "Score: " + trainingScore;
+        finalTime.text = "Time: " + Watch.instance.playTime;
         StartCoroutine(StartSound(winClip, 4.0f));
         Time.timeScale = 0;
     }

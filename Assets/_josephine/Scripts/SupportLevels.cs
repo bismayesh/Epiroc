@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Photon.Voice;
 
 public enum SupportMood
 {
@@ -30,10 +31,12 @@ public class SupportLevels : MonoBehaviour
     public GameObject supportAnimatedControlers;
     bool animatedContolersIsOn = false;
     public GameObject objectivesCanvas;
+    public AudioSource objectiveAudioSource;
     public AudioClip objectiveClip;
     bool objectiveCanvasIsOn = false;
     public GameObject dontForgetParkBrake;
     public GameObject endDriveGhost;
+    Coroutine objectiveRoutine;
 
     //Intro
     [Header("Intro")]
@@ -396,6 +399,28 @@ public class SupportLevels : MonoBehaviour
     {
         objectiveCanvasIsOn = !objectiveCanvasIsOn;
         objectivesCanvas.SetActive(objectiveCanvasIsOn);
+
+        
+        if (objectiveCanvasIsOn && !instructionsFinnished)
+        {
+            objectiveRoutine = StartCoroutine(ObjectiveAudio());
+        }
+        else
+        {
+            if (objectiveRoutine != null)
+                StopCoroutine(objectiveRoutine);
+        }
+    }
+
+    IEnumerator ObjectiveAudio()
+    {
+        if (objectiveRoutine != null)
+            StopCoroutine(objectiveRoutine);
+
+        objectiveAudioSource.clip = objectiveClip;
+        objectiveAudioSource.PlayOneShot(objectiveClip);
+
+        yield return new WaitForSeconds(objectiveClip.length);
     }
 
 
@@ -439,7 +464,7 @@ public class SupportLevels : MonoBehaviour
         
 
 
-        if (!instructionsFinnished)
+        if (!instructionsFinnished && index == 4)
         {
             xButtonPressed = true;
             SupportInstructions(SupportMood.Introduction);
@@ -454,25 +479,24 @@ public class SupportLevels : MonoBehaviour
                 {
                     ResetSupportLayers();
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    yield return new WaitForSeconds(objectiveClip.length);
 
-                    yield return new WaitForSeconds(5);
-
-                    objectivesCanvas.SetActive(false);
+                    ButtonTrainingObjectives();
                     textBackground.SetActive(true);
                     instructionTasks[index - 1].supportText.SetActive(true);
                     instructionTasks[index - 1].supportTextSmall.SetActive(true);
-                    lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index + 1].supportVoice));
+                    lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index - 1].supportVoice));
                     break;
                 }
             case 5:
                 {
-                    yield return new WaitForSeconds(5);
+                    yield return new WaitForSeconds(instructionTasks[4].supportVoice.length);
                     SupportInstructions(SupportMood.Introduction);
                     break;
                 }
             case 6:
                 {
-                    yield return new WaitForSeconds(5);
+                    yield return new WaitForSeconds(instructionTasks[5].supportVoice.length);
                     SupportInstructions(SupportMood.Introduction);
                     break;
                 }
