@@ -4,11 +4,13 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Photon.Voice;
 
 public enum SupportMood
 {
     None,
     Old,
+    Introduction,
     Drive,
     Drill,
     Torch
@@ -26,11 +28,22 @@ public class SupportLevels : MonoBehaviour
     public Toggle supportGhostToggle;
     bool holdingJoystick = false;
 
+    public GameObject supportAnimatedControlers;
+    bool animatedContolersIsOn = false;
+    public GameObject objectivesCanvas;
+    public AudioSource objectiveAudioSource;
+    public AudioClip objectiveClip;
+    bool objectiveCanvasIsOn = false;
+    public GameObject dontForgetParkBrake;
+    public GameObject endDriveGhost;
+    Coroutine objectiveRoutine;
+
     //Intro
     [Header("Intro")]
     public GameObject textBackground;
     public GameObject introText;
     public float introTime = 10.0f;
+    public AudioSource taskCompleteSource;
     [HideInInspector]
     public AudioSource audioSource;
     public AudioClip introClip;
@@ -38,10 +51,15 @@ public class SupportLevels : MonoBehaviour
     public AudioClip driveFinalClip;
     public AudioClip drillFinalClip;
     public AudioClip torchFinalClip;
+    [SerializeField]
     bool introFinnished = false;
+    [SerializeField]
+    public bool instructionsFinnished = false;
+    bool xButtonPressed = false;
     Coroutine lastCoroutine = null;
 
     //Tasks
+    List<SingleTask> instructionTasks;
     List<SingleTask> driveTasks;
     List<SingleTask> drillTasks;
     List<SingleTask> torchTasks;
@@ -77,9 +95,14 @@ public class SupportLevels : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        taskCompleteSource.clip = taskCompleteClip;
+        instructionTasks = TaskInstructions.instance.taskControl;
         driveTasks = TaskDrive.instance.taskControl;
         drillTasks = TaskDrill.instance.taskControl;
         torchTasks = TaskTorch.instance.taskControl;
+
+        supportAnimatedControlers.SetActive(false);
+        supportMenu.SetActive(false);
 
         ResetSupportLayers();
         StartCoroutine(IntroSupport());
@@ -98,7 +121,8 @@ public class SupportLevels : MonoBehaviour
 
         switch (supportMood)
         {
-            case SupportMood.None: break;
+            case SupportMood.None: ResetSupportLayers(); break;
+            case SupportMood.Introduction: SupportLayerChain(instructionTasks, thisObject); break;
             case SupportMood.Drive: SupportLayerChain(driveTasks, thisObject); break;
             case SupportMood.Drill: SupportLayerChain(drillTasks, thisObject); break;
             case SupportMood.Torch: SupportLayerChain(torchTasks, thisObject); break;
@@ -117,7 +141,8 @@ public class SupportLevels : MonoBehaviour
         textBackground.SetActive(false);
         introFinnished = true;
 
-        SupportInstructions(SupportMood.Drive);
+        supportMenu.SetActive(true);
+        SupportInstructions(SupportMood.Introduction);
     }
 
     IEnumerator PlayAudio(AudioClip clip)
@@ -134,36 +159,60 @@ public class SupportLevels : MonoBehaviour
 
     void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
     {
-        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject)
+        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject || !instructionsFinnished && index == 2 || !instructionsFinnished && index == 4 && xButtonPressed || !instructionsFinnished && index == 5 || !instructionsFinnished && index == 6)
         {
+            
+
             if (index != 0)
             {
                 audioSource.PlayOneShot(taskCompleteClip, 0.2f);
             }
 
-            if (index == tasks.Count)
+            if (index == tasks.Count )
             {
                 if (supportMood == SupportMood.Torch)
                 {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(torchFinalClip));
 
+                    /*
                     if (firstTorchInstruction)
                     {
                         firstTorchInstruction = false;
                         TrollSpawner.instance.InstanciateTrolls();
                     }
+                    */
                 }
 
                 if (supportMood == SupportMood.Drive)
                 {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(driveFinalClip));
+                    if (supportlayerGhost)
+                        StartCoroutine(ShowObjectTimer(endDriveGhost, 5.0f));
                 }
 
                 if (supportMood == SupportMood.Drill)
                 {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     lastCoroutine = StartCoroutine(PlayAudio(drillFinalClip));
                 }
 
+                if (supportMood == SupportMood.Introduction)
+                {
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    instructionsFinnished = true;
+                }
+
+                index = 0;
+                supportMood = SupportMood.None;
+                ResetSupportLayers();
+                return;
+            }
+
+            if (index == tasks.Count + 1 && supportMood == SupportMood.Introduction)
+            {
+                instructionsFinnished = true;
                 index = 0;
                 supportMood = SupportMood.None;
                 ResetSupportLayers();
@@ -180,6 +229,9 @@ public class SupportLevels : MonoBehaviour
                 }
                 tasks[index].supportText.SetActive(true);
                 tasks[index].supportTextSmall.SetActive(true);
+
+                if (supportMood == SupportMood.Drill && index == 0)
+                    StartCoroutine(ShowObjectTimer(dontForgetParkBrake, 3.0f, 1.5f));
             }
             if (supportlayerLight)
             {
@@ -190,16 +242,21 @@ public class SupportLevels : MonoBehaviour
             {
                 lastCoroutine = StartCoroutine(PlayAudio(tasks[index].supportVoice));
             }
-            /*
             if (supportlayerGhost)
             {
                 if (index != 0)
                     tasks[index - 1].supportGhost.SetActive(false);
                 tasks[index].supportGhost.SetActive(true);
             }
-            */
 
             index++;
+
+
+            //Instructions
+            if (!instructionsFinnished && index == 2 || !instructionsFinnished && index == 5 || !instructionsFinnished && index == 6)
+            {
+                StartCoroutine(InstructionsTimer());
+            }
         }
     }
 
@@ -208,13 +265,23 @@ public class SupportLevels : MonoBehaviour
         textBackground.SetActive(false);
         introText.SetActive(false);
 
+        audioSource.Stop();
+        audioSource.clip = null;
+
+        foreach (SingleTask task in instructionTasks)
+        {
+            task.supportText.SetActive(false);
+            task.supportTextSmall.SetActive(false);
+            task.supportLight.SetActive(false);
+            task.supportGhost.SetActive(false);
+        }
+
         foreach (SingleTask task in driveTasks)
         {
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportVoice.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
 
         foreach (SingleTask task in drillTasks)
@@ -222,8 +289,7 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportVoice.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
 
         foreach (SingleTask task in torchTasks)
@@ -231,8 +297,7 @@ public class SupportLevels : MonoBehaviour
             task.supportText.SetActive(false);
             task.supportTextSmall.SetActive(false);
             task.supportLight.SetActive(false);
-            //task.supportVoice.SetActive(false);
-            //task.supportGhost.SetActive(false);
+            task.supportGhost.SetActive(false);
         }
     }
 
@@ -240,63 +305,123 @@ public class SupportLevels : MonoBehaviour
 
     public void ButtonDrive()
     {
-        ResetSupportLayers();
-        SupportInstructions(SupportMood.Drive, default, true);
+        if (!introFinnished || !instructionsFinnished)
+            return;
+
+        ButtonMoodCheck(SupportMood.Drive);
     }
 
     public void ButtonDrill()
     {
-        if (!introFinnished)
+        if (!introFinnished || !instructionsFinnished)
             return;
 
-        ResetSupportLayers();
-        SupportInstructions(SupportMood.Drill, default, true);
+        ButtonMoodCheck(SupportMood.Drill);
     }
 
     public void ButtonTorch()
     {
-        if (!introFinnished)
+        if (!introFinnished || !instructionsFinnished)
             return;
 
+        ButtonMoodCheck(SupportMood.Torch);
+    }
+
+    void ButtonMoodCheck(SupportMood newMood)
+    {
         ResetSupportLayers();
-        SupportInstructions(SupportMood.Torch, default, true);
+
+        if (supportMood != newMood)
+        {
+            SupportInstructions(newMood, default, true);
+        }
+        else
+        {
+            SupportInstructions(SupportMood.None);
+        }
     }
 
     public void ButtonTextSupport()
     {
-        if (!introFinnished)
+        CheckSupportToggle(supportTextToggle, ref supportlayerText);
+
+        if (!introFinnished || !instructionsFinnished)
             return;
 
         ResetSupportLayers();
-        CheckSupportToggle(supportTextToggle, ref supportlayerText);
     }
 
     public void ButtonLightSupport()
     {
-        if (!introFinnished)
+        CheckSupportToggle(supportLightToggle, ref supportlayerLight);
+
+        if (!introFinnished || !instructionsFinnished)
             return;
 
+        /*
+        if (!instructionsFinnished)
+        {
+            TaskInstructions.instance.InstructionButton(this.gameObject);
+        }
+        */
+
         ResetSupportLayers();
-        CheckSupportToggle(supportLightToggle, ref supportlayerLight);
     }
 
     public void ButtonVoiceSupport()
     {
-        if (!introFinnished)
+        CheckSupportToggle(supportVoiceToggle, ref supportlayerVoice);
+
+        if (!introFinnished || !instructionsFinnished)
             return;
 
         ResetSupportLayers();
-        CheckSupportToggle(supportVoiceToggle, ref supportlayerVoice);
     }
 
     public void ButtonGhostSupport()
     {
-        if (!introFinnished)
+        CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
+
+        if (!introFinnished || !instructionsFinnished)
             return;
 
         ResetSupportLayers();
-        CheckSupportToggle(supportGhostToggle, ref supportlayerGhost);
     }
+
+    public void ButtonAnimatedControlers()
+    {
+        animatedContolersIsOn = !animatedContolersIsOn;
+        supportAnimatedControlers.SetActive(animatedContolersIsOn);
+    }
+
+    public void ButtonTrainingObjectives()
+    {
+        objectiveCanvasIsOn = !objectiveCanvasIsOn;
+        objectivesCanvas.SetActive(objectiveCanvasIsOn);
+
+        
+        if (objectiveCanvasIsOn && !instructionsFinnished)
+        {
+            objectiveRoutine = StartCoroutine(ObjectiveAudio());
+        }
+        else
+        {
+            if (objectiveRoutine != null)
+                StopCoroutine(objectiveRoutine);
+        }
+    }
+
+    IEnumerator ObjectiveAudio()
+    {
+        if (objectiveRoutine != null)
+            StopCoroutine(objectiveRoutine);
+
+        objectiveAudioSource.clip = objectiveClip;
+        objectiveAudioSource.PlayOneShot(objectiveClip);
+
+        yield return new WaitForSeconds(objectiveClip.length);
+    }
+
 
     private void CheckSupportToggle(Toggle toggle, ref bool supportLayer)
     {
@@ -322,9 +447,63 @@ public class SupportLevels : MonoBehaviour
         {
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
+
+        
+        if (supportMenu.activeSelf == true)
+        {
+            //Time.timeScale = 0.0f;
+        }
+        else
+        {
+            //Time.timeScale = 1.0f;
+        }
+        
+
+
+        if (!instructionsFinnished && index == 4)
+        {
+            xButtonPressed = true;
+            SupportInstructions(SupportMood.Introduction);
+        }
+    }
+
+    IEnumerator InstructionsTimer()
+    {
+        switch (index)
+        {
+            case 2:
+                {
+                    ResetSupportLayers();
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    yield return new WaitForSeconds(objectiveClip.length);
+
+                    ButtonTrainingObjectives();
+                    textBackground.SetActive(true);
+                    instructionTasks[index - 1].supportText.SetActive(true);
+                    instructionTasks[index - 1].supportTextSmall.SetActive(true);
+                    lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index - 1].supportVoice));
+                    break;
+                }
+            case 5:
+                {
+                    yield return new WaitForSeconds(instructionTasks[4].supportVoice.length);
+                    SupportInstructions(SupportMood.Introduction);
+                    break;
+                }
+            case 6:
+                {
+                    yield return new WaitForSeconds(instructionTasks[5].supportVoice.length);
+                    SupportInstructions(SupportMood.Introduction);
+                    break;
+                }
+        }
+    }
+
+    IEnumerator ShowObjectTimer(GameObject someGameObject,float showTime, float beginDelay = 0)
+    {
+        yield return new WaitForSeconds(beginDelay);
+        someGameObject.SetActive(true);
+        yield return new WaitForSeconds(showTime);
+        someGameObject.SetActive(false);
     }
 }
-
-
-
-

@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class TaskTorch : Task
 {
-    //public AudioClip torchAudio = null;
+    public AudioClip torchAudio = null;
     public List<SingleTask> taskControl = new List<SingleTask>();
     bool firstTime = true;
 
+    public Controllers lightPulseButton;
     public bool testDrive = false;
 
     //Singelton
@@ -56,12 +57,13 @@ public class TaskTorch : Task
         if (taskControl[0].IsOn)
         {
             machineController.ActivateTorch();
-            machineController.torchSpread = 35.0f;
+            machineController.torchIntensity = 1.0f;
+
         }
         else
         {
             machineController.DeactivateTorch();
-            machineController.torchSpread = 35.0f;
+            machineController.torchIntensity = 0.5f;
         }
     }
 
@@ -69,11 +71,11 @@ public class TaskTorch : Task
     {
         if (taskControl[1].IsOn)
         {
-            machineController.torchIntensity = 1.0f;
+            machineController.torchSpread = 35.0f;
         }
         else
         {
-            machineController.torchIntensity = 0.5f;
+            machineController.torchSpread = 0.0f;
         }
     }
 
@@ -89,16 +91,28 @@ public class TaskTorch : Task
 
             if (TaskDrill.instance.MachineStabalized)
             {
+
+                // deactivate button after a while
                 TorchFailure(5);
                 return;
             }
 
-            
+            audioSource.clip = torchAudio;
+            audioSource.PlayOneShot(torchAudio);
+
+            StartCoroutine(LightBeam());
+            TrollKillTorch.instance.FireLightPulse();
+            TrainingState.instance.UpdateScoreMultiplier();
         }
-        else
-        {
-            
-        }
+    }
+
+    IEnumerator LightBeam()
+    {
+        machineController.torchIntensity = 4.0f;
+        yield return new WaitForSeconds(1);
+        machineController.torchIntensity = 1.0f;
+        lightPulseButton.ButtonPressed();
+        TaskCheck(lightPulseButton.gameObject, false);
     }
 
     public void TorchProgress()

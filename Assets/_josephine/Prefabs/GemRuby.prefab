@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 328127160712242629}
   - component: {fileID: 1039741161618099911}
   - component: {fileID: 8646356602104220710}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GemModel
   m_TagString: SuperGem
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 1932060928337170601}
   - component: {fileID: 5373764490386653276}
   - component: {fileID: 3991420575264054643}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GemRuby
   m_TagString: ChunkGem
   m_Icon: {fileID: 0}

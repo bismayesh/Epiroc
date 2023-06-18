@@ -13,6 +13,7 @@ TagManager:
   - LeftJoystick
   - monster
   - Cave
+  - Stone
   layers:
   - Default
   - TransparentFX
@@ -26,9 +27,9 @@ TagManager:
   - Player
   - PlayerMenu
   - Cave
-  - 
-  - 
-  - 
+  - Gems
+  - Machine
+  - Ghosts
   - 
   - 
   - 

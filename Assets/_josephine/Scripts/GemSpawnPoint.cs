@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class GemSpawnPoint : MonoBehaviour
 {
-    public List<GameObject> gemObjects = new List<GameObject>();
-    public bool spawnGems = false;
-    public Transform spawnTransform;
-    Vector3 spawnPosition;
+    public GameObject trollPrefab;
+    public List<GameObject> stones = new List<GameObject>();
+    public int spawnCount;
+    public AudioSource audioSource;
+    public AudioClip explosionClip;
+    public bool spawn = false;
+    public Transform stoneSpawnTransform;
+    public Transform trollSpawnTransform;
 
     private void Start()
     {
-        spawnPosition = spawnTransform.position;
+        audioSource = gameObject.GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -20,6 +24,7 @@ public class GemSpawnPoint : MonoBehaviour
         {
             TaskDrill.instance.SpawnArea = true;
             TaskDrill.instance.GemSpawnObject = gameObject.GetComponent<GemSpawnPoint>();
+            audioSource.Play();
         }
     }
 
@@ -29,38 +34,54 @@ public class GemSpawnPoint : MonoBehaviour
         {
             TaskDrill.instance.SpawnArea = false;
             TaskDrill.instance.GemSpawnObject = null;
+            audioSource.Stop();
         }
     }
 
     private void Update()
     {
-        if (spawnGems)
+        if (spawn)
         {
-            spawnGems = false;
+            spawn = false;
             StartCoroutine(SpawnDelay());
         }
     }
 
-    public void SpawnGems()
+    public void GemPilesSpawn()
     {
         StartCoroutine(SpawnDelay());
     }
 
     IEnumerator SpawnDelay()
     {
-        for (int i = 0; i < 2; i++)
-        {
-            foreach (var g in gemObjects)
-            {
-                Vector3 randomDir = new Vector3(Random.Range(-8.0f, 8.0f), Random.Range(5.0f, 10.0f), Random.Range(-8.0f, 8.0f));
-                var gem = Instantiate(g, spawnPosition, Quaternion.identity);
-                gem.GetComponent<Rigidbody>().AddForce(randomDir, ForceMode.Impulse);
+        audioSource.clip = explosionClip;
+        audioSource.PlayOneShot(explosionClip);
 
-                
-                yield return new WaitForSeconds(0.2f);
-            }
+        StartCoroutine (SpawnStones());
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            Instantiate(trollPrefab, trollSpawnTransform.position, Quaternion.identity);
+            yield return new WaitForSeconds(1.0f);
         }
 
-        Destroy(gameObject, 2.5f);
+        Destroy(gameObject);
+    }
+
+    IEnumerator SpawnStones()
+    {
+        for (int i = 0; i < spawnCount; i++)
+        {
+            foreach (var s in stones)
+            {
+                Vector3 randomDir = new Vector3(Random.Range(-2.0f, 2.0f), Random.Range(0.5f, 3.0f), Random.Range(-2.0f, 2.0f));
+                var stone = Instantiate(s, stoneSpawnTransform.position, Quaternion.identity);
+                float size = Random.Range(2, 6);
+                stone.transform.localScale = new Vector3(size, size, size);
+                stone.GetComponent<Rigidbody>().AddForce(randomDir, ForceMode.Impulse);
+
+                yield return new WaitForSeconds(0.15f);
+            }
+        }
     }
 }

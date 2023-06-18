@@ -1,4 +1,5 @@
 using BNG;
+using Photon.Voice;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,15 +9,23 @@ using UnityEngine.SceneManagement;
 
 public class TrainingState : MonoBehaviour
 {
-    //public SmoothLocomotion smoothLocomotion;
-    bool smoothLocomotionChanged = true;
-    public List<Transform> playerPosition = new List<Transform>();
-    List<Vector3> playerStartPosition = new List<Vector3>();
-    bool positionSet = false;
+    //Audio
     public AudioSource audioSource;
     public AudioClip progressClip;
     public AudioClip failureClip;
     public AudioClip damageClip;
+    public AudioClip gemClip;
+    public AudioClip winClip;
+    public AudioClip loseClip;
+    Coroutine lastCoroutine;
+
+    [Header("Win/Lose Objects")]
+    public GameObject LoseObject;
+    public GameObject WinObject;
+    public TextMeshProUGUI finalScore;
+    public TextMeshProUGUI finalTime;
+    public GameObject megaGem;
+
 
     [Header("Damage Meter")]
     public Transform damageMeter;
@@ -27,8 +36,16 @@ public class TrainingState : MonoBehaviour
     int maxDamage = 100;
     [SerializeField]
     int curDamage = 0;
+    float meterSize;
+    bool damageMeterPulsatingOn = false;
+    public float duration = 2.0f;
+    public AudioSource damageAudio;
+    bool damageAudioInOn = false;
 
     //Training figures
+    Coroutine lastPopUp = null;
+    public GameObject popUpMessage;
+    public TextMeshProUGUI popUpText;
     int neededTrainingIterations;
     int currentTrainingIteration = 0;
 
@@ -74,7 +91,7 @@ public class TrainingState : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(PlayerStartPosition());
+        //StartCoroutine(PlayerStartPosition());
         neededTrainingIterations = TaskDrive.instance.neededIterations + TaskDrill.instance.neededIterations + TaskTorch.instance.neededIterations;
 
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
@@ -85,12 +102,15 @@ public class TrainingState : MonoBehaviour
         textTaskDriveProgress.text = taskDriveProgress + "%";
         textTaskDriveFailures.text = taskDriveFailures.ToString();
 
+        megaGem.SetActive(false);
+        popUpMessage.SetActive(false);
         UpdateDamageMeter();
     }
 
+    /*
     IEnumerator PlayerStartPosition()
     {
-
+        
         yield return new WaitForSeconds(1);
 
         if (smoothLocomotionChanged)
@@ -105,39 +125,65 @@ public class TrainingState : MonoBehaviour
         }
         positionSet = true;
     }
+    */
 
     
     void LateUpdate()
     {
-        if (!positionSet)
-            return;
-
-        for (int i = 0; i < playerPosition.Count; i++)
+        if (!damageMeterPulsatingOn)
         {
-            playerPosition[i].position = playerStartPosition[i];
+            var amplitude = Mathf.PingPong(Time.time, duration);
+            amplitude = amplitude / duration * 0.5f + 1.0f;
+            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f * amplitude);
+        }
+        else
+        {
+            if (!damageAudioInOn)
+            {
+                damageAudioInOn = true;
+                damageAudio.Play();
+            }
+
+            var amplitude = Mathf.PingPong(Time.time, duration / 3.0f);
+            amplitude = amplitude / duration * 0.2f + 1.0f;
+            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f * amplitude);
         }
     }
     
 
     public void UpdateTaskDriveProgress(int neededIt, int currentIt)
     {
-        textTaskDriveProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
+        taskDriveProgress = Percentage(neededIt, currentIt);
+        if(taskDriveProgress >= 100)
+            taskDriveProgress = 100;
+
+        textTaskDriveProgress.text = taskDriveProgress + "%";
         UpdateTrainingProgress();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + taskDriveProgress.ToString()) + "%");
     }
 
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
     {
-        currentIt++;
-        textTaskDrillProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
+        taskDrillProgress = Percentage(neededIt, currentIt);
+        if (taskDrillProgress >= 100)
+            taskDrillProgress = 100;
+
+        textTaskDrillProgress.text = taskDrillProgress + "%";
         UpdateTrainingProgress();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drill progress: " + taskDrillProgress + "%"));
     }
 
     public void UpdateTaskTorchProgress(int neededIt, int currentIt)
     {
-        textTaskTorchProgress.text = Percentage(neededIt, currentIt).ToString() + "%";
+        taskTorchProgress = Percentage(neededIt, currentIt);
+        if (taskTorchProgress >= 100)
+            taskTorchProgress = 100;
+
+        textTaskTorchProgress.text = taskTorchProgress + "%";
         trollsKill++;
         textTrainingTrollsKill.text = "Trolls Kill: " + trollsKill.ToString();
         UpdateTrainingProgress();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Torch progress: " + taskTorchProgress + "%\nTrolls Kill: +1"));
     }
 
     int Percentage(int neededIt, int currentIt)
@@ -148,32 +194,56 @@ public class TrainingState : MonoBehaviour
     void UpdateTrainingProgress()
     {
         currentTrainingIteration++;
-        trainingProgress = Percentage(neededTrainingIterations, currentTrainingIteration);
+        trainingProgress = (int)(((float)taskDriveProgress + (float)taskDrillProgress + (float)taskTorchProgress)/3);
         textTrainingProgress.text = "Progress: " + trainingProgress + "%";
-        audioSource.PlayOneShot(progressClip, 0.2f);
+        lastCoroutine = StartCoroutine(PlayAudio(gemClip, 0.2f));
 
-        if (currentTrainingIteration == neededTrainingIterations)
+        if (trainingProgress >= 100)
         {
-            Debug.Log("Training finnished!");
-            Invoke("TrainingFinnished", 2);
             //Spawn mega gem
+            megaGem.SetActive(true);
+            TrainingFinnished();
         }
     }
 
-    void TrainingFinnished()
+    public void TrainingFinnished()
     {
         //SceneManager.LoadScene(0);
-        Time.timeScale = 1;
+        WinObject.SetActive(true);
+        finalScore.text = "Score: " + trainingScore;
+        finalTime.text = "Time: " + Watch.instance.playTime;
+        StartCoroutine(StartSound(winClip, 4.0f));
+        //Time.timeScale = 0;
+    }
+
+    IEnumerator StartSound(AudioClip clip, float delay)
+    {
+        if (lastCoroutine != null)
+            StopCoroutine(lastCoroutine);
+
+        yield return new WaitForSeconds(delay);
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+    public void UpdateScoreMultiplier()
+    {
+        if (scoreMultiplier <= 10)
+        {
+            scoreMultiplier += 1;
+        }
+        
+        textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
     }
 
     public void UpdateTrainingScore(int gemScore)
     {
+        lastCoroutine = StartCoroutine(PlayAudio(gemClip, 0.2f));
         trainingScore += gemScore * scoreMultiplier;
-        scoreMultiplier *= 2;
         gemsCount++;
         textTrainingScore.text = "Score: " + trainingScore;
-        textTrainingScoreMultiplier.text = "Multiplier: " + scoreMultiplier.ToString() + "X";
         textTrainingGemsCount.text = "Gems: " + gemsCount.ToString();
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Score: +" + (gemScore * scoreMultiplier) + "\nGems: +1"));
     }
 
     public void UpdateTrainingFailures()
@@ -181,7 +251,8 @@ public class TrainingState : MonoBehaviour
         trainingFailures++;
         textTrainingFailures.text = "Failures: " + trainingFailures;
         scoreMultiplier = 1;
-        audioSource.PlayOneShot(failureClip, 0.6f);
+        lastCoroutine = StartCoroutine(PlayAudio(failureClip, 0.6f));
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Failures: +1 \nScore multiplier: 1X"));
     }
 
     public void UpdateDriveFailure()
@@ -208,26 +279,65 @@ public class TrainingState : MonoBehaviour
 
         curDamage += damage;
         UpdateDamageMeter();
-        audioSource.PlayOneShot(damageClip, 0.1f);
+
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Damage: +" + damage));
+        lastCoroutine = StartCoroutine(PlayAudio(damageClip, 0.1f));
 
         if (curDamage >= maxDamage)
         {
             trainingScore = 0;
-
-            //You fired screen
+            LoseObject.SetActive(true);
+            StartCoroutine(StartSound(loseClip, 4.0f));
+            //Time.timeScale = 0;
         }
     }
 
     void UpdateDamageMeter()
     {
         float damageSize = 1.0f / (float)maxDamage;
-        float meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
+        meterSize = ((float)maxDamage - (float)curDamage) * damageSize;
 
         if (meterSize >= 0)
         {
             damageMeter.localScale = new Vector3(meterSize, 1, 1);
             damageIndicator.material.color = damageColor.Evaluate(meterSize);
-            damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 1.9f);
+            lastPopUp = StartCoroutine(MeterBlink(meterSize));
         }
+
+        if (meterSize < 0.2f)
+        {
+            damageMeterPulsatingOn = true;
+        }
+    }
+
+    IEnumerator MeterBlink(float meterSize)
+    {
+        damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 15.9f);
+        yield return new WaitForSeconds(0.6f);
+        damageIndicator.material.SetColor("_EmissionColor", emissiveColor.Evaluate(meterSize) * 5.5f);
+    }
+
+    IEnumerator PlayAudio(AudioClip clip, float volume)
+    {
+        if (lastCoroutine != null)
+            StopCoroutine(lastCoroutine);
+
+        audioSource.clip = clip;
+        audioSource.volume = volume;
+        audioSource.Play();
+        yield return new WaitForSeconds(clip.length);
+        //audioSource.Stop();
+        //audioSource.clip = null;
+    }
+
+    IEnumerator ShowPopUpMessage(string message)
+    {
+        if (lastPopUp != null) 
+            StopCoroutine(lastPopUp);
+
+        popUpText.text = message;
+        popUpMessage.SetActive(true);
+        yield return new WaitForSeconds(3);
+        popUpMessage.SetActive(false);
     }
 }

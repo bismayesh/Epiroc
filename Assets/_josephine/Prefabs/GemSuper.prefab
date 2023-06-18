@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1932060928337170601}
   - component: {fileID: 5373764490386653276}
   - component: {fileID: 3991420575264054643}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GemSuper
   m_TagString: SuperGem
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 6286716142967411334}
   - component: {fileID: 6764052597209381252}
   - component: {fileID: 2615849663653673829}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SuperGem
   m_TagString: SuperGem
   m_Icon: {fileID: 0}

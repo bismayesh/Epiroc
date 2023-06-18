@@ -82,7 +82,7 @@ public class TaskDrive : Task
         }
 
 
-        if (TaskDrill.instance.MachineStabalized)
+        if (taskControl[2].IsOn && TaskDrill.instance.MachineStabalized)
         {
             DriveFailure(5);
             return;

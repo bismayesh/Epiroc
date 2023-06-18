@@ -61,7 +61,7 @@ public class TaskDrill : Task
         if (spawnArea && firstDrillInstruction)
         {
             firstDrillInstruction = false;
-            SupportLevels.instance.SupportInstructions(SupportMood.Drill);
+            SupportLevels.instance.ButtonDrill();
         }
     }
 
@@ -75,15 +75,7 @@ public class TaskDrill : Task
             {
                 spawnTrolls = false;
 
-                if (firstTorchInstruction)
-                {
-                    firstTorchInstruction = false;
-                    TaskTorch.instance.FirstTorchInstructions();
-                }
-                else
-                {
-                    TrollSpawner.instance.InstanciateTrolls();
-                }
+                
             }
         }
         else
@@ -155,9 +147,11 @@ public class TaskDrill : Task
                 if (spawnArea)
                 {
                     spawnArea = false;
-                    TrainingState.instance.UpdateTaskDrillProgress(neededIterations, currentIteration);
-                    gemSpawnPoint.SpawnGems();
-                    spawnTrolls = true;
+                    TrainingState.instance.UpdateScoreMultiplier();
+                    DrillProgress();
+                    gemSpawnPoint.GemPilesSpawn();
+                    StartCoroutine(FirstTorchInstruction());
+                    //spawnTrolls = true;
                 }
             }
             else
@@ -171,6 +165,17 @@ public class TaskDrill : Task
             SetAudio(drillAudio[1], false, false);
             machineController.DeactivateDrill();
             machineController.StopDrill();
+        }
+    }
+
+    IEnumerator FirstTorchInstruction()
+    {
+        if (firstTorchInstruction)
+        {
+            yield return new WaitForSeconds(5);
+            firstTorchInstruction = false;
+            SupportLevels.instance.ButtonTorch();
+            //TaskTorch.instance.FirstTorchInstructions();
         }
     }
 

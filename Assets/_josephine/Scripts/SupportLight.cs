@@ -8,7 +8,7 @@ public class SupportLight : MonoBehaviour
     public Light lightSource;
     float range;
     public float duration = 2.0f;
-    public float intensity;
+    //public float intensity;
     public Color normalColor;
     public Color progressColor;
 

@@ -8,6 +8,7 @@ public class Checkpoint : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Machine"))
         {
+            TrainingState.instance.UpdateScoreMultiplier();
             TaskDrive.instance.DriveProgress(gameObject);
         }
     }
