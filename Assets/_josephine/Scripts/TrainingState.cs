@@ -159,7 +159,9 @@ public class TrainingState : MonoBehaviour
 
         textTaskDriveProgress.text = taskDriveProgress + "%";
         UpdateTrainingProgress();
-        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + taskDriveProgress.ToString()) + "%");
+
+
+        lastPopUp = StartCoroutine(ShowPopUpMessage("Drive progress: " + taskDriveProgress.ToString() + "%"));
     }
 
     public void UpdateTaskDrillProgress(int neededIt, int currentIt)
@@ -335,8 +337,9 @@ public class TrainingState : MonoBehaviour
         if (lastPopUp != null) 
             StopCoroutine(lastPopUp);
 
-        popUpText.text = message;
+        
         popUpMessage.SetActive(true);
+        popUpText.text = message;
         yield return new WaitForSeconds(3);
         popUpMessage.SetActive(false);
     }

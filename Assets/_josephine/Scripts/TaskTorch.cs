@@ -33,15 +33,6 @@ public class TaskTorch : Task
         get { return taskControl[0].IsOn; }
     }
 
-    public void FirstTorchInstructions()
-    {
-        if (firstTime)
-        {
-            firstTime = false;
-            SupportLevels.instance.SupportInstructions(SupportMood.Torch);
-        }
-    }
-
     public void TaskCheck(GameObject thisObject, bool setOn)
     {
         if (taskControl[0].TaskCheck(thisObject, setOn))

@@ -172,10 +172,9 @@ public class TaskDrill : Task
     {
         if (firstTorchInstruction)
         {
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(7);
             firstTorchInstruction = false;
             SupportLevels.instance.ButtonTorch();
-            //TaskTorch.instance.FirstTorchInstructions();
         }
     }
 

@@ -1102,11 +1102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac72115dcb11cf4cad99ccb9aa5613d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knobAngle: {fileID: 0}
+  switchTransform: {fileID: 0}
   lightRenderer: {fileID: 4814539529612604641}
-  taskDrive: {fileID: 0}
-  taskDrill: {fileID: 0}
-  taskLights: {fileID: 0}
   isActive: 0
   MaterialOn: {fileID: 2100000, guid: 935f92a18a2ee4a4189c998033c7ad18, type: 2}
   MaterialOff: {fileID: 2100000, guid: 5e80cc6acf16d804a9446d4eb5118f54, type: 2}
@@ -1289,7 +1286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MinLocalY: 0.4
   MaxLocalY: 0.75
-  ClickTolerance: 0.2
+  ClickTolerance: 0.05
   AllowPhysicsForces: 1
   ButtonClick: {fileID: 8300000, guid: 96a66c8233acdff40a72e102fc819781, type: 3}
   ButtonClickUp: {fileID: 8300000, guid: 5602338fc0b4a3149a1b5bb57217426f, type: 3}

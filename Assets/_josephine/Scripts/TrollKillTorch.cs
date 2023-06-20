@@ -14,6 +14,11 @@ public class TrollKillTorch : MonoBehaviour
         instance = this;
     }
 
+    public void EmptyTrollsList()
+    {
+        trolls.Clear();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Troll"))

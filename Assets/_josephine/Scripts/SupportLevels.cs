@@ -5,6 +5,9 @@ using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Photon.Voice;
+using Unity.VisualScripting;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation;
+using UnityEngine.InputSystem.Controls;
 
 public enum SupportMood
 {
@@ -57,6 +60,8 @@ public class SupportLevels : MonoBehaviour
     public bool instructionsFinnished = false;
     bool xButtonPressed = false;
     Coroutine lastCoroutine = null;
+    bool objectiveButtonPressed = false;
+    bool controlerButtonPressed = true;
 
     //Tasks
     List<SingleTask> instructionTasks;
@@ -157,12 +162,17 @@ public class SupportLevels : MonoBehaviour
         //audioSource.clip = null;
     }
 
+
     void SupportLayerChain(List<SingleTask> tasks, GameObject thisObject = null)
     {
-        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject || !instructionsFinnished && index == 2 || !instructionsFinnished && index == 4 && xButtonPressed || !instructionsFinnished && index == 5 || !instructionsFinnished && index == 6)
+        if (supportMood == SupportMood.Introduction)
         {
-            
+            SupportmoodIntroduction(thisObject);
+            return;
+        }
 
+        if (index == 0 || tasks[index - 1].IsOn && tasks[index - 1].task == thisObject)
+        {
             if (index != 0)
             {
                 audioSource.PlayOneShot(taskCompleteClip, 0.2f);
@@ -173,21 +183,15 @@ public class SupportLevels : MonoBehaviour
                 if (supportMood == SupportMood.Torch)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    StartCoroutine(PlayAudio(torchFinalClip));
-
-                    /*
-                    if (firstTorchInstruction)
-                    {
-                        firstTorchInstruction = false;
-                        TrollSpawner.instance.InstanciateTrolls();
-                    }
-                    */
+                    audioSource.clip = null;
+                    audioSource.PlayOneShot(torchFinalClip);
                 }
 
                 if (supportMood == SupportMood.Drive)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    StartCoroutine(PlayAudio(driveFinalClip));
+                    audioSource.clip = null;
+                    audioSource.PlayOneShot(driveFinalClip);
                     if (supportlayerGhost)
                         StartCoroutine(ShowObjectTimer(endDriveGhost, 5.0f));
                 }
@@ -195,24 +199,10 @@ public class SupportLevels : MonoBehaviour
                 if (supportMood == SupportMood.Drill)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    StartCoroutine(PlayAudio(drillFinalClip));
+                    audioSource.clip = null;
+                    audioSource.PlayOneShot(drillFinalClip);
                 }
 
-                if (supportMood == SupportMood.Introduction)
-                {
-                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    instructionsFinnished = true;
-                }
-
-                index = 0;
-                supportMood = SupportMood.None;
-                ResetSupportLayers();
-                return;
-            }
-
-            if (index == tasks.Count + 1 && supportMood == SupportMood.Introduction)
-            {
-                instructionsFinnished = true;
                 index = 0;
                 supportMood = SupportMood.None;
                 ResetSupportLayers();
@@ -250,24 +240,22 @@ public class SupportLevels : MonoBehaviour
             }
 
             index++;
-
-
-            //Instructions
-            if (!instructionsFinnished && index == 2 || !instructionsFinnished && index == 5 || !instructionsFinnished && index == 6)
-            {
-                StartCoroutine(InstructionsTimer());
-            }
         }
     }
+
+
 
     void ResetSupportLayers()
     {
         textBackground.SetActive(false);
         introText.SetActive(false);
 
-        audioSource.Stop();
-        audioSource.clip = null;
-
+        if (lastCoroutine != null)
+        {
+            StopCoroutine(lastCoroutine);
+            audioSource.clip = null;
+        }
+            
         foreach (SingleTask task in instructionTasks)
         {
             task.supportText.SetActive(false);
@@ -358,13 +346,6 @@ public class SupportLevels : MonoBehaviour
         if (!introFinnished || !instructionsFinnished)
             return;
 
-        /*
-        if (!instructionsFinnished)
-        {
-            TaskInstructions.instance.InstructionButton(this.gameObject);
-        }
-        */
-
         ResetSupportLayers();
     }
 
@@ -400,7 +381,7 @@ public class SupportLevels : MonoBehaviour
         objectivesCanvas.SetActive(objectiveCanvasIsOn);
 
         
-        if (objectiveCanvasIsOn && !instructionsFinnished)
+        if (objectiveCanvasIsOn && instructionsFinnished)
         {
             objectiveRoutine = StartCoroutine(ObjectiveAudio());
         }
@@ -448,23 +429,111 @@ public class SupportLevels : MonoBehaviour
             supportMenu.SetActive(!supportMenu.activeSelf);
         }
 
-        
-        if (supportMenu.activeSelf == true)
-        {
-            //Time.timeScale = 0.0f;
-        }
-        else
-        {
-            //Time.timeScale = 1.0f;
-        }
-        
-
 
         if (!instructionsFinnished && index == 4)
         {
             xButtonPressed = true;
             SupportInstructions(SupportMood.Introduction);
         }
+    }
+
+    void SupportmoodIntroduction(GameObject thisObject)
+    {
+        if (instructionsFinnished) return;
+
+        switch (index)
+        {
+            case 0:
+                {
+                    textBackground.SetActive(true);
+                    instructionTasks[index].supportText.SetActive(true);
+                    instructionTasks[index].supportTextSmall.SetActive(true);
+                    lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index].supportVoice));
+                    index++;
+                    break;
+                }
+            case 1:
+                {
+                    if (instructionTasks[index - 1].IsOn && instructionTasks[index - 1].task == thisObject && !objectiveButtonPressed)
+                    {
+                        objectiveButtonPressed = true;
+                        audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+                        InstructionsHideShowInfo();
+                        index++;
+                        StartCoroutine(InstructionsTimer());
+                    }
+                    break;
+                }
+            case 2:
+                {
+                    if (instructionTasks[index - 1].IsOn && instructionTasks[index - 1].task == thisObject && !controlerButtonPressed)
+                    {
+                        controlerButtonPressed = true;
+                        audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+                        index++;
+                        StartCoroutine(InstructionsTimer());
+                    }
+                    break;
+                }
+            case 3:
+                {
+                    if (instructionTasks[index - 1].IsOn && instructionTasks[index - 1].task == thisObject)
+                    {
+                        audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+                        InstructionsHideShowInfo();
+                        index++;
+                    }
+                    break;
+                }
+            case 4:
+                {
+                    if (xButtonPressed)
+                    {
+                        audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+                        InstructionsHideShowInfo();
+                        index++;
+                        StartCoroutine(InstructionsTimer());
+                    }
+                    break;
+                }
+            case 5:
+                {
+
+                    audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    InstructionsHideShowInfo();
+                    index++;
+                    StartCoroutine(InstructionsTimer());
+                    break;
+                }
+            case 6:
+                {
+                    audioSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    InstructionsHideShowInfo();
+                    index++;
+                    break;
+                }
+            case 7:
+                {
+                    if (instructionTasks[index - 1].IsOn && instructionTasks[index - 1].task == thisObject)
+                    {
+                        taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                        instructionsFinnished = true;
+                        index = 0;
+                        supportMood = SupportMood.None;
+                        ResetSupportLayers();
+                    }
+                    break;
+                }
+        }
+    }
+
+    void InstructionsHideShowInfo()
+    {
+        instructionTasks[index - 1].supportText.SetActive(false);
+        instructionTasks[index - 1].supportTextSmall.SetActive(false);
+        instructionTasks[index].supportText.SetActive(true);
+        instructionTasks[index].supportTextSmall.SetActive(true);
+        lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index].supportVoice));
     }
 
     IEnumerator InstructionsTimer()
@@ -475,17 +544,39 @@ public class SupportLevels : MonoBehaviour
                 {
                     ResetSupportLayers();
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    StartCoroutine(PlayAudio(objectiveClip));
                     yield return new WaitForSeconds(objectiveClip.length);
 
                     ButtonTrainingObjectives();
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
                     textBackground.SetActive(true);
                     instructionTasks[index - 1].supportText.SetActive(true);
                     instructionTasks[index - 1].supportTextSmall.SetActive(true);
-                    lastCoroutine = StartCoroutine(PlayAudio(instructionTasks[index - 1].supportVoice));
+                    StartCoroutine(PlayAudio(instructionTasks[index - 1].supportVoice));
+                    controlerButtonPressed = false;
+                    break;
+                }
+            case 3:
+                {
+                    ResetSupportLayers();
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    yield return new WaitForSeconds(4);
+
+                    taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
+                    supportAnimatedControlers.SetActive(false);
+                    textBackground.SetActive(true);
+                    instructionTasks[index - 1].supportText.SetActive(true);
+                    instructionTasks[index - 1].supportTextSmall.SetActive(true);
+                    StartCoroutine(PlayAudio(instructionTasks[index - 1].supportVoice));
+                    yield return new WaitForSeconds(instructionTasks[4].supportVoice.length);
                     break;
                 }
             case 5:
                 {
+                    textBackground.SetActive(true);
+                    instructionTasks[index - 1].supportText.SetActive(true);
+                    instructionTasks[index - 1].supportTextSmall.SetActive(true);
+                    StartCoroutine(PlayAudio(instructionTasks[index - 1].supportVoice));
                     yield return new WaitForSeconds(instructionTasks[4].supportVoice.length);
                     SupportInstructions(SupportMood.Introduction);
                     break;
