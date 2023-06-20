@@ -508,7 +508,7 @@ GameObject:
   - component: {fileID: 8248536981608988537}
   m_Layer: 0
   m_Name: GemModel
-  m_TagString: SuperGem
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

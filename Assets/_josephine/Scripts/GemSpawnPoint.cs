@@ -65,6 +65,7 @@ public class GemSpawnPoint : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
         }
 
+        TrollKillTorch.instance.EmptyTrollsList();
         Destroy(gameObject);
     }
 
