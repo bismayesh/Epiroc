@@ -173,7 +173,7 @@ public class SupportLevels : MonoBehaviour
                 if (supportMood == SupportMood.Torch)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    lastCoroutine = StartCoroutine(PlayAudio(torchFinalClip));
+                    StartCoroutine(PlayAudio(torchFinalClip));
 
                     /*
                     if (firstTorchInstruction)
@@ -187,7 +187,7 @@ public class SupportLevels : MonoBehaviour
                 if (supportMood == SupportMood.Drive)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    lastCoroutine = StartCoroutine(PlayAudio(driveFinalClip));
+                    StartCoroutine(PlayAudio(driveFinalClip));
                     if (supportlayerGhost)
                         StartCoroutine(ShowObjectTimer(endDriveGhost, 5.0f));
                 }
@@ -195,7 +195,7 @@ public class SupportLevels : MonoBehaviour
                 if (supportMood == SupportMood.Drill)
                 {
                     taskCompleteSource.PlayOneShot(taskCompleteClip, 0.2f);
-                    lastCoroutine = StartCoroutine(PlayAudio(drillFinalClip));
+                    StartCoroutine(PlayAudio(drillFinalClip));
                 }
 
                 if (supportMood == SupportMood.Introduction)
